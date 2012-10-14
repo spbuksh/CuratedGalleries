@@ -1,0 +1,94 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+<section id="scSearch" style="float: right;">
+            <fieldset>
+                        <legend>Log in Form</legend>
+                        <ol>
+                            <li>
+                           <img src="~/Images/star.png" alt="save search" onclick="savesearch()" width="19px" style="float:left;" />
+                            <input id="searchbar" type="text"/>
+                           <div class="btn2 btn2-warning" onclick="search()">Search</div>
+                           
+                            </li>                                     
+                        </ol>
+                        </section>
+<div>
+    <div id="scBody" style="float: left;width: 780px;">
+    </div>
+    <div id="searchtags" class="tags" style="float: right;width: 180px;vertical-align:top;">
+        @Html.Partial("Controls/_SearchTags", (List<Corbis.Public.Entity.Search.SavedSearchResult>)ViewBag.Tags)
+    </div>
+</div>
+
+  @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/Scripts/jquery.json-2.3.min.js")
+        @Scripts.Render("~/Scripts/jquery.autocomplete.js")
+<script type="text/javascript">
+
+
+    var acimg;
+   
+    $(document).ready(
+      function () {
+          $("#searchbar").live('keypress', function (event) {
+              if (event.keyCode === 13) {
+                  search();
+                  return false;
+              }
+
+          });
+
+          acimg = $('#searchbar').autocomplete({
+              serviceUrl: '/Home/ImageNameAutocomplete',
+              minChars: 3,
+              delimiter: /(,|;)\s*/,
+              maxHeight: 400,
+              width: 300,
+              zIndex: 9999,
+              onSelect: function (data, value) { }
+          });
+      });
+
+    function executeSearch(searchval) {
+        $('#searchbar').val(searchval);
+        $.ajax({
+            type: "POST",
+            url: "Home/SearchCondition",
+            data: $.toJSON({ "search": searchval
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                $('#scBody').html(response);
+            },
+            error: function (response) {
+                if (response.status == 401) {
+                }
+            }
+        });
+
+    }
+
+    function search() {
+        executeSearch($('#searchbar').val());
+    }
+
+    function savesearch() {
+        $.ajax({
+            type: "POST",
+            url: "Home/SaveSearchCondition",
+            data: $.toJSON({ "search": $('#searchbar').val()
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                $('#searchtags').html(response);
+            },
+            error: function (response) {
+                if (response.status == 401) {
+                }
+            }
+        });
+    }
+</script>

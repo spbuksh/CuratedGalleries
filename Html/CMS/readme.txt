@@ -1,0 +1,1 @@
+It contains html templates for cms site pages

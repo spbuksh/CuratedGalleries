@@ -1,0 +1,59 @@
+﻿
+<!--Alias - unique gallery id. It is not identifier in the DB. It is identifier for references in xml files-->
+
+
+<!--Multilang ext possibility is included--> 
+
+<Galleries defaultImagePath="\Images\DefaultCategory.jpg">
+  <Gallery>
+    <Alias>Animals</Alias>
+    <Name>
+      <Item culture="en-US">Animals</Item> <!-- culture - it is culture alias -->
+      <Item culture="ru-RU">Животные</Item>
+    </Name>
+    <Description>
+      <Item culture="en-US">Contains images with animals</Item>
+      <Item culture="ru-RU">Содержит картинки с животными</Item>
+    </Description>
+    <IsActive>true</IsActive>
+    <Image path="\Images\Galleries\animals.jpg" />
+    <Keywords>
+      <Keyword>
+        <Item culture="en-US">Nature</Item>
+        <Item culture="ru-RU">Природа</Item>
+      </Keyword>
+      <Keyword>
+        <Item culture="en-US">Mammal</Item>
+        <Item culture="ru-RU">Млекопитающие</Item>
+      </Keyword>
+      <Keyword>
+        <Item culture="en-US">Monkey</Item>
+        <Item culture="ru-RU">Обезьяна</Item>
+      </Keyword>
+    </Keywords>
+  </Gallery>
+  <Gallery>
+    <Alias>People</Alias>
+    <Name>
+      <Item culture="en-US">Animals</Item>
+      <!-- culture - it is culture alias -->
+      <Item culture="ru-RU">Животные</Item>
+    </Name>
+    <Description>
+      <Item culture="en-US">Contains images with peaople</Item>
+      <Item culture="ru-RU">Содержит картинки c животными</Item>
+    </Description>
+    <IsActive>true</IsActive>
+    <Image path="\Images\Galleries\animals.jpg" />
+    <Keywords>
+      <Keyword>
+        <Item culture="en-US">Family</Item>
+        <Item culture="ru-RU">Семья</Item>
+      </Keyword>
+      <Keyword>
+        <Item culture="en-US">Portrait</Item>
+        <Item culture="ru-RU">Портрет</Item>
+      </Keyword>
+    </Keywords>
+  </Gallery>
+</Galleries>

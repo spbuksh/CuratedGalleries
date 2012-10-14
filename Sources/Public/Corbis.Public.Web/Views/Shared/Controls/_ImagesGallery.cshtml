@@ -1,0 +1,37 @@
+﻿@using Corbis.Public.Entity.Search
+@using Corbis.Presentation.Common.Models
+@model CorbisImageGalleryModel
+
+<ul class="hoverbox">
+@foreach (var item in Model.Images)
+{
+    <li>
+        <div id="image_@item.CorbisID-panel" class="result_image-panel search-image-border">
+	        <div id="image_thumb_@item.CorbisID-panel" class="image_thumbnail">
+		        <a id="enlargement_@item.CorbisID" href="#" onclick="@item.CutdownUrl128" class="enlarge-image">
+			        <img alt="@item.Title" src="@item.CutdownUrl128"  style="height: @item.SizePx.Height; width:  @item.SizePx.Width; "
+                     id="thumb_@item.CorbisID" class="search-results-image" />
+                    <img src="@item.CutdownUrl350" id="preview_@item.CorbisID" class="preview" />                                  
+		        </a>		
+	        </div>
+	        <div id="image_details_@item.CorbisID-panel" class="image_detail-panel">
+		        <div id="action_@item.CorbisID-panel">
+			        <div id="rfcd_@item.CorbisID-panel" class="rfcd-panel">
+				        <div class="rmrs-icon">
+					        <div class="rmrs-label" title="Rights Managed">@item.LicenseModel</div>
+				        </div>
+			        </div>			
+		        </div>
+		        <div id="info_@item.CorbisID-panel" class="image_details-panel">
+			        <div id="details_@item.CorbisID-panel">
+				        <div id="category_detail_@item.CorbisID" class="image_category-text">@item.CategoryName</div>
+				        <div id="collection_detail_@item.CorbisID" class="image_collection-text">@item.CollectionName</div>
+				        <div id="title_detail_@item.CorbisID" class="image_title-text" alt="Studio portrait of cat">@item.Title</div>
+				        <div id="date_detail_@item.CorbisID" class="image_date_photo-text">@item.DatePhotographed</div>
+			        </div>
+		        </div>
+	        </div>
+        </div>
+    </li>
+} 
+</ul>

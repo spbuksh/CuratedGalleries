@@ -1,0 +1,37 @@
+﻿@model IEnumerable<Corbis.CMS.Entity.AdminUser>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create", null,
+            new Dictionary<string, object> { { "class", "btn2 btn2-info" } })
+</p>
+
+<div id="content">
+@Html.Partial("Controls/Grid/_UserGrid",Model)
+</div>
+
+<script type="text/javascript">
+
+    function deleteUser(userId) {
+
+        $.ajax({
+            type: "POST",
+            url: "/User/DeleteUser",
+            data: $.toJSON({
+                "id": userId
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+
+                $('#content').html(response);
+            }
+        });
+    }
+
+</script>

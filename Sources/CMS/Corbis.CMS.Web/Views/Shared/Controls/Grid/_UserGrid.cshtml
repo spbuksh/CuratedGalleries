@@ -1,0 +1,46 @@
+﻿@model IEnumerable<Corbis.CMS.Entity.AdminUser>
+<table>
+    <tr>
+        <th>
+        </th>
+        <th>
+            Login
+        </th>
+         <th>
+            Email
+        </th>
+         <th>
+            Is active
+        </th>
+          <th>
+            Role
+        </th>
+        <th>
+        </th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                <a href="/User/Edit/@item.ID" >
+                    <img src="/Images/edit.png" alt="edit" /></a>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Login)
+            </td>
+             <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+             <td>
+                @Html.DisplayFor(modelItem => item.IsActive)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Roles)
+            </td>
+            <td>              
+                <a href="#" onclick="deleteUser(@item.ID)">
+                    <img style="width: 33px;" src="/Images/trash.png" alt="delete" /></a>
+            </td>
+        </tr>
+    }
+</table>

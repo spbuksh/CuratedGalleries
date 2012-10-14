@@ -1,0 +1,3 @@
+﻿/*ALTER DATABASE [$(DatabaseName)]
+    ADD LOG FILE (NAME = [aspnet-Corbis.CMS.Web-20120912185123_log], FILENAME = 'C:\Program Files\Microsoft SQL Server\MSSQL10.SQLEXPRESS\MSSQL\DATA\aspnet-Corbis.CMS.Web-20120912185123_log.LDF', SIZE = 504 KB, MAXSIZE = 2097152 MB, FILEGROWTH = 10 %);*/
+

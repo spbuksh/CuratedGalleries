@@ -1,0 +1,1 @@
+DATE:1-01-01 00:00:00.0000; LEVEL:Warn; MESSAGE:Hello word! It is logging

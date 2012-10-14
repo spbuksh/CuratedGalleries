@@ -21,12 +21,19 @@
 # ***************** CORBIS TEMP FILES & FOLDERS **************************
 
 # ignore temp files for DB projects
-Sources/DB/Corbis.DB.Log/sql/*
-Sources/DB/Corbis.DB.Main/sql/*
-Sources/DB/Corbis.DB.Resources/sql/*
+Sources/Storage/Corbis.DB.Log/sql/*
+Sources/Storage/Corbis.DB.Main/sql/*
+Sources/Storage/Corbis.DB.Resources/sql/*
 
-Sources/DB/Deployment/DbDeployment.bat
-Sources/DB/Deployment/*.txt
+Sources/Storage/Deployment/DbDeployment.bat
+Sources/Storage/Deployment/DbSessionSetup.bat
+Sources/Storage/Deployment/*.txt
+!Sources/Storage/Deployment/_README.txt
+
+Sources/Storage/Corbis.DataImporter/[Aa]pp.config
+
+NuGet.Repository/*
+!NuGet.Repository/_README.txt
 
 # ignore config files
 Sources/Public/Corbis.Public.Web/[Ww]eb.config

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>jQuery.Autocomplete</id>
+    <version>1.0.0</version>
+    <authors>Corbis</authors>
+    <owners>Corbis</owners>
+    <projectUrl>http://www.eyecatch.no/projects/autoloadservicehostfactory/</projectUrl>
+    <iconUrl>http://www.eyecatch.no/favicon.ico</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>
+      Core library for the Autoloading ServiceHost Factory.
+    </description>
+    <releaseNotes>
+    </releaseNotes>
+    <copyright>Copyright Corbis 2012</copyright>
+    <tags></tags>
+    <dependencies />
+  </metadata>
+  <files>
+    <file src="lib\**" target="lib" />
+    <file src="tools\**" target="tools" />
+    <file src="content\**" target="content" />
+  </files>
+</package>

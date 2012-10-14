@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{4E398398-70FB-456A-A1FC-81D44F473C2B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Corbis.Repository.Test</RootNamespace>
+    <AssemblyName>Corbis.Repository.Test</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Practices.ServiceLocation">
+      <HintPath>..\..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity">
+      <HintPath>..\..\packages\Unity.2.1.505.2\lib\NET35\Microsoft.Practices.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Configuration">
+      <HintPath>..\..\packages\Unity.2.1.505.2\lib\NET35\Microsoft.Practices.Unity.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\packages\Newtonsoft.Json.4.5.6\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web.Helpers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <CodeAnalysisDependentAssemblyPaths Condition=" '$(VS100COMNTOOLS)' != '' " Include="$(VS100COMNTOOLS)..\IDE\PrivateAssemblies">
+      <Visible>False</Visible>
+    </CodeAnalysisDependentAssemblyPaths>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserRepositoryTest.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="_README.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Shadow Include="Test References\Corbis.CMS.Repository.accessor" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\CMS\Corbis.CMS.Entity\Corbis.CMS.Entity.csproj">
+      <Project>{FE8695FC-0FD1-491A-AF8D-ABB6E74B14EF}</Project>
+      <Name>Corbis.CMS.Entity</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\CMS\Corbis.CMS.Repository.Interface\Corbis.CMS.Repository.Interface.csproj">
+      <Project>{6F11D905-C233-45DC-9009-49955BD662D2}</Project>
+      <Name>Corbis.CMS.Repository.Interface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\CMS\Corbis.CMS.Repository\Corbis.CMS.Repository.csproj">
+      <Project>{67F5341D-247F-46EC-89BF-DAD1C14277E0}</Project>
+      <Name>Corbis.CMS.Repository</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Public\Corbis.Public.Entity\Corbis.Public.Entity.csproj">
+      <Project>{26660E6F-CF12-4503-A34A-46DE4834149F}</Project>
+      <Name>Corbis.Public.Entity</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Public\Corbis.Public.Repository.Interface\Corbis.Public.Repository.Interface.csproj">
+      <Project>{12287E8D-E19D-4C15-92E8-EAD5B25DE004}</Project>
+      <Name>Corbis.Public.Repository.Interface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Public\Corbis.Public.Repository\Corbis.Public.Repository.csproj">
+      <Project>{7E9DA6AA-4A24-483D-8CE5-285139B03060}</Project>
+      <Name>Corbis.Public.Repository</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Share\Corbis.Common\Corbis.Common.csproj">
+      <Project>{9A585B1C-B7DA-4BCC-8412-E63278CB5B17}</Project>
+      <Name>Corbis.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Share\Corbis.Logging\Corbis.Logging.csproj">
+      <Project>{44B52E0A-7A72-4ACA-B712-95CF1C3FE642}</Project>
+      <Name>Corbis.Logging</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Shadow Include="Test References\Corbis.Public.Repository.accessor" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

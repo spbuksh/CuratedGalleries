@@ -1,0 +1,13 @@
+﻿<CONFIG_FILE_ROOT>
+
+  <!-- Section registration -->
+  <configSections>
+    <section name="ApplicationDescriptor" type="Corbis.Common.Configuration.ApplicationDescriptorConfigSection, Corbis.Common, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"/>
+  </configSections>
+
+  <!-- Section definition -->
+  <ApplicationDescriptor>
+    <Details name="Corbis.Public.Web" version="1.0.0.0" />
+  </ApplicationDescriptor>
+
+</CONFIG_FILE_ROOT>

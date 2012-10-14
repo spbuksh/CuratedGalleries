@@ -1,0 +1,16 @@
+﻿<CONFIG_FILE_ROOT>
+  
+  <!-- Section registration -->
+  <configSections>
+    <section name="LoggingSection" type="Corbis.Logging.Core.Configuration.LoggingConfigurationSection, Corbis.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"/>
+  </configSections>
+
+  <!-- Section definition -->
+  <LoggingSection async="false" appSectionName="ApplicationDescriptor">
+    <Loggers>
+      <add name="default" enabled="true" type="Corbis.Logging.Loggers.DefaultLogger, Corbis.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+      <add ... />
+    </Loggers>
+  </LoggingSection>
+
+</CONFIG_FILE_ROOT>

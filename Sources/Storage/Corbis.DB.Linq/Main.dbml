@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="Corbis.Main" Class="MainDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=PAVELSM\MSSQL2008;Initial Catalog=Corbis.Main;Integrated Security=True" SettingsObjectName="Corbis.DB.Linq.Properties.Settings" SettingsPropertyName="Corbis_MainConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.AdminUserMembership" Member="AdminUserMembershipRecords">
+    <Type Name="AdminUserMembershipRecord">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="ProfileID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Login" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Password" Type="System.String" DbType="NVarChar(150) NOT NULL" CanBeNull="false" />
+      <Column Name="PasswordExpirationDate" Type="System.DateTime" DbType="DateTime2" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="DateCreated" Type="System.DateTime" DbType="DateTime2 NOT NULL" CanBeNull="false" />
+      <Association Name="AdminUserMembership_AdminUserToRole" Member="AdminUserToRoleRecords" ThisKey="ID" OtherKey="MemberID" Type="AdminUserToRoleRecord" />
+      <Association Name="AdminUserProfile_AdminUserMembership" Member="AdminUserProfileRecord" ThisKey="ProfileID" OtherKey="ID" Type="AdminUserProfileRecord" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AdminUserProfile" Member="AdminUserProfileRecords">
+    <Type Name="AdminUserProfileRecord">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="FirstName" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="MiddleName" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="LastName" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Email" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Association Name="AdminUserProfile_AdminUserMembership" Member="AdminUserMembershipRecords" ThisKey="ID" OtherKey="ProfileID" Type="AdminUserMembershipRecord" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AdminUserRole" Member="AdminUserRoleRecords">
+    <Type Name="AdminUserRoleRecord">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Association Name="AdminUserRole_AdminUserToRole" Member="AdminUserToRoleRecords" ThisKey="ID" OtherKey="RoleID" Type="AdminUserToRoleRecord" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AdminUserToRole" Member="AdminUserToRoleRecords">
+    <Type Name="AdminUserToRoleRecord">
+      <Column Name="MemberID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="RoleID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="AdminUserMembership_AdminUserToRole" Member="AdminUserMembershipRecord" ThisKey="MemberID" OtherKey="ID" Type="AdminUserMembershipRecord" IsForeignKey="true" />
+      <Association Name="AdminUserRole_AdminUserToRole" Member="AdminUserRoleRecord" ThisKey="RoleID" OtherKey="ID" Type="AdminUserRoleRecord" IsForeignKey="true" />
+    </Type>
+  </Table>
+</Database>

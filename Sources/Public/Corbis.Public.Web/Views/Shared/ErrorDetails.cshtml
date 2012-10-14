@@ -1,0 +1,15 @@
+﻿@using Corbis.Presentation.Common
+@model Corbis.Presentation.Common.ErrorDetailsModel
+
+@{
+    ViewBag.Title = "ErrorDetails";
+
+    var message = string.IsNullOrEmpty(this.Model.Message) ? "Information is absent" : this.Model.Message;
+    var exception = this.Model.Exception == null ? "Information is absent" : this.Model.Exception.ToString();
+}
+
+<h2>Message:</h2>
+<span>@message</span>
+
+<h2>Exception:</h2>
+<span>@exception</span>

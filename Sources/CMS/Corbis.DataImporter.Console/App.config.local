@@ -1,0 +1,45 @@
+﻿<?xml version="1.0"?>
+<configuration>
+  <startup>
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.0"/>
+  </startup>
+
+  <configSections>
+    <!-- ****************** Custom Sections ********************** -->
+    <section name="ApplicationDescriptor" type="Corbis.Common.Configuration.ApplicationDescriptorConfigSection, Corbis.Common, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+    <section name="LoggingSection" type="Corbis.Logging.Core.Configuration.LoggingConfigurationSection, Corbis.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+    <section name="RepositoryProvider" type="Corbis.Presentation.Common.RepositoryProvider.RepositoryProviderConfigurationSection, Corbis.Presentation.Common, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+    <section name="WebApiClientSection" type="Corbis.Common.WebApi.WebApiClientConfigSection, Corbis.Common, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+    <!-- ********************************************************* -->
+  </configSections>
+
+  <!-- ****************** Custom Sections ********************** -->
+  <ApplicationDescriptor>
+    <Details name="Corbis.WebAPI" version="1.0.0.0" />
+  </ApplicationDescriptor>
+
+  <LoggingSection async="false" appSectionName="ApplicationDescriptor">
+    <Loggers>
+      <add name="default" enabled="true" type="Corbis.Logging.Loggers.DefaultLogger, Corbis.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+    </Loggers>
+  </LoggingSection>
+
+  <RepositoryProvider>
+    <Settings path="bin\Corbis.CMS.Repository.dll" creationMode="Singleton" />
+  </RepositoryProvider>
+
+  <WebApiClientSection>
+    <Settings clientID="Crave.client" secret="D9E2AE39-A3BA-4165-AB52-B52C17B04D33" authUrl="https://sqaapi.corbisimages.com/v2" apiUrl="https://sqaapi.corbisimages.com/v2" />
+  </WebApiClientSection>
+  <!-- ********************************************************* -->
+
+  <connectionStrings>
+    <add name="MainDB" connectionString="Data Source=$DataSource$;Initial Catalog=Corbis.Main;User Id=CorbisUser; Password=CorbisUserPassword;" providerName="System.Data.SqlClient" />
+  </connectionStrings>
+
+  <appSettings>
+    <!-- Absolute or relevant path to the directory with source xml files for data importing -->
+    <add key="sourceDir" value="..\..\DataImportSource"/>
+  </appSettings>
+  
+</configuration>

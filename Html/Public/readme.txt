@@ -1,0 +1,1 @@
+It contains html templates for public site pages

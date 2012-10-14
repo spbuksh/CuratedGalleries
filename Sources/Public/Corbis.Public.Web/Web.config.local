@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+  For more information on how to configure your ASP.NET application, please visit
+  http://go.microsoft.com/fwlink/?LinkId=169433
+  -->
+<configuration>
+  <configSections>
+    <!-- For more information on Entity Framework configuration, visit http://go.microsoft.com/fwlink/?LinkID=237468 -->
+    <section name="entityFramework" type="System.Data.Entity.Internal.ConfigFile.EntityFrameworkSection, EntityFramework, Version=4.4.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" requirePermission="false" />
+    <!-- ****************** Custom Sections ********************** -->
+    <section name="ApplicationDescriptor" type="Corbis.Common.Configuration.ApplicationDescriptorConfigSection, Corbis.Common, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+    <section name="LoggingSection" type="Corbis.Logging.Core.Configuration.LoggingConfigurationSection, Corbis.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+    <section name="RepositoryProvider" type="Corbis.Presentation.Common.RepositoryProvider.RepositoryProviderConfigurationSection, Corbis.Presentation.Common, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+    <section name="WebApiClientSection" type="Corbis.Common.WebApi.WebApiClientConfigSection, Corbis.Common, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+    <!-- ********************************************************* -->
+  </configSections>
+  <!-- ****************** Custom Sections ********************** -->
+  <ApplicationDescriptor>
+    <Details name="Corbis.Public.Web" version="1.0.0.0" />
+  </ApplicationDescriptor>
+  <LoggingSection async="false" appSectionName="ApplicationDescriptor">
+    <Loggers>
+      <add name="default" enabled="true" type="Corbis.Logging.Loggers.DefaultLogger, Corbis.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+    </Loggers>
+  </LoggingSection>
+  <RepositoryProvider>
+    <Settings path="bin\Corbis.Public.Repository.dll" creationMode="Singleton" />
+  </RepositoryProvider>
+  <WebApiClientSection>
+    <!--<Settings clientID="bmbagency.client" secret="E763D52F-622A-478f-B9F5-A0477732AB36" authUrl="https://secure.corbis.com" apiUrl="https://api.corbisimages.com/v2" />-->
+    <Settings clientID="Crave.client" secret="D9E2AE39-A3BA-4165-AB52-B52C17B04D33" authUrl="https://sqaapi.corbisimages.com/v2" apiUrl="https://sqaapi.corbisimages.com/v2" />
+  </WebApiClientSection>
+  <!-- ********************************************************* -->
+  <connectionStrings>
+    <add name="MainDB" connectionString="Data Source=YMURASHKA\SQLEXPRESS;Initial Catalog=Corbis.Main;User Id=CorbisUser; Password=CorbisUserPassword;" providerName="System.Data.SqlClient" />
+    <add name="ASPStateConnection" connectionString="Data Source=YMURASHKA\SQLEXPRESS;Initial Catalog=Corbis.ASPState;User Id=CorbisUser; Password=CorbisUserPassword;" providerName="System.Data.SqlClient" />
+  </connectionStrings>
+  <appSettings>
+    <add key="webpages:Version" value="2.0.0.0" />
+    <add key="webpages:Enabled" value="false" />
+    <add key="PreserveLoginUrl" value="true" />
+    <add key="ClientValidationEnabled" value="true" />
+    <add key="UnobtrusiveJavaScriptEnabled" value="true" />
+  </appSettings>
+  <system.web>
+    <sessionState timeout="20" mode="SQLServer" sqlConnectionString="ASPStateConnection" allowCustomSqlDatabase="true" />
+    <compilation debug="true" targetFramework="4.0" />
+    <authentication mode="Forms">
+      <forms loginUrl="~/Account/Login" timeout="20" slidingExpiration="true" />
+    </authentication>
+    <pages>
+      <namespaces>
+        <add namespace="System.Web.Helpers" />
+        <add namespace="System.Web.Mvc" />
+        <add namespace="System.Web.Mvc.Ajax" />
+        <add namespace="System.Web.Mvc.Html" />
+        <add namespace="System.Web.Optimization" />
+        <add namespace="System.Web.Routing" />
+        <add namespace="System.Web.WebPages" />
+      </namespaces>
+    </pages>
+    <customErrors mode="Off" defaultRedirect="errors/default.htm">
+      <error statusCode="400" redirect="errors/error.htm?error=400" />
+      <error statusCode="401" redirect="errors/error.htm?error=401" />
+      <error statusCode="402" redirect="errors/error.htm?error=402" />
+      <error statusCode="403" redirect="errors/error.htm?error=403" />
+      <error statusCode="404" redirect="errors/error.htm?error=404" />
+      <error statusCode="405" redirect="errors/error.htm?error=405" />
+      <error statusCode="406" redirect="errors/error.htm?error=406" />
+      <error statusCode="407" redirect="errors/error.htm?error=407" />
+      <error statusCode="408" redirect="errors/error.htm?error=408" />
+      <error statusCode="409" redirect="errors/error.htm?error=409" />
+      <error statusCode="410" redirect="errors/error.htm?error=410" />
+      <error statusCode="411" redirect="errors/error.htm?error=411" />
+      <error statusCode="412" redirect="errors/error.htm?error=412" />
+      <error statusCode="413" redirect="errors/error.htm?error=413" />
+      <error statusCode="414" redirect="errors/error.htm?error=414" />
+      <error statusCode="415" redirect="errors/error.htm?error=415" />
+      <error statusCode="416" redirect="errors/error.htm?error=416" />
+      <error statusCode="417" redirect="errors/error.htm?error=417" />
+      <error statusCode="418" redirect="errors/error.htm?error=418" />
+      <error statusCode="422" redirect="errors/error.htm?error=422" />
+      <error statusCode="423" redirect="errors/error.htm?error=423" />
+      <error statusCode="424" redirect="errors/error.htm?error=424" />
+      <error statusCode="425" redirect="errors/error.htm?error=425" />
+      <error statusCode="426" redirect="errors/error.htm?error=426" />
+      <error statusCode="444" redirect="errors/error.htm?error=444" />
+      <error statusCode="449" redirect="errors/error.htm?error=449" />
+      <error statusCode="450" redirect="errors/error.htm?error=450" />
+      <error statusCode="499" redirect="errors/error.htm?error=499" />
+      <error statusCode="500" redirect="errors/error.htm?error=500" />
+      <error statusCode="501" redirect="errors/error.htm?error=501" />
+      <error statusCode="502" redirect="errors/error.htm?error=502" />
+      <error statusCode="503" redirect="errors/error.htm?error=503" />
+      <error statusCode="504" redirect="errors/error.htm?error=504" />
+      <error statusCode="505" redirect="errors/error.htm?error=505" />
+    </customErrors>
+  </system.web>
+  <system.webServer>
+    <validation validateIntegratedModeConfiguration="false" />
+    <modules runAllManagedModulesForAllRequests="true" />
+    <handlers>
+      <remove name="ExtensionlessUrlHandler-ISAPI-4.0_32bit" />
+      <remove name="ExtensionlessUrlHandler-ISAPI-4.0_64bit" />
+      <remove name="ExtensionlessUrlHandler-Integrated-4.0" />
+      <add name="ExtensionlessUrlHandler-ISAPI-4.0_32bit" path="*." verb="GET,HEAD,POST,DEBUG,PUT,DELETE,PATCH,OPTIONS" modules="IsapiModule" scriptProcessor="%windir%\Microsoft.NET\Framework\v4.0.30319\aspnet_isapi.dll" preCondition="classicMode,runtimeVersionv4.0,bitness32" responseBufferLimit="0" />
+      <add name="ExtensionlessUrlHandler-ISAPI-4.0_64bit" path="*." verb="GET,HEAD,POST,DEBUG,PUT,DELETE,PATCH,OPTIONS" modules="IsapiModule" scriptProcessor="%windir%\Microsoft.NET\Framework64\v4.0.30319\aspnet_isapi.dll" preCondition="classicMode,runtimeVersionv4.0,bitness64" responseBufferLimit="0" />
+      <add name="ExtensionlessUrlHandler-Integrated-4.0" path="*." verb="GET,HEAD,POST,DEBUG,PUT,DELETE,PATCH,OPTIONS" type="System.Web.Handlers.TransferRequestHandler" preCondition="integratedMode,runtimeVersionv4.0" />
+    </handlers>
+  </system.webServer>
+  <runtime>
+    <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
+      <dependentAssembly>
+        <assemblyIdentity name="System.Web.Helpers" publicKeyToken="31bf3856ad364e35" />
+        <bindingRedirect oldVersion="1.0.0.0-2.0.0.0" newVersion="2.0.0.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="System.Web.Mvc" publicKeyToken="31bf3856ad364e35" />
+        <bindingRedirect oldVersion="0.0.0.0-4.0.0.0" newVersion="4.0.0.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="System.Web.WebPages" publicKeyToken="31bf3856ad364e35" />
+        <bindingRedirect oldVersion="1.0.0.0-2.0.0.0" newVersion="2.0.0.0" />
+      </dependentAssembly>
+    </assemblyBinding>
+  </runtime>
+  <entityFramework>
+    <defaultConnectionFactory type="System.Data.Entity.Infrastructure.SqlConnectionFactory, EntityFramework" />
+  </entityFramework>
+</configuration>

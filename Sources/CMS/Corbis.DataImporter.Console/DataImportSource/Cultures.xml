@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!-- Contains list of supported cultures -->
+<!--alias - unique public culture id for references-->
+<!--lcid - culture identifier-->
+<!--isActive - active or not. If it is not active then data is migrate into storage but is not active-->
+<!--isIgnored - is used for data import or not-->
+<Cultures>
+  <Culture lcid="en-US" alias="en-US" isDefault="true" />
+  <Culture lcid="en-US" alias="en-US" isActive="true" isIgnored =" true" />
+</Cultures>

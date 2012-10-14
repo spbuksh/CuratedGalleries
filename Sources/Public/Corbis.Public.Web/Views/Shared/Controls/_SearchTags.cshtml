@@ -1,0 +1,13 @@
+﻿@model List<Corbis.Public.Entity.Search.SavedSearchResult>
+
+@{
+    var a = 0;
+    foreach (Corbis.Public.Entity.Search.SavedSearchResult item in Model)
+    { 
+    if(a==4){
+        a = 0;
+    }
+<a href="#" onclick="executeSearch('@item.SearchValue')" class="@string.Format("tag{0}",a)">@item.SearchValue</a>
+        a++;
+    }
+}

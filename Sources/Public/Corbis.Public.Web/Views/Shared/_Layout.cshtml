@@ -1,0 +1,114 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>@ViewBag.Title - My ASP.NET MVC Application</title>
+        <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+        <meta name="viewport" content="width=device-width" />
+        @Styles.Render("~/Content/css")
+        @Styles.Render("~/Content/bootstrap.min.css")
+        @Scripts.Render("~/bundles/modernizr")
+        @Scripts.Render("~/Scripts/jquery-1.7.1-vsdoc.js")
+        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/Scripts/jquery.json-2.3.min.js")
+        @Scripts.Render("~/Scripts/jquery.autocomplete.js")
+
+           <script type="text/javascript">
+
+
+               $(window).error(
+                function (errObj) {
+                    logError(errObj.originalEvent.currentTarget.navigator.userAgent,
+            errObj.originalEvent.filename,
+            errObj.originalEvent.message);
+                }
+            );
+
+
+               window.onerror = function (errorMessage, fileName, lineNumber) {
+                   logError(navigator.appName,
+        fileName,
+        errorMessage);
+               }
+
+
+
+               function logError(nvgtr, pageExc, messageExc) {
+                   var usr = getCookie('Login');
+                   $.ajax({
+                       type: "POST",
+                       url: "/Error/LogClientError",
+                       data: $.toJSON({
+                           "browser": nvgtr,
+                           "page": pageExc,
+                           "message": messageExc,
+                           "user": usr
+                       }),
+                       contentType: "application/json; charset=utf-8",
+                       dataType: "json",
+                       success: function (response) {
+                       }
+                   });
+               }
+
+
+               function getCookie(c_name) {
+                   if (document.cookie.length > 0) {
+                       c_start = document.cookie.indexOf(c_name + "=");
+                       if (c_start != -1 && (c_start == 0 || (document.cookie.charAt(c_start - 1) === ' '))) {
+                           c_start += c_name.length + 1;
+                           c_end = document.cookie.indexOf(";", c_start);
+                           if (c_end == -1) { c_end = document.cookie.length; }
+                           return unescape(document.cookie.substring(c_start, c_end));
+                       }
+                   }
+                   return "";
+               }
+
+        </script>
+
+    </head>
+    <body>
+        <header>
+            <div class="content-wrapper">
+                <div class="float-left">
+                    <p class="site-title">@Html.ActionLink("your logo here", "Index", "Home")</p>
+                </div>
+                <div class="float-right">
+                    <section id="login">                        
+                    </section>
+                    <nav>
+                        <ul id="menu">
+                            <li>@Html.ActionLink("Home", "Index", "Home")</li>                         
+                            <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </header>
+        <div id="body">
+            @RenderSection("featured", required: false)
+            <section class="content-wrapper main-content clear-fix">
+                @RenderBody()
+            </section>
+        </div>
+        <footer>
+            <div class="content-wrapper">
+                <div class="float-left">
+                    <p>&copy; @DateTime.Now.Year - My ASP.NET MVC Application</p>
+                </div>
+            </div>
+        </footer>
+
+         @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/Scripts/jquery.json-2.3.min.js")
+
+    @RenderSection("scripts", required: false)
+    <script type="text/javascript">
+
+      
+       
+
+    </script>
+    </body>
+</html>

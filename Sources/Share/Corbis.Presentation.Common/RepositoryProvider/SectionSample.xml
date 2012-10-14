@@ -1,0 +1,13 @@
+﻿<CONFIG_FILE_ROOT>
+
+  <!-- Section registration -->
+  <configSections>
+    <section name="RepositoryProvider" type="Corbis.Presentation.Common.RepositoryProvider.ApplicationDescriptorConfigSection, Corbis.Presentation.Common, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"/>
+  </configSections>
+
+  <!-- Section definition -->
+  <RepositoryProvider>
+    <Settings path="\bin\Corbis.Public.Repository.dll" creationMode="Singleton" />
+  </RepositoryProvider>
+
+</CONFIG_FILE_ROOT>
