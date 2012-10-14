@@ -1,0 +1,40 @@
+
+# ***************** VS 2010 TEMP FILES & FOLDERS **************************
+
+# Build Folders (you can keep bin if you'd like, to store dlls and pdbs)
+[Bb]in
+[Oo]bj
+
+# mstest test results
+[Tt]est[Rr]esults
+
+# Resharper folder
+*[Rr]esharper*
+
+*.suo
+*.user
+*.[Dd]bmdl
+*.[Cc]ache
+
+*.orig
+
+# ***************** CORBIS TEMP FILES & FOLDERS **************************
+
+# ignore temp files for DB projects
+Sources/DB/Corbis.DB.Log/sql/*
+Sources/DB/Corbis.DB.Main/sql/*
+Sources/DB/Corbis.DB.Resources/sql/*
+
+Sources/DB/Deployment/DbDeployment.bat
+Sources/DB/Deployment/*.txt
+
+# ignore config files
+Sources/Public/Corbis.Public.Web/[Ww]eb.config
+Sources/Public/Corbis.WebAPI/[Ww]eb.config
+Sources/Public/Corbis.Public.Repository/[Aa]pp.config
+
+Sources/CMS/Corbis.CMS.Web/[Ww]eb.config
+Sources/CMS/Corbis.CMS.Repository/[Aa]pp.config
+Sources/CMS/Corbis.DataImporter.Console/[Aa]pp.config
+
+# ************************************************************************
