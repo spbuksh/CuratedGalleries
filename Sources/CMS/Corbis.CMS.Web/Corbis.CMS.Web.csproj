@@ -51,6 +51,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -177,9 +178,11 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Code\AdminUserPrincipal.cs" />
-    <Compile Include="Code\CuratedGallerySection.cs" />
-    <Compile Include="Code\CuratedGalleryEnvironment.cs" />
+    <Compile Include="Code\Gallery\CuratedGalleryEntry.cs" />
+    <Compile Include="Code\Gallery\CuratedGallerySection.cs" />
+    <Compile Include="Code\Gallery\CuratedGalleryEnvironment.cs" />
     <Compile Include="Code\Extensions.cs" />
+    <Compile Include="Code\Gallery\GalleryTemplateEntry.cs" />
     <Compile Include="Code\RepositoryProvider.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Api\ApiControllerBase.cs" />

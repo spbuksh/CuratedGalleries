@@ -30,13 +30,18 @@ namespace Corbis.CMS.Entity
         public string Description { get; set; }
 
         /// <summary>
-        /// 
-        /// </summary>
-        public string Directory { get; set; }
-
-        /// <summary>
         /// Is gallery active or not
         /// </summary>
         public bool IsActive { get; set; }
+
+        /// <summary>
+        /// Creation date. Has UTC format
+        /// </summary>
+        public DateTime DateCreated { get; set; }
+
+        /// <summary>
+        /// It is zip archive of the template package
+        /// </summary>
+        public byte[] Archive { get; set; }
     }
 }

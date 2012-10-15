@@ -6,6 +6,7 @@ using Corbis.CMS.Repository.Interface;
 using Microsoft.Practices.Unity;
 using Corbis.CMS.Entity;
 using System.IO;
+using Corbis.Common;
 
 namespace Corbis.CMS.Web.Code
 {
@@ -18,7 +19,7 @@ namespace Corbis.CMS.Web.Code
         /// Gallery template repository
         /// </summary>
         [Dependency]
-        public ICuratedGalleryRepository TemplateRepository { get; set; }
+        public ICuratedGalleryRepository GalleryRepository { get; set; }
 
         #region Environment settings
 
@@ -116,5 +117,9 @@ namespace Corbis.CMS.Web.Code
         ///// Deploys gallery.
         ///// </summary>
         //public void DeployGallery();
+
+
+        //public OperationResult<OperationResults, GalleryTemplateEntry> AddTemplate(byte[] archive)
+        //{ }
     }
 }

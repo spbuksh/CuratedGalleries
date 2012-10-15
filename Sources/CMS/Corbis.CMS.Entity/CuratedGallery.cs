@@ -12,13 +12,17 @@ namespace Corbis.CMS.Entity
     public enum CuratedGalleryStatuses
     {
         /// <summary>
-        /// Curated gallery has been created and released
+        /// Undefided status
         /// </summary>
-        Deployed,
+        Undefined = 0,
         /// <summary>
         /// Curated gallery is in development process
         /// </summary>
-        IsInDevelopment
+        Implementing = 1,
+        /// <summary>
+        /// Curated gallery has been created and released
+        /// </summary>
+        Deployed = 2
     }
 
     /// <summary>
@@ -38,11 +42,6 @@ namespace Corbis.CMS.Entity
         public string Name { get; set; }
 
         /// <summary>
-        /// Set of gallery image urls
-        /// </summary>
-        public ImageUrlSet UrlSet { get; set; }
-
-        /// <summary>
         /// Gallery template identifier
         /// </summary>
         public int TemplateID { get; set; }
@@ -53,18 +52,32 @@ namespace Corbis.CMS.Entity
         public bool Enabled { get; set; }
 
         /// <summary>
-        /// Gallery root directory path.
-        /// </summary>
-        public string RootDirectory { get; set; }
-
-        /// <summary>
-        /// Url to the gallery for preview
-        /// </summary>
-        public string GalleryUrl { get; set; }
-
-        /// <summary>
         /// Current gallery status
         /// </summary>
         public CuratedGalleryStatuses Status { get; set; }
+
+        /// <summary>
+        /// Creation date. Has UTC format
+        /// </summary>
+        public DateTime DateCreated { get; set; }
+
+        /// <summary>
+        /// Last modified date. Has UTC format
+        /// </summary>
+        public Nullable<DateTime> DateModified { get; set; }
+
+        /// <summary>
+        /// Zip archive with current gallery state.
+        /// </summary>
+        public byte[] Archive { get; set; }
+
+        /// <summary>
+        /// ctor
+        /// </summary>
+        public CuratedGallery()
+        {
+            this.Status = CuratedGalleryStatuses.Undefined;
+            this.Enabled = true;
+        }
     }
 }

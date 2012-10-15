@@ -39,6 +39,18 @@ namespace Corbis.DB.Linq
     partial void InsertAdminUserRoleRecord(AdminUserRoleRecord instance);
     partial void UpdateAdminUserRoleRecord(AdminUserRoleRecord instance);
     partial void DeleteAdminUserRoleRecord(AdminUserRoleRecord instance);
+    partial void InsertCuratedGalleryStatusRecord(CuratedGalleryStatusRecord instance);
+    partial void UpdateCuratedGalleryStatusRecord(CuratedGalleryStatusRecord instance);
+    partial void DeleteCuratedGalleryStatusRecord(CuratedGalleryStatusRecord instance);
+    partial void InsertFileRecord(FileRecord instance);
+    partial void UpdateFileRecord(FileRecord instance);
+    partial void DeleteFileRecord(FileRecord instance);
+    partial void InsertGalleryTemplateRecord(GalleryTemplateRecord instance);
+    partial void UpdateGalleryTemplateRecord(GalleryTemplateRecord instance);
+    partial void DeleteGalleryTemplateRecord(GalleryTemplateRecord instance);
+    partial void InsertCuratedGalleryRecord(CuratedGalleryRecord instance);
+    partial void UpdateCuratedGalleryRecord(CuratedGalleryRecord instance);
+    partial void DeleteCuratedGalleryRecord(CuratedGalleryRecord instance);
     #endregion
 		
 		public MainDataContext() : 
@@ -100,6 +112,38 @@ namespace Corbis.DB.Linq
 			get
 			{
 				return this.GetTable<AdminUserToRoleRecord>();
+			}
+		}
+		
+		public System.Data.Linq.Table<CuratedGalleryStatusRecord> CuratedGalleryStatusRecords
+		{
+			get
+			{
+				return this.GetTable<CuratedGalleryStatusRecord>();
+			}
+		}
+		
+		public System.Data.Linq.Table<FileRecord> FileRecords
+		{
+			get
+			{
+				return this.GetTable<FileRecord>();
+			}
+		}
+		
+		public System.Data.Linq.Table<GalleryTemplateRecord> GalleryTemplateRecords
+		{
+			get
+			{
+				return this.GetTable<GalleryTemplateRecord>();
+			}
+		}
+		
+		public System.Data.Linq.Table<CuratedGalleryRecord> CuratedGalleryRecords
+		{
+			get
+			{
+				return this.GetTable<CuratedGalleryRecord>();
 			}
 		}
 	}
@@ -296,7 +340,7 @@ namespace Corbis.DB.Linq
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AdminUserProfile_AdminUserMembership", Storage="_AdminUserProfileRecord", ThisKey="ProfileID", OtherKey="ID", IsForeignKey=true)]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AdminUserProfileRecord_AdminUserMembershipRecord", Storage="_AdminUserProfileRecord", ThisKey="ProfileID", OtherKey="ID", IsForeignKey=true)]
 		public AdminUserProfileRecord AdminUserProfileRecord
 		{
 			get
@@ -491,7 +535,7 @@ namespace Corbis.DB.Linq
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AdminUserProfile_AdminUserMembership", Storage="_AdminUserMembershipRecords", ThisKey="ID", OtherKey="ProfileID")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AdminUserProfileRecord_AdminUserMembershipRecord", Storage="_AdminUserMembershipRecords", ThisKey="ID", OtherKey="ProfileID")]
 		public EntitySet<AdminUserMembershipRecord> AdminUserMembershipRecords
 		{
 			get
@@ -688,6 +732,962 @@ namespace Corbis.DB.Linq
 				{
 					this._RoleID = value;
 				}
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.CuratedGalleryStatus")]
+	public partial class CuratedGalleryStatusRecord : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ID;
+		
+		private string _Name;
+		
+		private string _Description;
+		
+		private EntitySet<CuratedGalleryRecord> _CuratedGalleryRecords;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIDChanging(int value);
+    partial void OnIDChanged();
+    partial void OnNameChanging(string value);
+    partial void OnNameChanged();
+    partial void OnDescriptionChanging(string value);
+    partial void OnDescriptionChanged();
+    #endregion
+		
+		public CuratedGalleryStatusRecord()
+		{
+			this._CuratedGalleryRecords = new EntitySet<CuratedGalleryRecord>(new Action<CuratedGalleryRecord>(this.attach_CuratedGalleryRecords), new Action<CuratedGalleryRecord>(this.detach_CuratedGalleryRecords));
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int ID
+		{
+			get
+			{
+				return this._ID;
+			}
+			set
+			{
+				if ((this._ID != value))
+				{
+					this.OnIDChanging(value);
+					this.SendPropertyChanging();
+					this._ID = value;
+					this.SendPropertyChanged("ID");
+					this.OnIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string Name
+		{
+			get
+			{
+				return this._Name;
+			}
+			set
+			{
+				if ((this._Name != value))
+				{
+					this.OnNameChanging(value);
+					this.SendPropertyChanging();
+					this._Name = value;
+					this.SendPropertyChanged("Name");
+					this.OnNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Description", DbType="NVarChar(255)")]
+		public string Description
+		{
+			get
+			{
+				return this._Description;
+			}
+			set
+			{
+				if ((this._Description != value))
+				{
+					this.OnDescriptionChanging(value);
+					this.SendPropertyChanging();
+					this._Description = value;
+					this.SendPropertyChanged("Description");
+					this.OnDescriptionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CuratedGalleryStatusRecord_CuratedGallery", Storage="_CuratedGalleryRecords", ThisKey="ID", OtherKey="StatusID")]
+		public EntitySet<CuratedGalleryRecord> CuratedGalleryRecords
+		{
+			get
+			{
+				return this._CuratedGalleryRecords;
+			}
+			set
+			{
+				this._CuratedGalleryRecords.Assign(value);
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_CuratedGalleryRecords(CuratedGalleryRecord entity)
+		{
+			this.SendPropertyChanging();
+			entity.CuratedGalleryStatusRecord = this;
+		}
+		
+		private void detach_CuratedGalleryRecords(CuratedGalleryRecord entity)
+		{
+			this.SendPropertyChanging();
+			entity.CuratedGalleryStatusRecord = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.[File]")]
+	public partial class FileRecord : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private long _ID;
+		
+		private string _Name;
+		
+		private System.Data.Linq.Binary _Content;
+		
+		private EntitySet<GalleryTemplateRecord> _GalleryTemplateRecords;
+		
+		private EntitySet<CuratedGalleryRecord> _CuratedGalleryRecords;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIDChanging(long value);
+    partial void OnIDChanged();
+    partial void OnNameChanging(string value);
+    partial void OnNameChanged();
+    partial void OnContentChanging(System.Data.Linq.Binary value);
+    partial void OnContentChanged();
+    #endregion
+		
+		public FileRecord()
+		{
+			this._GalleryTemplateRecords = new EntitySet<GalleryTemplateRecord>(new Action<GalleryTemplateRecord>(this.attach_GalleryTemplateRecords), new Action<GalleryTemplateRecord>(this.detach_GalleryTemplateRecords));
+			this._CuratedGalleryRecords = new EntitySet<CuratedGalleryRecord>(new Action<CuratedGalleryRecord>(this.attach_CuratedGalleryRecords), new Action<CuratedGalleryRecord>(this.detach_CuratedGalleryRecords));
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", AutoSync=AutoSync.OnInsert, DbType="BigInt NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public long ID
+		{
+			get
+			{
+				return this._ID;
+			}
+			set
+			{
+				if ((this._ID != value))
+				{
+					this.OnIDChanging(value);
+					this.SendPropertyChanging();
+					this._ID = value;
+					this.SendPropertyChanged("ID");
+					this.OnIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="NChar(50)")]
+		public string Name
+		{
+			get
+			{
+				return this._Name;
+			}
+			set
+			{
+				if ((this._Name != value))
+				{
+					this.OnNameChanging(value);
+					this.SendPropertyChanging();
+					this._Name = value;
+					this.SendPropertyChanged("Name");
+					this.OnNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Content", DbType="VarBinary(MAX) NOT NULL", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
+		public System.Data.Linq.Binary Content
+		{
+			get
+			{
+				return this._Content;
+			}
+			set
+			{
+				if ((this._Content != value))
+				{
+					this.OnContentChanging(value);
+					this.SendPropertyChanging();
+					this._Content = value;
+					this.SendPropertyChanged("Content");
+					this.OnContentChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="File_GalleryTemplate", Storage="_GalleryTemplateRecords", ThisKey="ID", OtherKey="Archive")]
+		public EntitySet<GalleryTemplateRecord> GalleryTemplateRecords
+		{
+			get
+			{
+				return this._GalleryTemplateRecords;
+			}
+			set
+			{
+				this._GalleryTemplateRecords.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="FileRecord_CuratedGallery", Storage="_CuratedGalleryRecords", ThisKey="ID", OtherKey="Archive")]
+		public EntitySet<CuratedGalleryRecord> CuratedGalleryRecords
+		{
+			get
+			{
+				return this._CuratedGalleryRecords;
+			}
+			set
+			{
+				this._CuratedGalleryRecords.Assign(value);
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_GalleryTemplateRecords(GalleryTemplateRecord entity)
+		{
+			this.SendPropertyChanging();
+			entity.FileRecord = this;
+		}
+		
+		private void detach_GalleryTemplateRecords(GalleryTemplateRecord entity)
+		{
+			this.SendPropertyChanging();
+			entity.FileRecord = null;
+		}
+		
+		private void attach_CuratedGalleryRecords(CuratedGalleryRecord entity)
+		{
+			this.SendPropertyChanging();
+			entity.FileRecord = this;
+		}
+		
+		private void detach_CuratedGalleryRecords(CuratedGalleryRecord entity)
+		{
+			this.SendPropertyChanging();
+			entity.FileRecord = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.GalleryTemplate")]
+	public partial class GalleryTemplateRecord : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ID;
+		
+		private string _Name;
+		
+		private string _Description;
+		
+		private string _ImageUrl;
+		
+		private bool _Enabled;
+		
+		private long _Archive;
+		
+		private bool _IsDefault;
+		
+		private System.DateTime _DateCreated;
+		
+		private EntitySet<CuratedGalleryRecord> _CuratedGalleryRecords;
+		
+		private EntityRef<FileRecord> _FileRecord;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIDChanging(int value);
+    partial void OnIDChanged();
+    partial void OnNameChanging(string value);
+    partial void OnNameChanged();
+    partial void OnDescriptionChanging(string value);
+    partial void OnDescriptionChanged();
+    partial void OnImageUrlChanging(string value);
+    partial void OnImageUrlChanged();
+    partial void OnEnabledChanging(bool value);
+    partial void OnEnabledChanged();
+    partial void OnArchiveChanging(long value);
+    partial void OnArchiveChanged();
+    partial void OnIsDefaultChanging(bool value);
+    partial void OnIsDefaultChanged();
+    partial void OnDateCreatedChanging(System.DateTime value);
+    partial void OnDateCreatedChanged();
+    #endregion
+		
+		public GalleryTemplateRecord()
+		{
+			this._CuratedGalleryRecords = new EntitySet<CuratedGalleryRecord>(new Action<CuratedGalleryRecord>(this.attach_CuratedGalleryRecords), new Action<CuratedGalleryRecord>(this.detach_CuratedGalleryRecords));
+			this._FileRecord = default(EntityRef<FileRecord>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int ID
+		{
+			get
+			{
+				return this._ID;
+			}
+			set
+			{
+				if ((this._ID != value))
+				{
+					this.OnIDChanging(value);
+					this.SendPropertyChanging();
+					this._ID = value;
+					this.SendPropertyChanged("ID");
+					this.OnIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="NVarChar(150) NOT NULL", CanBeNull=false)]
+		public string Name
+		{
+			get
+			{
+				return this._Name;
+			}
+			set
+			{
+				if ((this._Name != value))
+				{
+					this.OnNameChanging(value);
+					this.SendPropertyChanging();
+					this._Name = value;
+					this.SendPropertyChanged("Name");
+					this.OnNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Description", DbType="NVarChar(MAX)")]
+		public string Description
+		{
+			get
+			{
+				return this._Description;
+			}
+			set
+			{
+				if ((this._Description != value))
+				{
+					this.OnDescriptionChanging(value);
+					this.SendPropertyChanging();
+					this._Description = value;
+					this.SendPropertyChanged("Description");
+					this.OnDescriptionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ImageUrl", DbType="NVarChar(2048)")]
+		public string ImageUrl
+		{
+			get
+			{
+				return this._ImageUrl;
+			}
+			set
+			{
+				if ((this._ImageUrl != value))
+				{
+					this.OnImageUrlChanging(value);
+					this.SendPropertyChanging();
+					this._ImageUrl = value;
+					this.SendPropertyChanged("ImageUrl");
+					this.OnImageUrlChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Enabled", DbType="Bit NOT NULL")]
+		public bool Enabled
+		{
+			get
+			{
+				return this._Enabled;
+			}
+			set
+			{
+				if ((this._Enabled != value))
+				{
+					this.OnEnabledChanging(value);
+					this.SendPropertyChanging();
+					this._Enabled = value;
+					this.SendPropertyChanged("Enabled");
+					this.OnEnabledChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Archive", DbType="BigInt NOT NULL")]
+		public long Archive
+		{
+			get
+			{
+				return this._Archive;
+			}
+			set
+			{
+				if ((this._Archive != value))
+				{
+					if (this._FileRecord.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnArchiveChanging(value);
+					this.SendPropertyChanging();
+					this._Archive = value;
+					this.SendPropertyChanged("Archive");
+					this.OnArchiveChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsDefault", DbType="Bit NOT NULL")]
+		public bool IsDefault
+		{
+			get
+			{
+				return this._IsDefault;
+			}
+			set
+			{
+				if ((this._IsDefault != value))
+				{
+					this.OnIsDefaultChanging(value);
+					this.SendPropertyChanging();
+					this._IsDefault = value;
+					this.SendPropertyChanged("IsDefault");
+					this.OnIsDefaultChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DateCreated", DbType="DateTime2 NOT NULL")]
+		public System.DateTime DateCreated
+		{
+			get
+			{
+				return this._DateCreated;
+			}
+			set
+			{
+				if ((this._DateCreated != value))
+				{
+					this.OnDateCreatedChanging(value);
+					this.SendPropertyChanging();
+					this._DateCreated = value;
+					this.SendPropertyChanged("DateCreated");
+					this.OnDateCreatedChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="GalleryTemplateRecord_CuratedGallery", Storage="_CuratedGalleryRecords", ThisKey="ID", OtherKey="TemplateID")]
+		public EntitySet<CuratedGalleryRecord> CuratedGalleryRecords
+		{
+			get
+			{
+				return this._CuratedGalleryRecords;
+			}
+			set
+			{
+				this._CuratedGalleryRecords.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="File_GalleryTemplate", Storage="_FileRecord", ThisKey="Archive", OtherKey="ID", IsForeignKey=true)]
+		public FileRecord FileRecord
+		{
+			get
+			{
+				return this._FileRecord.Entity;
+			}
+			set
+			{
+				FileRecord previousValue = this._FileRecord.Entity;
+				if (((previousValue != value) 
+							|| (this._FileRecord.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._FileRecord.Entity = null;
+						previousValue.GalleryTemplateRecords.Remove(this);
+					}
+					this._FileRecord.Entity = value;
+					if ((value != null))
+					{
+						value.GalleryTemplateRecords.Add(this);
+						this._Archive = value.ID;
+					}
+					else
+					{
+						this._Archive = default(long);
+					}
+					this.SendPropertyChanged("FileRecord");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_CuratedGalleryRecords(CuratedGalleryRecord entity)
+		{
+			this.SendPropertyChanging();
+			entity.GalleryTemplateRecord = this;
+		}
+		
+		private void detach_CuratedGalleryRecords(CuratedGalleryRecord entity)
+		{
+			this.SendPropertyChanging();
+			entity.GalleryTemplateRecord = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.CuratedGallery")]
+	public partial class CuratedGalleryRecord : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ID;
+		
+		private string _Name;
+		
+		private int _StatusID;
+		
+		private bool _Enabled;
+		
+		private int _TemplateID;
+		
+		private System.DateTime _DateCreated;
+		
+		private System.Nullable<System.DateTime> _DateModified;
+		
+		private System.Nullable<long> _Archive;
+		
+		private EntityRef<CuratedGalleryStatusRecord> _CuratedGalleryStatusRecord;
+		
+		private EntityRef<FileRecord> _FileRecord;
+		
+		private EntityRef<GalleryTemplateRecord> _GalleryTemplateRecord;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIDChanging(int value);
+    partial void OnIDChanged();
+    partial void OnNameChanging(string value);
+    partial void OnNameChanged();
+    partial void OnStatusIDChanging(int value);
+    partial void OnStatusIDChanged();
+    partial void OnEnabledChanging(bool value);
+    partial void OnEnabledChanged();
+    partial void OnTemplateIDChanging(int value);
+    partial void OnTemplateIDChanged();
+    partial void OnDateCreatedChanging(System.DateTime value);
+    partial void OnDateCreatedChanged();
+    partial void OnDateModifiedChanging(System.Nullable<System.DateTime> value);
+    partial void OnDateModifiedChanged();
+    partial void OnArchiveChanging(System.Nullable<long> value);
+    partial void OnArchiveChanged();
+    #endregion
+		
+		public CuratedGalleryRecord()
+		{
+			this._CuratedGalleryStatusRecord = default(EntityRef<CuratedGalleryStatusRecord>);
+			this._FileRecord = default(EntityRef<FileRecord>);
+			this._GalleryTemplateRecord = default(EntityRef<GalleryTemplateRecord>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int ID
+		{
+			get
+			{
+				return this._ID;
+			}
+			set
+			{
+				if ((this._ID != value))
+				{
+					this.OnIDChanging(value);
+					this.SendPropertyChanging();
+					this._ID = value;
+					this.SendPropertyChanged("ID");
+					this.OnIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string Name
+		{
+			get
+			{
+				return this._Name;
+			}
+			set
+			{
+				if ((this._Name != value))
+				{
+					this.OnNameChanging(value);
+					this.SendPropertyChanging();
+					this._Name = value;
+					this.SendPropertyChanged("Name");
+					this.OnNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StatusID", DbType="Int NOT NULL")]
+		public int StatusID
+		{
+			get
+			{
+				return this._StatusID;
+			}
+			set
+			{
+				if ((this._StatusID != value))
+				{
+					if (this._CuratedGalleryStatusRecord.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnStatusIDChanging(value);
+					this.SendPropertyChanging();
+					this._StatusID = value;
+					this.SendPropertyChanged("StatusID");
+					this.OnStatusIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Enabled", DbType="Bit NOT NULL")]
+		public bool Enabled
+		{
+			get
+			{
+				return this._Enabled;
+			}
+			set
+			{
+				if ((this._Enabled != value))
+				{
+					this.OnEnabledChanging(value);
+					this.SendPropertyChanging();
+					this._Enabled = value;
+					this.SendPropertyChanged("Enabled");
+					this.OnEnabledChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TemplateID", DbType="Int NOT NULL")]
+		public int TemplateID
+		{
+			get
+			{
+				return this._TemplateID;
+			}
+			set
+			{
+				if ((this._TemplateID != value))
+				{
+					if (this._GalleryTemplateRecord.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnTemplateIDChanging(value);
+					this.SendPropertyChanging();
+					this._TemplateID = value;
+					this.SendPropertyChanged("TemplateID");
+					this.OnTemplateIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DateCreated", DbType="DateTime2 NOT NULL")]
+		public System.DateTime DateCreated
+		{
+			get
+			{
+				return this._DateCreated;
+			}
+			set
+			{
+				if ((this._DateCreated != value))
+				{
+					this.OnDateCreatedChanging(value);
+					this.SendPropertyChanging();
+					this._DateCreated = value;
+					this.SendPropertyChanged("DateCreated");
+					this.OnDateCreatedChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DateModified", DbType="DateTime2")]
+		public System.Nullable<System.DateTime> DateModified
+		{
+			get
+			{
+				return this._DateModified;
+			}
+			set
+			{
+				if ((this._DateModified != value))
+				{
+					this.OnDateModifiedChanging(value);
+					this.SendPropertyChanging();
+					this._DateModified = value;
+					this.SendPropertyChanged("DateModified");
+					this.OnDateModifiedChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Archive", DbType="BigInt")]
+		public System.Nullable<long> Archive
+		{
+			get
+			{
+				return this._Archive;
+			}
+			set
+			{
+				if ((this._Archive != value))
+				{
+					if (this._FileRecord.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnArchiveChanging(value);
+					this.SendPropertyChanging();
+					this._Archive = value;
+					this.SendPropertyChanged("Archive");
+					this.OnArchiveChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CuratedGalleryStatusRecord_CuratedGallery", Storage="_CuratedGalleryStatusRecord", ThisKey="StatusID", OtherKey="ID", IsForeignKey=true)]
+		public CuratedGalleryStatusRecord CuratedGalleryStatusRecord
+		{
+			get
+			{
+				return this._CuratedGalleryStatusRecord.Entity;
+			}
+			set
+			{
+				CuratedGalleryStatusRecord previousValue = this._CuratedGalleryStatusRecord.Entity;
+				if (((previousValue != value) 
+							|| (this._CuratedGalleryStatusRecord.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CuratedGalleryStatusRecord.Entity = null;
+						previousValue.CuratedGalleryRecords.Remove(this);
+					}
+					this._CuratedGalleryStatusRecord.Entity = value;
+					if ((value != null))
+					{
+						value.CuratedGalleryRecords.Add(this);
+						this._StatusID = value.ID;
+					}
+					else
+					{
+						this._StatusID = default(int);
+					}
+					this.SendPropertyChanged("CuratedGalleryStatusRecord");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="FileRecord_CuratedGallery", Storage="_FileRecord", ThisKey="Archive", OtherKey="ID", IsForeignKey=true)]
+		public FileRecord FileRecord
+		{
+			get
+			{
+				return this._FileRecord.Entity;
+			}
+			set
+			{
+				FileRecord previousValue = this._FileRecord.Entity;
+				if (((previousValue != value) 
+							|| (this._FileRecord.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._FileRecord.Entity = null;
+						previousValue.CuratedGalleryRecords.Remove(this);
+					}
+					this._FileRecord.Entity = value;
+					if ((value != null))
+					{
+						value.CuratedGalleryRecords.Add(this);
+						this._Archive = value.ID;
+					}
+					else
+					{
+						this._Archive = default(Nullable<long>);
+					}
+					this.SendPropertyChanged("FileRecord");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="GalleryTemplateRecord_CuratedGallery", Storage="_GalleryTemplateRecord", ThisKey="TemplateID", OtherKey="ID", IsForeignKey=true)]
+		public GalleryTemplateRecord GalleryTemplateRecord
+		{
+			get
+			{
+				return this._GalleryTemplateRecord.Entity;
+			}
+			set
+			{
+				GalleryTemplateRecord previousValue = this._GalleryTemplateRecord.Entity;
+				if (((previousValue != value) 
+							|| (this._GalleryTemplateRecord.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._GalleryTemplateRecord.Entity = null;
+						previousValue.CuratedGalleryRecords.Remove(this);
+					}
+					this._GalleryTemplateRecord.Entity = value;
+					if ((value != null))
+					{
+						value.CuratedGalleryRecords.Add(this);
+						this._TemplateID = value.ID;
+					}
+					else
+					{
+						this._TemplateID = default(int);
+					}
+					this.SendPropertyChanged("GalleryTemplateRecord");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
 		}
 	}

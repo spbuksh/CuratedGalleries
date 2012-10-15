@@ -8,6 +8,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{B65196DE-5A00-4828-9513-FAA0504F25FB}"
 	ProjectSection(SolutionItems) = preProject
 		Documents\ASP.NET MVC4.0 & WebAPI sources-Downloaded 2012-09-26.zip = Documents\ASP.NET MVC4.0 & WebAPI sources-Downloaded 2012-09-26.zip
+		Backlog.txt = Backlog.txt
 		Documents\Corbis Web - Architecture & Physical Modules.pdf = Documents\Corbis Web - Architecture & Physical Modules.pdf
 		Documents\Development Key Points.docx = Documents\Development Key Points.docx
 	EndProjectSection
