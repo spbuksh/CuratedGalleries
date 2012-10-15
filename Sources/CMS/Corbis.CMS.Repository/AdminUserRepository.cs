@@ -145,9 +145,11 @@ namespace Corbis.CMS.Repository
 
             using (var context = this.CreateMainContext())
             {
+                string loginLower = login.ToLower();
+
                 var query = from m in context.AdminUserMembershipRecords
                             join u in context.AdminUserProfileRecords on m.ProfileID equals u.ID
-                            where string.Equals(m.Login, login, StringComparison.InvariantCultureIgnoreCase)
+                            where m.Login.ToLower() == loginLower
                             select new { ID = m.ID, FirstName = u.FirstName, MiddleName = u.MiddleName, LastName = u.LastName, IsActive = m.IsActive, Password = m.Password };
 
                 var record = query.SingleOrDefault();
@@ -168,7 +170,7 @@ namespace Corbis.CMS.Repository
 
                 foreach (int item in context.AdminUserToRoleRecords.Where(x => x.MemberID == record.ID).Select(x => x.RoleID))
                 {
-                    user.Roles = user.Roles.HasValue ? (user.Roles | this.GetRole(item)) : user.Roles.Value;
+                    user.Roles = user.Roles.HasValue ? (user.Roles.Value | this.GetRole(item)) : (AdminUserRoles)item;
                 }
 
                 result.Output = user;

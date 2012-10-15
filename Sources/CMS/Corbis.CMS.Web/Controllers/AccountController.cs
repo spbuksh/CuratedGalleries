@@ -88,18 +88,7 @@ namespace Corbis.CMS.Web.Controllers
                     {
                         this.CurrentUser = auth.Output;
 
-                        var roles = this.CurrentUser.Roles.HasValue ? this.CurrentUser.Roles.Value.GetRoleNames() : new string[] { };
-
-                        IPrincipal principal = new AdminUserPrincipal(new GenericIdentity(this.CurrentUser.GetFullName()), this.CurrentUser, roles);
-
-                        this.HttpContext.User = principal;
-                        System.Threading.Thread.CurrentPrincipal = principal;
-
-                        //in the configuration file slidingExpiration is set as TRUE and timeout is set as sessions timeout => auth ticket is valid only for session period
-                        FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(1, this.CurrentUser.ID.ToString(),
-                            DateTime.Now, DateTime.Now.AddMinutes(FormsAuthentication.Timeout.TotalMinutes), false, System.Web.Helpers.Json.Encode(this.CurrentUser));
-
-                        this.HttpContext.Response.Cookies.Set(new HttpCookie(FormsAuthentication.FormsCookieName, FormsAuthentication.Encrypt(ticket)));
+                        this.SetAuthData(this.CurrentUser);
 
                         return string.IsNullOrEmpty(returnUrl) ? this.RedirectToHomePage() : this.Redirect(returnUrl);
                     }
