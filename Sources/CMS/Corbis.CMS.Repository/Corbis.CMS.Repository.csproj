@@ -64,6 +64,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="CuratedGalleryRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Public\Corbis.Public.Entity\Corbis.Public.Entity.csproj">
@@ -110,10 +111,11 @@
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy /r /y "$(TargetDir)*" "$(SolutionDir)CMS\Corbis.CMS.Web\bin"
-xcopy /r /y "$(TargetDir)*" "$(SolutionDir)CMS\Corbis.DataImporter.Console\bin\Debug"</PostBuildEvent>
+xcopy /r /y "$(TargetDir)*" "$(SolutionDir)Storage\Corbis.DataImporter\bin\Debug"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

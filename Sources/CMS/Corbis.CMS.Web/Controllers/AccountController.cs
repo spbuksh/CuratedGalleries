@@ -10,13 +10,13 @@ using Microsoft.Web.WebPages.OAuth;
 using WebMatrix.WebData;
 using System.Security.Principal;
 using System.Configuration;
+using Microsoft.Practices.Unity;
 
 using Corbis.CMS.Web.Models;
 using Corbis.Public.Entity;
 using Corbis.CMS.Entity;
 using Corbis.CMS.Web.Code;
 using Corbis.Common;
-using Microsoft.Practices.Unity;
 using Corbis.CMS.Repository.Interface;
 using Corbis.Common.Utilities.Password;
 
@@ -55,12 +55,6 @@ namespace Corbis.CMS.Web.Controllers
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
-            string hash = this.PasswordUtility.HashPassword("john.doe", this.PasswordHashKey);
-
-            hash = this.PasswordUtility.HashPassword("adam.smith", this.PasswordHashKey);
-
-            hash = this.PasswordUtility.HashPassword("ivan.petrov", this.PasswordHashKey);
-
             ViewBag.ReturnUrl = returnUrl;
             return View();
         }

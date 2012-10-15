@@ -9,6 +9,9 @@ using System.Web.Routing;
 using Corbis.Presentation.Common.RepositoryProvider;
 using Corbis.Presentation.Common;
 using Microsoft.Practices.Unity;
+using Corbis.CMS.Web.Code;
+using Corbis.Common;
+using Corbis.CMS.Repository.Interface;
 
 namespace Corbis.CMS.Web
 {
@@ -42,9 +45,13 @@ namespace Corbis.CMS.Web
             IoCControllerFactory.Container = new UnityContainer();
             RepositoryProvider.Register(IoCControllerFactory.Container, "RepositoryProvider");
             ControllerBuilder.Current.SetControllerFactory(typeof(IoCControllerFactory));
-            //*************************************************************
 
-            Logging.LogManagerProvider.Instance.WriteWarning("Hello word! It is logging");
+            //initialize curated gallery environment
+            var environment = new CuratedGalleryEnvironment();
+            IoCControllerFactory.Container.BuildUp(environment);
+            environment.Initialize();
+            SingletonProvider<CuratedGalleryEnvironment>.Initialize(environment);
+            //*************************************************************
         }
     }
 }

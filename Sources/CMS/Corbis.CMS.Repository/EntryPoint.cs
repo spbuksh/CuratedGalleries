@@ -13,6 +13,8 @@ namespace Corbis.CMS.Repository
         protected override void RegisterTypes(IUnityContainer container)
         {         
             container.RegisterType<IAdminUserRepository, AdminUserRepository>();
+            container.RegisterType<ICuratedGalleryRepository, CuratedGalleryRepository>();
+
         }
 
         protected override void RegisterInstances(IUnityContainer container)
@@ -20,6 +22,10 @@ namespace Corbis.CMS.Repository
             var admin = new AdminUserRepository();
             container.BuildUp(admin.GetType(), admin);
             container.RegisterInstance<IAdminUserRepository>(admin);
+
+            var tmpl = new CuratedGalleryRepository();
+            container.BuildUp(tmpl.GetType(), tmpl);
+            container.RegisterInstance<ICuratedGalleryRepository>(tmpl);
         }
 
     }

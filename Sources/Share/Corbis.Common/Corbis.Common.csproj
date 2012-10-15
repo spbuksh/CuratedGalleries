@@ -74,6 +74,7 @@
     <Compile Include="ObjectMapping\Mappers\ObjectMapper.cs" />
     <Compile Include="OperationResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SingletonProvider.cs" />
     <Compile Include="Utilities\Password\IPasswordUtility.cs" />
     <Compile Include="Utilities\Password\PasswordUtility.cs" />
     <Compile Include="Utils.cs" />

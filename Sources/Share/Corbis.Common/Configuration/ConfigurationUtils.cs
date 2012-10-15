@@ -65,7 +65,6 @@ namespace Corbis.Common.Configuration
             }
 
             return (T)ConfigurationManager.GetSection(sectionName);
- 
         }
     }
 }
