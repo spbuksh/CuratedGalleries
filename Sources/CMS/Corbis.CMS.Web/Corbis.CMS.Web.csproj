@@ -180,7 +180,9 @@
     <Compile Include="Code\CuratedGallerySection.cs" />
     <Compile Include="Code\CuratedGalleryEnvironment.cs" />
     <Compile Include="Code\Extensions.cs" />
+    <Compile Include="Code\RepositoryProvider.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\Api\ApiControllerBase.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />

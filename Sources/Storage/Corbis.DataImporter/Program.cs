@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Practices.Unity;
+using Corbis.Presentation.Common.RepositoryProvider;
 
 namespace Corbis.DataImporter
 {
@@ -9,6 +11,9 @@ namespace Corbis.DataImporter
     {
         static void Main(string[] args)
         {
+            var container = new UnityContainer();
+            RepositoryProvider.Register(container, "RepositoryProvider");
+
         }
     }
 }

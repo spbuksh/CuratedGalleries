@@ -20,6 +20,12 @@ namespace Corbis.CMS.Web
 
     public class MvcApplication : System.Web.HttpApplication
     {
+        /// <summary>
+        /// Root unity container for the entire application
+        /// </summary>
+        public static IUnityContainer Container { get; set; }
+
+
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
@@ -42,9 +48,16 @@ namespace Corbis.CMS.Web
             Logging.LogManagerProvider.Initialize("LoggingSection");
 
             //Repository and controller initialization
-            IoCControllerFactory.Container = new UnityContainer();
+            MvcApplication.Container = new UnityContainer();
+
+            //Web Configuration
+            IoCControllerFactory.Container = MvcApplication.Container;
             RepositoryProvider.Register(IoCControllerFactory.Container, "RepositoryProvider");
             ControllerBuilder.Current.SetControllerFactory(typeof(IoCControllerFactory));
+
+            //WebApi Configuration
+            GlobalConfiguration.Configuration.DependencyResolver = new Unity.WebApi.UnityDependencyResolver(MvcApplication.Container);
+
 
             //initialize curated gallery environment
             var environment = new CuratedGalleryEnvironment();
