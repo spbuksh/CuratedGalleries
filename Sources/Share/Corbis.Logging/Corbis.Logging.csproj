@@ -74,6 +74,7 @@
     <Content Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="NLog.config.local" />
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
     </None>
