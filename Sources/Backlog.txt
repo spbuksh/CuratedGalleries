@@ -1,0 +1,10 @@
+************************************************************
+*	Write here some issues which must be done later		   *
+************************************************************
+
+
+CMS USER MODULE
+
+1. Authentication and authorzation
+Implement schedule to retrive actual user info. It means that user data is ment obsolete in for example 5 minutes. We can have case when super admin edited an admin 
+membership data and updated his roles but the admin was working. In this case we must rdirect the user to login page. See comments in CMSControllerBase.OnAuthorization
