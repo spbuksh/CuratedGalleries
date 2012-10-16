@@ -6,14 +6,66 @@ using Corbis.CMS.Repository.Interface;
 using Corbis.CMS.Repository.Interface.Communication;
 using Corbis.Common;
 using Corbis.CMS.Entity;
+using System.IO;
+using Corbis.Public.Repository;
+using Corbis.DB.Linq;
 
 namespace Corbis.CMS.Repository
 {
-    public class CuratedGalleryRepository : ICuratedGalleryRepository
+    public class CuratedGalleryRepository : RepositoryBase, ICuratedGalleryRepository
     {
-        public OperationResult<OperationResults, GalleryTemplate> AddTemplate(byte[] archive)
+        public OperationResult<OperationResults, GalleryTemplate> AddTemplate(GalleryTemplateInfo template)
         {
-            throw new NotImplementedException();
+            var output = new OperationResult<OperationResults, GalleryTemplate>();
+
+            using (var context = this.CreateMainContext())
+            {
+                try
+                {
+                    context.Transaction = context.Connection.BeginTransaction();
+
+                    var frec = new FileRecord() { Name = template.Package.Filename, Content = new System.Data.Linq.Binary(template.Package.Content) };
+                    context.FileRecords.InsertOnSubmit(frec);
+                    context.SubmitChanges();
+
+
+                    var trec = this.ObjectMapper.DoMapping<GalleryTemplateRecord>(template);
+                    trec.Archive = frec.ID;
+                    trec.DateCreated = DateTime.UtcNow;
+
+                    if (context.GalleryTemplateRecords.Count() == 0)
+                    {
+                        trec.IsDefault = true;
+                    }
+                    else if (template.IsDefault)
+                    {
+                        var dtrec = context.GalleryTemplateRecords.Where(x => x.IsDefault).Single();
+                        dtrec.IsDefault = false;
+                    }
+
+                    context.GalleryTemplateRecords.InsertOnSubmit(trec);
+                    context.SubmitChanges();
+
+                    context.Transaction.Commit();
+
+                    output.Result = OperationResults.Success;
+                    output.Output = this.ObjectMapper.DoMapping<GalleryTemplate>(trec);
+                    output.Output.PackageID = trec.Archive;
+                }
+                catch (Exception ex)
+                {
+                    context.Transaction.Rollback();
+                    this.Logger.WriteError(ex, "Gallery template adding error");
+
+#if DEBUG
+                    throw;
+#else
+                    return new OperationResult<OperationResults, GalleryTemplate>() { Result = OperationResults.Failure };
+#endif
+                }
+            }
+
+            return output;
         }
 
         public OperationResult<OperationResults, object> RemoveTemplate(int templateID)

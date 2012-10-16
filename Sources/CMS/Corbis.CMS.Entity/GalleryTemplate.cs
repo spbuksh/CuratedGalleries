@@ -6,8 +6,11 @@ using System.Runtime.Serialization;
 
 namespace Corbis.CMS.Entity
 {
+    /// <summary>
+    /// Gallery template object
+    /// </summary>
     [Serializable, DataContract]
-    public class GalleryTemplate
+    public class GalleryTemplate : GalleryTemplateInfo
     {
         /// <summary>
         /// Gallery template identifier
@@ -15,33 +18,13 @@ namespace Corbis.CMS.Entity
         public int ID { get; set; }
 
         /// <summary>
-        /// Gallery name
+        /// 
         /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
-        /// Gallery template image url. It is "face" of the gallery
-        /// </summary>
-        public string ImageUrl { get; set; }
-
-        /// <summary>
-        /// Gallery template description
-        /// </summary>
-        public string Description { get; set; }
-
-        /// <summary>
-        /// Is gallery active or not
-        /// </summary>
-        public bool IsActive { get; set; }
-
+        public long PackageID { get; set; }
+        
         /// <summary>
         /// Creation date. Has UTC format
         /// </summary>
-        public DateTime DateCreated { get; set; }
-
-        /// <summary>
-        /// It is zip archive of the template package
-        /// </summary>
-        public byte[] Archive { get; set; }
+        public Nullable<DateTime> DateCreated { get; set; }
     }
 }

@@ -15,9 +15,9 @@ namespace Corbis.CMS.Repository.Interface
         /// <summary>
         /// Registers template in the system
         /// </summary>
-        /// <param name="archive">Template package ZIP archive</param>
+        /// <param name="template">Creating template details</param>
         /// <returns></returns>
-        OperationResult<OperationResults, GalleryTemplate> AddTemplate(byte[] archive);
+        OperationResult<OperationResults, GalleryTemplate> AddTemplate(GalleryTemplateInfo template);
 
         /// <summary>
         /// Removes template from the system

@@ -26,16 +26,14 @@
     <RepositoryProvider>
         <Settings path="bin\Corbis.CMS.Repository.dll" creationMode="Singleton" />
     </RepositoryProvider>
-	<CuratedGalleryEnvironment>
-		<Settings templateDir="CuratedGalleries\Templates\"
-				  deploymentDir="CuratedGalleries\Deployed\"
-				  developmentDir="CuratedGalleries\BeingDeveloped\"
-				  sharedImageDir="CuratedGalleries\SharedImages\"
+    <CuratedGalleryEnvironment>
+        <Settings templateDir="CuratedGalleries\Templates\"
+				  galleriesDir="CuratedGalleries\Galleries\"
+				  sharedDir="CuratedGalleries\Shared\"
 				  defaultTemplateImageUrl=""
 				  minImageSize="0"
-				  maxImageSize="10485760"/>
-		<!--Max size is 10MB-->
-	</CuratedGalleryEnvironment>
+				  maxImageSize="10485760"/> <!--Max size is 10MB-->
+    </CuratedGalleryEnvironment>
 	<!-- ******************* End Custom Sections ******************** -->
 	<connectionStrings>
 		<add name="MainDB" connectionString="Data Source=$SQLServer$;Initial Catalog=$MainDB$;User Id=CorbisUser; Password=CorbisUserPassword;" providerName="System.Data.SqlClient" />

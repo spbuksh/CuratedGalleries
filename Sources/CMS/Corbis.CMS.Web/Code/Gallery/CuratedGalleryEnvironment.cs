@@ -7,6 +7,7 @@ using Microsoft.Practices.Unity;
 using Corbis.CMS.Entity;
 using System.IO;
 using Corbis.Common;
+using Ionic.Zip;
 
 namespace Corbis.CMS.Web.Code
 {
@@ -31,17 +32,12 @@ namespace Corbis.CMS.Web.Code
         /// <summary>
         /// Absolute directory path to folder with deployed (released) curated galleries
         /// </summary>
-        public string DeploymentDirectory { get; protected set; }
-
-        /// <summary>
-        /// Absolute directory path to folder with curated galleries which are being developed
-        /// </summary>
-        public string DevelopmentDirectory { get; protected set; }
+        public string GalleryDirectory { get; protected set; }
 
         /// <summary>
         /// Absolute directory path to folder with shared images
         /// </summary>
-        public string SharedImageDirectory { get; protected set; }
+        public string SharedDirectory { get; protected set; }
 
         /// <summary>
         /// Min image size in bytes. This rule will be applied to all curated galleries
@@ -69,25 +65,20 @@ namespace Corbis.CMS.Web.Code
             var section = CuratedGalleryEnvironmentSection.GetSection(configSection);
 
             //
-            this.DeploymentDirectory = this.GetAbsolutePath(section.Settings.DeploymentDirectory);
+            this.GalleryDirectory = this.GetAbsolutePath(section.Settings.GalleryDirectory);
 
-            if (!Directory.Exists(this.DeploymentDirectory))
-                Directory.CreateDirectory(this.DeploymentDirectory);
+            if (!Directory.Exists(this.GalleryDirectory))
+                Directory.CreateDirectory(this.GalleryDirectory);
 
             //
-            this.DevelopmentDirectory = this.GetAbsolutePath(section.Settings.DevelopmentDirectory);
-
-            if (!Directory.Exists(this.DevelopmentDirectory))
-                Directory.CreateDirectory(this.DevelopmentDirectory);
-
             this.MaxImageSize = section.Settings.MaxImageSize;
             this.MinImageSize = section.Settings.MinImageSize;
 
             //
-            this.SharedImageDirectory = this.GetAbsolutePath(section.Settings.SharedImageDirectory);
+            this.SharedDirectory = this.GetAbsolutePath(section.Settings.SharedDirectory);
 
-            if (!Directory.Exists(this.SharedImageDirectory))
-                Directory.CreateDirectory(this.SharedImageDirectory);
+            if (!Directory.Exists(this.SharedDirectory))
+                Directory.CreateDirectory(this.SharedDirectory);
 
             //
             this.TemplateDirectory = this.GetAbsolutePath(section.Settings.TemplateDirectory);
@@ -119,7 +110,33 @@ namespace Corbis.CMS.Web.Code
         //public void DeployGallery();
 
 
-        //public OperationResult<OperationResults, GalleryTemplateEntry> AddTemplate(byte[] archive)
-        //{ }
+        public OperationResult<OperationResults, GalleryTemplateEntry> AddTemplate(string filename, byte[] package)
+        {
+            //
+            using (var stream = new MemoryStream(package))
+            {
+                using (var zip = ZipFile.Read(stream))
+                {
+                    string tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+                    zip.ExtractAll(tempDir);
+
+                    //read template descriptor into 
+                    var template = new GalleryTemplateInfo() { Package = new GalleryTemplatePackage() { Filename = filename, Content = package } };
+
+
+                    //
+                    var ares = this.GalleryRepository.AddTemplate(template);
+
+
+                    string tpath = Path.Combine(this.TemplateDirectory, ares.Output.ID.ToString());
+
+                    //move files from path to tpath
+
+                }
+            }
+
+
+            throw new NotImplementedException();
+        }
     }
 }

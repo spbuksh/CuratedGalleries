@@ -52,31 +52,21 @@ namespace Corbis.CMS.Web.Code
         /// <summary>
         /// Absolute or relative directory path to folder with deployed (released) curated galleries
         /// </summary>
-        [ConfigurationProperty("deploymentDir", IsRequired = true)]
-        public string DeploymentDirectory
+        [ConfigurationProperty("galleryDir", IsRequired = true)]
+        public string GalleryDirectory
         {
-            get { return this["deploymentDir"] as string; }
-            set { this["deploymentDir"] = value; }
-        }
-
-        /// <summary>
-        /// Absolute or relative directory path to folder with curated galleries which are being developed
-        /// </summary>
-        [ConfigurationProperty("developmentDir", IsRequired = true)]
-        public string DevelopmentDirectory
-        {
-            get { return this["developmentDir"] as string; }
-            set { this["developmentDir"] = value; }
+            get { return this["galleryDir"] as string; }
+            set { this["galleryDir"] = value; }
         }
 
         /// <summary>
         /// Absolute or relative directory path to folder with shared images
         /// </summary>
-        [ConfigurationProperty("sharedImageDir", IsRequired = true)]
-        public string SharedImageDirectory
+        [ConfigurationProperty("sharedDir", IsRequired = true)]
+        public string SharedDirectory
         {
-            get { return this["sharedImageDir"] as string; }
-            set { this["sharedImageDir"] = value; }
+            get { return this["sharedDir"] as string; }
+            set { this["sharedDir"] = value; }
         }
 
         /// <summary>
