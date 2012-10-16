@@ -12,6 +12,7 @@
         @Scripts.Render("~/bundles/jquery")
         @Scripts.Render("~/Scripts/jquery.json-2.3.min.js")
         @Scripts.Render("~/Scripts/jquery.autocomplete.js")
+        @Scripts.Render("~/Scripts/swfobject.js")
         
 
        <script type="text/javascript">
@@ -82,9 +83,8 @@
                     <nav>
                         <ul id="menu">
                             <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                            <li>@Html.ActionLink("Galleries", "Index", "Gallery")</li>
-                             <li>@Html.ActionLink("Users", "Index", "User")</li>
-                            <li>@Html.ActionLink("Portfolio", "Index", "Portfolio")</li>
+                            <li>@Html.ActionLink("Users", "Index", "User")</li>
+                            <li>@Html.ActionLink("Upload", "Index", "Upload")</li>
                             @{
                                 if(Session["LoggedUser"]!=null){
                                 var userId = ((Corbis.CMS.Entity.AdminUser)Session["LoggedUser"]).ID;
