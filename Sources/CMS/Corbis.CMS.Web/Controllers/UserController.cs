@@ -26,11 +26,13 @@ namespace Corbis.CMS.Web.Controllers
         [Dependency]
         public IAdminUserRepository UserRepository { get; set; }
 
+        [System.Web.Mvc.Authorize]
         public ActionResult Index()
         {
             //return View(this.UserRepository.GetUsers(this.CurrentUser.Roles));
 
             throw new NotImplementedException();
+
         }
 
 

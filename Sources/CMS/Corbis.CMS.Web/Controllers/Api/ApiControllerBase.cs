@@ -20,5 +20,22 @@ namespace Corbis.CMS.Web.Controllers.Api
             get { return Logging.LogManagerProvider.Instance; }
         }
 
+        /// <summary>
+        /// Http context of the user request
+        /// </summary>
+        protected HttpContextWrapper HttpContext
+        {
+            get
+            {
+                if (this.m_HttpContext == null)
+                {
+                    if (this.Request.Properties.ContainsKey("MS_HttpContext"))
+                        this.m_HttpContext = this.Request.Properties["MS_HttpContext"] as HttpContextWrapper;
+                }
+                return this.m_HttpContext;
+            }
+        }
+        private HttpContextWrapper m_HttpContext = null;
+
     }
 }

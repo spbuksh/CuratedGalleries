@@ -186,7 +186,9 @@
     <Compile Include="Code\RepositoryProvider.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Api\ApiControllerBase.cs" />
+    <Compile Include="Controllers\Api\UploadController.cs" />
     <Compile Include="Controllers\CMSControllerBase.cs" />
+    <Compile Include="Controllers\UploadController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -296,6 +298,9 @@
     <Content Include="Scripts\knockout-2.1.0.js" />
     <Content Include="Scripts\modernizr-2.5.3.js" />
     <Content Include="Unity.WebAPI.README.txt" />
+    <Content Include="crossdomain.xml" />
+    <Content Include="SimpleUploader.swf" />
+    <Content Include="Scripts\swfobject.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -333,6 +338,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Uploads\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -383,6 +389,7 @@
     <Content Include="Views\User\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Views\Upload\Index.cshtml" />
     <None Include="Web.config.local">
       <SubType>Designer</SubType>
     </None>
@@ -403,7 +410,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>16869</DevelopmentServerPort>
+          <DevelopmentServerPort>62506</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>
