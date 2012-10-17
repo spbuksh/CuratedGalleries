@@ -5,21 +5,62 @@ using System.Web;
 using Corbis.Common;
 using Corbis.CMS.Entity;
 using System.IO;
+using Corbis.CMS.Repository.Interface.Communication;
 
 namespace Corbis.CMS.Web.Code
 {
     public partial class GalleryRuntime
     {
-
-        public CuratedGallery CreateGallery(string name, Nullable<int> templateID = null)
+        /// <summary>
+        /// Gets absolute folder path to the gallery based on its identifier
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public static string GetGalleryFolderPath(int id)
         {
-            //var rslt = this.GalleryRepository.CreateGallery(name, templateID);
+            return Path.Combine(GalleryRuntime.GalleryDirectory, id.ToString());
+        }
 
-            //System.IO.Directory.CreateDirectory(Path.Combine(this.GalleryDirectory, rslt.Output.ID.ToString())
-            //rslt.Output.TemplateID
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="templateID"></param>
+        /// <returns></returns>
+        public static CuratedGallery CreateGallery(string name, Nullable<int> templateID = null)
+        {
+            //try to create gallery
+            OperationResult<OperationResults, CuratedGallery> rslt = null;
+
+            try
+            {
+                rslt = GalleryRuntime.GalleryRepository.CreateGallery(name, templateID);
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteError(ex, "Gallery creation was failed");
+                throw;
+            }
+
+            if (rslt.Result != OperationResults.Success)
+                throw new Exception("Gallery creation was failed");
+
+            var gallery = rslt.Output;
+
+            //find template for the gallery
+            var tdir = new DirectoryInfo(GetTemplateFolderPath(gallery.TemplateID));
+
+            if (!tdir.Exists)
+            {
+                tdir.Create();
+
+                GalleryRepository.GetTemplate(gallery.TemplateID, GalleryTemplateContent.All);
+            }
+
+            var gdir = tdir.CopyTo(gallery.GetFolderPath());
 
 
-            throw new NotImplementedException();
+            return gallery;
         }
     }
 }

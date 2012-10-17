@@ -11,10 +11,20 @@ namespace Corbis.CMS.Web.Code
     {
         #region Decorator for CuratedGallery
 
-        public static string GetDirectory(this CuratedGallery gallery)
+        /// <summary>
+        /// Gets absolute folder path to the gallery
+        /// </summary>
+        /// <param name="gallery"></param>
+        /// <returns></returns>
+        public static string GetFolderPath(this CuratedGallery gallery)
         {
-            return Path.Combine(GalleryRuntime.GalleryDirectory, gallery.ID.ToString());
+            return GalleryRuntime.GetGalleryFolderPath(gallery.ID);
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="gallery"></param>
+        /// <returns></returns>
         public static string GetUrl(this CuratedGallery gallery)
         {
             throw new NotImplementedException();
@@ -24,9 +34,14 @@ namespace Corbis.CMS.Web.Code
 
         #region Decorator for GalleryTemplate
 
-        public static string GetDirectory(this GalleryTemplate template)
+        /// <summary>
+        /// Gets absolute folder path to the template
+        /// </summary>
+        /// <param name="template"></param>
+        /// <returns></returns>
+        public static string GetFolderPath(this GalleryTemplate template)
         {
-            throw new NotImplementedException();
+            return GalleryRuntime.GetTemplateFolderPath(template.ID);
         }
 
         #endregion Decorator for GalleryTemplate

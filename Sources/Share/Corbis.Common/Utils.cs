@@ -44,5 +44,22 @@ namespace Corbis.Common
             return mexpr.Member.Name;
         }
 
+        /// <summary>
+        /// Copy all directory content recursively with files and sub directories
+        /// </summary>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        public static void DirectoryCopy(DirectoryInfo from, DirectoryInfo to)
+        {
+            if (!to.Exists)
+                to.Create();
+
+            foreach (var fi in from.GetFiles())
+                fi.CopyTo(Path.Combine(to.ToString(), fi.Name), true);
+
+            foreach (var subdir in from.GetDirectories())
+                DirectoryCopy(subdir, to.CreateSubdirectory(subdir.Name));
+        }
+
     }
 }

@@ -8,6 +8,8 @@ using Corbis.CMS.Entity;
 using System.IO;
 using Corbis.Common;
 using Ionic.Zip;
+using Corbis.Logging;
+using Corbis.Logging.Interface;
 
 namespace Corbis.CMS.Web.Code
 {
@@ -19,7 +21,7 @@ namespace Corbis.CMS.Web.Code
         /// <summary>
         /// Gallery template repository
         /// </summary>
-        public static ICuratedGalleryRepository GalleryRepository 
+        protected static ICuratedGalleryRepository GalleryRepository 
         {
             get
             {
@@ -35,6 +37,14 @@ namespace Corbis.CMS.Web.Code
             }
         }
         private static ICuratedGalleryRepository m_GalleryRepository = null;
+
+        /// <summary>
+        /// System logger
+        /// </summary>
+        protected static ILogManager Logger
+        {
+            get { return LogManagerProvider.Instance; }
+        }
 
         #region Environment settings
 

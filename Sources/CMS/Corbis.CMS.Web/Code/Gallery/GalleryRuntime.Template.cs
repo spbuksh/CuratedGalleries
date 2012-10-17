@@ -11,7 +11,17 @@ namespace Corbis.CMS.Web.Code
 {
     public partial class GalleryRuntime
     {
-        public OperationResult<OperationResults, GalleryTemplate> AddTemplate(string filename, byte[] package)
+        /// <summary>
+        /// Gets absolute folder path to the template based on its identifier
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public static string GetTemplateFolderPath(int id)
+        {
+            return Path.Combine(GalleryRuntime.TemplateDirectory, id.ToString());
+        }
+
+        public static OperationResult<OperationResults, GalleryTemplate> AddTemplate(string filename, byte[] package)
         {
             //
             using (var stream = new MemoryStream(package))
@@ -35,6 +45,19 @@ namespace Corbis.CMS.Web.Code
 
                 }
             }
+
+
+            throw new NotImplementedException();
+        }
+
+
+        /// <summary>
+        /// Gets gallery template
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public static GalleryTemplate GetTemplate(int id)
+        {
 
 
             throw new NotImplementedException();

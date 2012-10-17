@@ -29,10 +29,11 @@ namespace Corbis.CMS.Repository
                     DateCreated = DateTime.UtcNow,
                     Enabled = true,
                     Name = name,
-                    TemplateID = templateID.Value
+                    TemplateID = template.ID
                 };
                     
                 context.CuratedGalleryRecords.InsertOnSubmit(gallery);
+                context.SubmitChanges();
 
                 rslt.Result = OperationResults.Success;
                 rslt.Output = this.ObjectMapper.DoMapping<CuratedGallery>(gallery);

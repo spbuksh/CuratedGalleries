@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using System.Collections;
+using System.IO;
 
 namespace Corbis.Common
 {
@@ -94,6 +95,15 @@ namespace Corbis.Common
         public static string ToISO8601(this DateTime datetime, bool dateOnly = false)
         {
             return datetime.ToString(dateOnly ? "yyyy-MM-dd" : "yyyy-MM-ddTHH-mm-ss");
+        }
+
+
+
+        public static DirectoryInfo CopyTo(this DirectoryInfo from, string to)
+        {
+            var dir = new DirectoryInfo(to);
+            Utils.DirectoryCopy(from, dir);
+            return dir;
         }
     }
 }

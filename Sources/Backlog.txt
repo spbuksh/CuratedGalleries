@@ -2,6 +2,9 @@
 *	Write here some issues which must be done later		   *
 ************************************************************
 
+Issue (proposals):
+Social network integration
+
 
 CMS USER MODULE
 

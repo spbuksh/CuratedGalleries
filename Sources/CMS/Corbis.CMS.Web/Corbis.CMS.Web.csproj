@@ -179,7 +179,6 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Bootstrapper.cs" />
     <Compile Include="Code\AdminUserPrincipal.cs" />
     <Compile Include="Code\Gallery\GalleryRuntime.Gallery.cs" />
     <Compile Include="Code\Gallery\GalleryRuntime.Template.cs" />
@@ -192,6 +191,7 @@
     <Compile Include="Controllers\Api\ApiControllerBase.cs" />
     <Compile Include="Controllers\Api\UploadController.cs" />
     <Compile Include="Controllers\CMSControllerBase.cs" />
+    <Compile Include="Controllers\GalleryController.cs" />
     <Compile Include="Controllers\UploadController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
@@ -281,6 +281,9 @@
     <Content Include="Images\gallery.jpg" />
     <Content Include="Images\photo_add.png" />
     <Content Include="Images\trash.png" />
+    <Content Include="Scripts\Corbis\Corbis.Common.js" />
+    <Content Include="Scripts\Corbis\EditGallery.js" />
+    <Content Include="Scripts\Corbis\Uploader.js" />
     <Content Include="Scripts\jquery-1.7.1-vsdoc.js" />
     <Content Include="Scripts\jquery-1.7.1.js" />
     <Content Include="Scripts\jquery-1.7.1.min.js" />
@@ -338,7 +341,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Uploads\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -390,6 +392,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Upload\Index.cshtml" />
+    <Content Include="Views\Gallery\Index.cshtml" />
+    <Content Include="Views\Gallery\Gallery.cshtml" />
     <None Include="Web.config.local">
       <SubType>Designer</SubType>
     </None>
