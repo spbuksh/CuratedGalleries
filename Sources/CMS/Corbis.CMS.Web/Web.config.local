@@ -28,7 +28,7 @@
     </RepositoryProvider>
     <CuratedGalleryEnvironment>
         <Settings templateDir="CuratedGalleries\Templates\"
-				  galleriesDir="CuratedGalleries\Galleries\"
+				  galleryDir="CuratedGalleries\Galleries\"
 				  sharedDir="CuratedGalleries\Shared\"
 				  defaultTemplateImageUrl=""
 				  minImageSize="0"

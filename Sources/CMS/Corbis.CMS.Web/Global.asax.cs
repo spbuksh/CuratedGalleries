@@ -60,10 +60,7 @@ namespace Corbis.CMS.Web
 
 
             //initialize curated gallery environment
-            var environment = new CuratedGalleryEnvironment();
-            IoCControllerFactory.Container.BuildUp(environment);
-            environment.Initialize();
-            SingletonProvider<CuratedGalleryEnvironment>.Initialize(environment);
+            GalleryRuntime.Initialize();
             //*************************************************************
         }
     }

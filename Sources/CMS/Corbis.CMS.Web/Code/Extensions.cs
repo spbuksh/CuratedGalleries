@@ -4,10 +4,11 @@ using System.Linq;
 using System.Web;
 using Corbis.CMS.Entity;
 using Corbis.Common;
+using System.IO;
 
 namespace Corbis.CMS.Web.Code
 {
-    public static class Extensions
+    public static partial class Extensions
     {
         public static string GetFullName(this AdminUserInfo item)
         {
@@ -18,6 +19,5 @@ namespace Corbis.CMS.Web.Code
         {
             return roles.GetItems().Select(x => x.ToString().ToLower()).ToArray();
         }
-
     }
 }

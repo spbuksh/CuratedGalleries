@@ -46,6 +46,6 @@ namespace Corbis.CMS.Entity
         /// <summary>
         /// It is zip archive of the template package
         /// </summary>
-        public GalleryTemplatePackage Package { get; set; }
+        public ZipArchivePackage Package { get; set; }
     }
 }

@@ -12,7 +12,7 @@ using Corbis.DB.Linq;
 
 namespace Corbis.CMS.Repository
 {
-    public class CuratedGalleryRepository : RepositoryBase, ICuratedGalleryRepository
+    public partial class CuratedGalleryRepository : RepositoryBase, ICuratedGalleryRepository
     {
         public OperationResult<OperationResults, GalleryTemplate> AddTemplate(GalleryTemplateInfo template)
         {
@@ -24,7 +24,7 @@ namespace Corbis.CMS.Repository
                 {
                     context.Transaction = context.Connection.BeginTransaction();
 
-                    var frec = new FileRecord() { Name = template.Package.Filename, Content = new System.Data.Linq.Binary(template.Package.Content) };
+                    var frec = new FileRecord() { Name = template.Package.FileName, Content = new System.Data.Linq.Binary(template.Package.FileContent) };
                     context.FileRecords.InsertOnSubmit(frec);
                     context.SubmitChanges();
 
@@ -83,24 +83,5 @@ namespace Corbis.CMS.Repository
             throw new NotImplementedException();
         }
 
-        public OperationResult<OperationResults, CuratedGallery> CreateGallery(string name, int? templateID = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public OperationResult<OperationResults, CuratedGallery> GetGallery(int id, CuratedGalleryContent contect = CuratedGalleryContent.All)
-        {
-            throw new NotImplementedException();
-        }
-
-        public OperationResult<OperationResults, List<CuratedGallery>> GetGalleries(CuratedGalleryFilter filter = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public OperationResult<OperationResults, object> UpdateGallery(CuratedGallery gallery, CuratedGalleryContent content = CuratedGalleryContent.All)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

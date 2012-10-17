@@ -56,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdminUserRepository.cs" />
+    <Compile Include="CuratedGalleryRepository.Gallery.cs" />
     <Compile Include="EntryPoint.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -64,7 +65,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="CuratedGalleryRepository.cs" />
+    <Compile Include="CuratedGalleryRepository.Template.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Public\Corbis.Public.Entity\Corbis.Public.Entity.csproj">

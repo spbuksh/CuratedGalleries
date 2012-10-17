@@ -39,9 +39,6 @@ namespace Corbis.DB.Linq
     partial void InsertAdminUserRoleRecord(AdminUserRoleRecord instance);
     partial void UpdateAdminUserRoleRecord(AdminUserRoleRecord instance);
     partial void DeleteAdminUserRoleRecord(AdminUserRoleRecord instance);
-    partial void InsertCuratedGalleryStatusRecord(CuratedGalleryStatusRecord instance);
-    partial void UpdateCuratedGalleryStatusRecord(CuratedGalleryStatusRecord instance);
-    partial void DeleteCuratedGalleryStatusRecord(CuratedGalleryStatusRecord instance);
     partial void InsertFileRecord(FileRecord instance);
     partial void UpdateFileRecord(FileRecord instance);
     partial void DeleteFileRecord(FileRecord instance);
@@ -112,14 +109,6 @@ namespace Corbis.DB.Linq
 			get
 			{
 				return this.GetTable<AdminUserToRoleRecord>();
-			}
-		}
-		
-		public System.Data.Linq.Table<CuratedGalleryStatusRecord> CuratedGalleryStatusRecords
-		{
-			get
-			{
-				return this.GetTable<CuratedGalleryStatusRecord>();
 			}
 		}
 		
@@ -736,144 +725,6 @@ namespace Corbis.DB.Linq
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.CuratedGalleryStatus")]
-	public partial class CuratedGalleryStatusRecord : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _ID;
-		
-		private string _Name;
-		
-		private string _Description;
-		
-		private EntitySet<CuratedGalleryRecord> _CuratedGalleryRecords;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnIDChanging(int value);
-    partial void OnIDChanged();
-    partial void OnNameChanging(string value);
-    partial void OnNameChanged();
-    partial void OnDescriptionChanging(string value);
-    partial void OnDescriptionChanged();
-    #endregion
-		
-		public CuratedGalleryStatusRecord()
-		{
-			this._CuratedGalleryRecords = new EntitySet<CuratedGalleryRecord>(new Action<CuratedGalleryRecord>(this.attach_CuratedGalleryRecords), new Action<CuratedGalleryRecord>(this.detach_CuratedGalleryRecords));
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int ID
-		{
-			get
-			{
-				return this._ID;
-			}
-			set
-			{
-				if ((this._ID != value))
-				{
-					this.OnIDChanging(value);
-					this.SendPropertyChanging();
-					this._ID = value;
-					this.SendPropertyChanged("ID");
-					this.OnIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
-		public string Name
-		{
-			get
-			{
-				return this._Name;
-			}
-			set
-			{
-				if ((this._Name != value))
-				{
-					this.OnNameChanging(value);
-					this.SendPropertyChanging();
-					this._Name = value;
-					this.SendPropertyChanged("Name");
-					this.OnNameChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Description", DbType="NVarChar(255)")]
-		public string Description
-		{
-			get
-			{
-				return this._Description;
-			}
-			set
-			{
-				if ((this._Description != value))
-				{
-					this.OnDescriptionChanging(value);
-					this.SendPropertyChanging();
-					this._Description = value;
-					this.SendPropertyChanged("Description");
-					this.OnDescriptionChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CuratedGalleryStatusRecord_CuratedGallery", Storage="_CuratedGalleryRecords", ThisKey="ID", OtherKey="StatusID")]
-		public EntitySet<CuratedGalleryRecord> CuratedGalleryRecords
-		{
-			get
-			{
-				return this._CuratedGalleryRecords;
-			}
-			set
-			{
-				this._CuratedGalleryRecords.Assign(value);
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-		
-		private void attach_CuratedGalleryRecords(CuratedGalleryRecord entity)
-		{
-			this.SendPropertyChanging();
-			entity.CuratedGalleryStatusRecord = this;
-		}
-		
-		private void detach_CuratedGalleryRecords(CuratedGalleryRecord entity)
-		{
-			this.SendPropertyChanging();
-			entity.CuratedGalleryStatusRecord = null;
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.[File]")]
 	public partial class FileRecord : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -969,7 +820,7 @@ namespace Corbis.DB.Linq
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="File_GalleryTemplate", Storage="_GalleryTemplateRecords", ThisKey="ID", OtherKey="Archive")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="FileRecord_GalleryTemplateRecord", Storage="_GalleryTemplateRecords", ThisKey="ID", OtherKey="Archive")]
 		public EntitySet<GalleryTemplateRecord> GalleryTemplateRecords
 		{
 			get
@@ -1272,7 +1123,7 @@ namespace Corbis.DB.Linq
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="File_GalleryTemplate", Storage="_FileRecord", ThisKey="Archive", OtherKey="ID", IsForeignKey=true)]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="FileRecord_GalleryTemplateRecord", Storage="_FileRecord", ThisKey="Archive", OtherKey="ID", IsForeignKey=true)]
 		public FileRecord FileRecord
 		{
 			get
@@ -1349,8 +1200,6 @@ namespace Corbis.DB.Linq
 		
 		private string _Name;
 		
-		private int _StatusID;
-		
 		private bool _Enabled;
 		
 		private int _TemplateID;
@@ -1360,8 +1209,6 @@ namespace Corbis.DB.Linq
 		private System.Nullable<System.DateTime> _DateModified;
 		
 		private System.Nullable<long> _Archive;
-		
-		private EntityRef<CuratedGalleryStatusRecord> _CuratedGalleryStatusRecord;
 		
 		private EntityRef<FileRecord> _FileRecord;
 		
@@ -1375,8 +1222,6 @@ namespace Corbis.DB.Linq
     partial void OnIDChanged();
     partial void OnNameChanging(string value);
     partial void OnNameChanged();
-    partial void OnStatusIDChanging(int value);
-    partial void OnStatusIDChanged();
     partial void OnEnabledChanging(bool value);
     partial void OnEnabledChanged();
     partial void OnTemplateIDChanging(int value);
@@ -1391,7 +1236,6 @@ namespace Corbis.DB.Linq
 		
 		public CuratedGalleryRecord()
 		{
-			this._CuratedGalleryStatusRecord = default(EntityRef<CuratedGalleryStatusRecord>);
 			this._FileRecord = default(EntityRef<FileRecord>);
 			this._GalleryTemplateRecord = default(EntityRef<GalleryTemplateRecord>);
 			OnCreated();
@@ -1433,30 +1277,6 @@ namespace Corbis.DB.Linq
 					this._Name = value;
 					this.SendPropertyChanged("Name");
 					this.OnNameChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StatusID", DbType="Int NOT NULL")]
-		public int StatusID
-		{
-			get
-			{
-				return this._StatusID;
-			}
-			set
-			{
-				if ((this._StatusID != value))
-				{
-					if (this._CuratedGalleryStatusRecord.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnStatusIDChanging(value);
-					this.SendPropertyChanging();
-					this._StatusID = value;
-					this.SendPropertyChanged("StatusID");
-					this.OnStatusIDChanged();
 				}
 			}
 		}
@@ -1565,40 +1385,6 @@ namespace Corbis.DB.Linq
 					this._Archive = value;
 					this.SendPropertyChanged("Archive");
 					this.OnArchiveChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CuratedGalleryStatusRecord_CuratedGallery", Storage="_CuratedGalleryStatusRecord", ThisKey="StatusID", OtherKey="ID", IsForeignKey=true)]
-		public CuratedGalleryStatusRecord CuratedGalleryStatusRecord
-		{
-			get
-			{
-				return this._CuratedGalleryStatusRecord.Entity;
-			}
-			set
-			{
-				CuratedGalleryStatusRecord previousValue = this._CuratedGalleryStatusRecord.Entity;
-				if (((previousValue != value) 
-							|| (this._CuratedGalleryStatusRecord.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._CuratedGalleryStatusRecord.Entity = null;
-						previousValue.CuratedGalleryRecords.Remove(this);
-					}
-					this._CuratedGalleryStatusRecord.Entity = value;
-					if ((value != null))
-					{
-						value.CuratedGalleryRecords.Add(this);
-						this._StatusID = value.ID;
-					}
-					else
-					{
-						this._StatusID = default(int);
-					}
-					this.SendPropertyChanged("CuratedGalleryStatusRecord");
 				}
 			}
 		}

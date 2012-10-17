@@ -181,11 +181,12 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Code\AdminUserPrincipal.cs" />
-    <Compile Include="Code\Gallery\CuratedGalleryEntry.cs" />
+    <Compile Include="Code\Gallery\GalleryRuntime.Gallery.cs" />
+    <Compile Include="Code\Gallery\GalleryRuntime.Template.cs" />
     <Compile Include="Code\Gallery\CuratedGallerySection.cs" />
-    <Compile Include="Code\Gallery\CuratedGalleryEnvironment.cs" />
+    <Compile Include="Code\Gallery\GalleryRuntime.cs" />
     <Compile Include="Code\Extensions.cs" />
-    <Compile Include="Code\Gallery\GalleryTemplateEntry.cs" />
+    <Compile Include="Code\Gallery\Extensions.cs" />
     <Compile Include="Code\RepositoryProvider.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Api\ApiControllerBase.cs" />
