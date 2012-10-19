@@ -33,9 +33,6 @@ namespace Corbis.DB.Linq
     partial void InsertAdminUserMembershipRecord(AdminUserMembershipRecord instance);
     partial void UpdateAdminUserMembershipRecord(AdminUserMembershipRecord instance);
     partial void DeleteAdminUserMembershipRecord(AdminUserMembershipRecord instance);
-    partial void InsertAdminUserProfileRecord(AdminUserProfileRecord instance);
-    partial void UpdateAdminUserProfileRecord(AdminUserProfileRecord instance);
-    partial void DeleteAdminUserProfileRecord(AdminUserProfileRecord instance);
     partial void InsertAdminUserRoleRecord(AdminUserRoleRecord instance);
     partial void UpdateAdminUserRoleRecord(AdminUserRoleRecord instance);
     partial void DeleteAdminUserRoleRecord(AdminUserRoleRecord instance);
@@ -48,6 +45,9 @@ namespace Corbis.DB.Linq
     partial void InsertCuratedGalleryRecord(CuratedGalleryRecord instance);
     partial void UpdateCuratedGalleryRecord(CuratedGalleryRecord instance);
     partial void DeleteCuratedGalleryRecord(CuratedGalleryRecord instance);
+    partial void InsertAdminUserProfileRecord(AdminUserProfileRecord instance);
+    partial void UpdateAdminUserProfileRecord(AdminUserProfileRecord instance);
+    partial void DeleteAdminUserProfileRecord(AdminUserProfileRecord instance);
     #endregion
 		
 		public MainDataContext() : 
@@ -85,14 +85,6 @@ namespace Corbis.DB.Linq
 			get
 			{
 				return this.GetTable<AdminUserMembershipRecord>();
-			}
-		}
-		
-		public System.Data.Linq.Table<AdminUserProfileRecord> AdminUserProfileRecords
-		{
-			get
-			{
-				return this.GetTable<AdminUserProfileRecord>();
 			}
 		}
 		
@@ -135,6 +127,14 @@ namespace Corbis.DB.Linq
 				return this.GetTable<CuratedGalleryRecord>();
 			}
 		}
+		
+		public System.Data.Linq.Table<AdminUserProfileRecord> AdminUserProfileRecords
+		{
+			get
+			{
+				return this.GetTable<AdminUserProfileRecord>();
+			}
+		}
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.AdminUserMembership")]
@@ -156,6 +156,8 @@ namespace Corbis.DB.Linq
 		private bool _IsActive;
 		
 		private System.DateTime _DateCreated;
+		
+		private EntitySet<CuratedGalleryRecord> _CuratedGalleryRecords;
 		
 		private EntityRef<AdminUserProfileRecord> _AdminUserProfileRecord;
 		
@@ -181,6 +183,7 @@ namespace Corbis.DB.Linq
 		
 		public AdminUserMembershipRecord()
 		{
+			this._CuratedGalleryRecords = new EntitySet<CuratedGalleryRecord>(new Action<CuratedGalleryRecord>(this.attach_CuratedGalleryRecords), new Action<CuratedGalleryRecord>(this.detach_CuratedGalleryRecords));
 			this._AdminUserProfileRecord = default(EntityRef<AdminUserProfileRecord>);
 			OnCreated();
 		}
@@ -329,7 +332,20 @@ namespace Corbis.DB.Linq
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AdminUserProfileRecord_AdminUserMembershipRecord", Storage="_AdminUserProfileRecord", ThisKey="ProfileID", OtherKey="ID", IsForeignKey=true)]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AdminUserMembershipRecord_CuratedGalleryRecord", Storage="_CuratedGalleryRecords", ThisKey="ID", OtherKey="Editor")]
+		public EntitySet<CuratedGalleryRecord> CuratedGalleryRecords
+		{
+			get
+			{
+				return this._CuratedGalleryRecords;
+			}
+			set
+			{
+				this._CuratedGalleryRecords.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AdminUserProfile_AdminUserMembershipRecord", Storage="_AdminUserProfileRecord", ThisKey="ProfileID", OtherKey="ID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
 		public AdminUserProfileRecord AdminUserProfileRecord
 		{
 			get
@@ -382,191 +398,17 @@ namespace Corbis.DB.Linq
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
 		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.AdminUserProfile")]
-	public partial class AdminUserProfileRecord : INotifyPropertyChanging, INotifyPropertyChanged
-	{
 		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _ID;
-		
-		private string _FirstName;
-		
-		private string _MiddleName;
-		
-		private string _LastName;
-		
-		private string _Email;
-		
-		private EntitySet<AdminUserMembershipRecord> _AdminUserMembershipRecords;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnIDChanging(int value);
-    partial void OnIDChanged();
-    partial void OnFirstNameChanging(string value);
-    partial void OnFirstNameChanged();
-    partial void OnMiddleNameChanging(string value);
-    partial void OnMiddleNameChanged();
-    partial void OnLastNameChanging(string value);
-    partial void OnLastNameChanged();
-    partial void OnEmailChanging(string value);
-    partial void OnEmailChanged();
-    #endregion
-		
-		public AdminUserProfileRecord()
-		{
-			this._AdminUserMembershipRecords = new EntitySet<AdminUserMembershipRecord>(new Action<AdminUserMembershipRecord>(this.attach_AdminUserMembershipRecords), new Action<AdminUserMembershipRecord>(this.detach_AdminUserMembershipRecords));
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", DbType="Int NOT NULL", IsPrimaryKey=true)]
-		public int ID
-		{
-			get
-			{
-				return this._ID;
-			}
-			set
-			{
-				if ((this._ID != value))
-				{
-					this.OnIDChanging(value);
-					this.SendPropertyChanging();
-					this._ID = value;
-					this.SendPropertyChanged("ID");
-					this.OnIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FirstName", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
-		public string FirstName
-		{
-			get
-			{
-				return this._FirstName;
-			}
-			set
-			{
-				if ((this._FirstName != value))
-				{
-					this.OnFirstNameChanging(value);
-					this.SendPropertyChanging();
-					this._FirstName = value;
-					this.SendPropertyChanged("FirstName");
-					this.OnFirstNameChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MiddleName", DbType="NVarChar(50)")]
-		public string MiddleName
-		{
-			get
-			{
-				return this._MiddleName;
-			}
-			set
-			{
-				if ((this._MiddleName != value))
-				{
-					this.OnMiddleNameChanging(value);
-					this.SendPropertyChanging();
-					this._MiddleName = value;
-					this.SendPropertyChanged("MiddleName");
-					this.OnMiddleNameChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LastName", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
-		public string LastName
-		{
-			get
-			{
-				return this._LastName;
-			}
-			set
-			{
-				if ((this._LastName != value))
-				{
-					this.OnLastNameChanging(value);
-					this.SendPropertyChanging();
-					this._LastName = value;
-					this.SendPropertyChanged("LastName");
-					this.OnLastNameChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Email", DbType="NVarChar(100)")]
-		public string Email
-		{
-			get
-			{
-				return this._Email;
-			}
-			set
-			{
-				if ((this._Email != value))
-				{
-					this.OnEmailChanging(value);
-					this.SendPropertyChanging();
-					this._Email = value;
-					this.SendPropertyChanged("Email");
-					this.OnEmailChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AdminUserProfileRecord_AdminUserMembershipRecord", Storage="_AdminUserMembershipRecords", ThisKey="ID", OtherKey="ProfileID")]
-		public EntitySet<AdminUserMembershipRecord> AdminUserMembershipRecords
-		{
-			get
-			{
-				return this._AdminUserMembershipRecords;
-			}
-			set
-			{
-				this._AdminUserMembershipRecords.Assign(value);
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-		
-		private void attach_AdminUserMembershipRecords(AdminUserMembershipRecord entity)
+		private void attach_CuratedGalleryRecords(CuratedGalleryRecord entity)
 		{
 			this.SendPropertyChanging();
-			entity.AdminUserProfileRecord = this;
+			entity.AdminUserMembershipRecord = this;
 		}
 		
-		private void detach_AdminUserMembershipRecords(AdminUserMembershipRecord entity)
+		private void detach_CuratedGalleryRecords(CuratedGalleryRecord entity)
 		{
 			this.SendPropertyChanging();
-			entity.AdminUserProfileRecord = null;
+			entity.AdminUserMembershipRecord = null;
 		}
 	}
 	
@@ -833,7 +675,7 @@ namespace Corbis.DB.Linq
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="FileRecord_CuratedGallery", Storage="_CuratedGalleryRecords", ThisKey="ID", OtherKey="Archive")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="FileRecord_CuratedGalleryRecord", Storage="_CuratedGalleryRecords", ThisKey="ID", OtherKey="Archive")]
 		public EntitySet<CuratedGalleryRecord> CuratedGalleryRecords
 		{
 			get
@@ -1110,7 +952,7 @@ namespace Corbis.DB.Linq
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="GalleryTemplateRecord_CuratedGallery", Storage="_CuratedGalleryRecords", ThisKey="ID", OtherKey="TemplateID")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="GalleryTemplateRecord_CuratedGalleryRecord", Storage="_CuratedGalleryRecords", ThisKey="ID", OtherKey="TemplateID")]
 		public EntitySet<CuratedGalleryRecord> CuratedGalleryRecords
 		{
 			get
@@ -1210,6 +1052,10 @@ namespace Corbis.DB.Linq
 		
 		private System.Nullable<long> _Archive;
 		
+		private System.Nullable<int> _Editor;
+		
+		private EntityRef<AdminUserMembershipRecord> _AdminUserMembershipRecord;
+		
 		private EntityRef<FileRecord> _FileRecord;
 		
 		private EntityRef<GalleryTemplateRecord> _GalleryTemplateRecord;
@@ -1232,10 +1078,13 @@ namespace Corbis.DB.Linq
     partial void OnDateModifiedChanged();
     partial void OnArchiveChanging(System.Nullable<long> value);
     partial void OnArchiveChanged();
+    partial void OnEditorChanging(System.Nullable<int> value);
+    partial void OnEditorChanged();
     #endregion
 		
 		public CuratedGalleryRecord()
 		{
+			this._AdminUserMembershipRecord = default(EntityRef<AdminUserMembershipRecord>);
 			this._FileRecord = default(EntityRef<FileRecord>);
 			this._GalleryTemplateRecord = default(EntityRef<GalleryTemplateRecord>);
 			OnCreated();
@@ -1389,7 +1238,65 @@ namespace Corbis.DB.Linq
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="FileRecord_CuratedGallery", Storage="_FileRecord", ThisKey="Archive", OtherKey="ID", IsForeignKey=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Editor", DbType="Int")]
+		public System.Nullable<int> Editor
+		{
+			get
+			{
+				return this._Editor;
+			}
+			set
+			{
+				if ((this._Editor != value))
+				{
+					if (this._AdminUserMembershipRecord.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnEditorChanging(value);
+					this.SendPropertyChanging();
+					this._Editor = value;
+					this.SendPropertyChanged("Editor");
+					this.OnEditorChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AdminUserMembershipRecord_CuratedGalleryRecord", Storage="_AdminUserMembershipRecord", ThisKey="Editor", OtherKey="ID", IsForeignKey=true)]
+		public AdminUserMembershipRecord AdminUserMembershipRecord
+		{
+			get
+			{
+				return this._AdminUserMembershipRecord.Entity;
+			}
+			set
+			{
+				AdminUserMembershipRecord previousValue = this._AdminUserMembershipRecord.Entity;
+				if (((previousValue != value) 
+							|| (this._AdminUserMembershipRecord.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._AdminUserMembershipRecord.Entity = null;
+						previousValue.CuratedGalleryRecords.Remove(this);
+					}
+					this._AdminUserMembershipRecord.Entity = value;
+					if ((value != null))
+					{
+						value.CuratedGalleryRecords.Add(this);
+						this._Editor = value.ID;
+					}
+					else
+					{
+						this._Editor = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("AdminUserMembershipRecord");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="FileRecord_CuratedGalleryRecord", Storage="_FileRecord", ThisKey="Archive", OtherKey="ID", IsForeignKey=true)]
 		public FileRecord FileRecord
 		{
 			get
@@ -1423,7 +1330,7 @@ namespace Corbis.DB.Linq
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="GalleryTemplateRecord_CuratedGallery", Storage="_GalleryTemplateRecord", ThisKey="TemplateID", OtherKey="ID", IsForeignKey=true)]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="GalleryTemplateRecord_CuratedGalleryRecord", Storage="_GalleryTemplateRecord", ThisKey="TemplateID", OtherKey="ID", IsForeignKey=true)]
 		public GalleryTemplateRecord GalleryTemplateRecord
 		{
 			get
@@ -1475,6 +1382,192 @@ namespace Corbis.DB.Linq
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.AdminUserProfile")]
+	public partial class AdminUserProfileRecord : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ID;
+		
+		private string _FirstName;
+		
+		private string _MiddleName;
+		
+		private string _LastName;
+		
+		private string _Email;
+		
+		private EntitySet<AdminUserMembershipRecord> _AdminUserMembershipRecords;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIDChanging(int value);
+    partial void OnIDChanged();
+    partial void OnFirstNameChanging(string value);
+    partial void OnFirstNameChanged();
+    partial void OnMiddleNameChanging(string value);
+    partial void OnMiddleNameChanged();
+    partial void OnLastNameChanging(string value);
+    partial void OnLastNameChanged();
+    partial void OnEmailChanging(string value);
+    partial void OnEmailChanged();
+    #endregion
+		
+		public AdminUserProfileRecord()
+		{
+			this._AdminUserMembershipRecords = new EntitySet<AdminUserMembershipRecord>(new Action<AdminUserMembershipRecord>(this.attach_AdminUserMembershipRecords), new Action<AdminUserMembershipRecord>(this.detach_AdminUserMembershipRecords));
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int ID
+		{
+			get
+			{
+				return this._ID;
+			}
+			set
+			{
+				if ((this._ID != value))
+				{
+					this.OnIDChanging(value);
+					this.SendPropertyChanging();
+					this._ID = value;
+					this.SendPropertyChanged("ID");
+					this.OnIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FirstName", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string FirstName
+		{
+			get
+			{
+				return this._FirstName;
+			}
+			set
+			{
+				if ((this._FirstName != value))
+				{
+					this.OnFirstNameChanging(value);
+					this.SendPropertyChanging();
+					this._FirstName = value;
+					this.SendPropertyChanged("FirstName");
+					this.OnFirstNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MiddleName", DbType="NVarChar(50)")]
+		public string MiddleName
+		{
+			get
+			{
+				return this._MiddleName;
+			}
+			set
+			{
+				if ((this._MiddleName != value))
+				{
+					this.OnMiddleNameChanging(value);
+					this.SendPropertyChanging();
+					this._MiddleName = value;
+					this.SendPropertyChanged("MiddleName");
+					this.OnMiddleNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LastName", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string LastName
+		{
+			get
+			{
+				return this._LastName;
+			}
+			set
+			{
+				if ((this._LastName != value))
+				{
+					this.OnLastNameChanging(value);
+					this.SendPropertyChanging();
+					this._LastName = value;
+					this.SendPropertyChanged("LastName");
+					this.OnLastNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Email", DbType="NVarChar(100)")]
+		public string Email
+		{
+			get
+			{
+				return this._Email;
+			}
+			set
+			{
+				if ((this._Email != value))
+				{
+					this.OnEmailChanging(value);
+					this.SendPropertyChanging();
+					this._Email = value;
+					this.SendPropertyChanged("Email");
+					this.OnEmailChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AdminUserProfile_AdminUserMembershipRecord", Storage="_AdminUserMembershipRecords", ThisKey="ID", OtherKey="ProfileID")]
+		public EntitySet<AdminUserMembershipRecord> AdminUserMembershipRecords
+		{
+			get
+			{
+				return this._AdminUserMembershipRecords;
+			}
+			set
+			{
+				this._AdminUserMembershipRecords.Assign(value);
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_AdminUserMembershipRecords(AdminUserMembershipRecord entity)
+		{
+			this.SendPropertyChanging();
+			entity.AdminUserProfileRecord = this;
+		}
+		
+		private void detach_AdminUserMembershipRecords(AdminUserMembershipRecord entity)
+		{
+			this.SendPropertyChanging();
+			entity.AdminUserProfileRecord = null;
 		}
 	}
 }

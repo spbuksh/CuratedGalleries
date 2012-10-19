@@ -9,6 +9,8 @@ namespace Corbis.CMS.Web
         {
             //!!! DO NOT DELETE AND UNCOMMENT!!! We use custom error processing!!!
             //filters.Add(new HandleErrorAttribute());
+
+            filters.Add(new AuthorizeAttribute());
         }
     }
 }

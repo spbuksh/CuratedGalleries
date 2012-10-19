@@ -48,6 +48,19 @@ namespace Corbis.CMS.Entity
         public ZipArchivePackage Package { get; set; }
 
         /// <summary>
+        /// Admin person who is editing this gallery. We must prevent gallery editing wy several persons
+        /// </summary>
+        public Nullable<int> Editor { get; set; }
+
+        /// <summary>
+        /// True - this gallery is in edit mode now.
+        /// </summary>
+        public bool IsInEditMode
+        {
+            get { return this.Editor.HasValue; }
+        }
+
+        /// <summary>
         /// ctor
         /// </summary>
         public CuratedGallery()

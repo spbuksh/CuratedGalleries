@@ -6,6 +6,7 @@ using Corbis.Common;
 using Ionic.Zip;
 using System.IO;
 using Corbis.CMS.Entity;
+using Corbis.CMS.Repository.Interface.Communication;
 
 namespace Corbis.CMS.Web.Code
 {
@@ -16,7 +17,7 @@ namespace Corbis.CMS.Web.Code
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static string GetTemplateFolderPath(int id)
+        public static string GetTemplatePath(int id)
         {
             return Path.Combine(GalleryRuntime.TemplateDirectory, id.ToString());
         }
@@ -56,7 +57,7 @@ namespace Corbis.CMS.Web.Code
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static GalleryTemplate GetTemplate(int id)
+        public static GalleryTemplate GetTemplate(int id, GalleryTemplateContent content = GalleryTemplateContent.Base)
         {
 
 
