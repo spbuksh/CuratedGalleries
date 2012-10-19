@@ -186,6 +186,7 @@ namespace Corbis.CMS.Repository
             {
                 try
                 {
+                    context.Connection.Open();
                     context.Transaction = context.Connection.BeginTransaction();
 
                     if (!this.Check(context, form.Login))
@@ -227,7 +228,8 @@ namespace Corbis.CMS.Repository
 
             }
 
-            throw new NotImplementedException();
+           //TODO: Set Output param to ProfileID.
+           return new OperationResult<OperationResults, int?>{Result = OperationResults.Success, Output = null};
         }
 
         /// <summary>

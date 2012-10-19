@@ -19,6 +19,21 @@ namespace Corbis.CMS.Entity
         }
 
         /// <summary>
+        /// Gallery Template Author
+        /// </summary>
+        public string Author { get; set; }
+
+        /// <summary>
+        /// Gallery Template Company
+        /// </summary>
+        public string Company { get; set; }
+
+        /// <summary>
+        /// Gallery Template Images.
+        /// </summary>
+        public string ImagesUploadPath { get; set; }
+
+        /// <summary>
         /// Gallery name
         /// </summary>
         public string Name { get; set; }
@@ -26,7 +41,7 @@ namespace Corbis.CMS.Entity
         /// <summary>
         /// Gallery template image url. It is "face" of the gallery
         /// </summary>
-        public string ImageUrl { get; set; }
+        public GalleryIcon GalleryIcon { get; set; }
 
         /// <summary>
         /// Gallery template description

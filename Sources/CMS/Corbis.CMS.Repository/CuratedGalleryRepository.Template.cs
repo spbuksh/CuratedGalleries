@@ -22,6 +22,7 @@ namespace Corbis.CMS.Repository
             {
                 try
                 {
+                    context.Connection.Open();
                     context.Transaction = context.Connection.BeginTransaction();
 
                     var frec = new FileRecord() { Name = template.Package.FileName, Content = new System.Data.Linq.Binary(template.Package.FileContent) };
@@ -33,13 +34,13 @@ namespace Corbis.CMS.Repository
                     trec.Archive = frec.ID;
                     trec.DateCreated = DateTime.UtcNow;
 
-                    if (context.GalleryTemplateRecords.Count() == 0)
+                    if (!context.GalleryTemplateRecords.Any())
                     {
                         trec.IsDefault = true;
                     }
                     else if (template.IsDefault)
                     {
-                        var dtrec = context.GalleryTemplateRecords.Where(x => x.IsDefault).Single();
+                        var dtrec = context.GalleryTemplateRecords.Single(x => x.IsDefault);
                         dtrec.IsDefault = false;
                     }
 
