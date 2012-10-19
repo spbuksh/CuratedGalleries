@@ -42,6 +42,7 @@ Sources/Public/Corbis.Public.Repository/[Aa]pp.config
 
 Sources/CMS/Corbis.CMS.Web/[Ww]eb.config
 Sources/CMS/Corbis.CMS.Repository/[Aa]pp.config
+Sources/CMS/Corbis.CMS.Web/CuratedGalleries/*
 
 
 Sources/Share/Corbis.Logging/NLog.config
