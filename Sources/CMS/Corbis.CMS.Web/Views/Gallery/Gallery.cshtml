@@ -34,8 +34,7 @@
 @Scripts.Render("~/Scripts/Corbis/Uploader.js")
 
 <script type="text/javascript">
-    //uploaderOptions.url = "api/Upload/GalleryImageUpload?id=@this.Model.ID.Value";
-    uploaderOptions.url = "Gallery/UploadImage?id=@this.Model.ID.Value";
+    uploaderOptions.url = "api/Upload/GalleryImageUpload?id=@this.Model.ID.Value";
     uploaderOptions.uploadCallBack = "callBackImageID";
     uploaderOptions.errorCallBack = "errorCallBack";
     uploaderOptions.filter = "*.jpg;*.jpeg;*.tif;*.tiff;*.png"
@@ -50,7 +49,7 @@
     }
 </script>
 <p>
-    @Html.ActionLink("Preview", "GalleryPreview", new { id = this.Model.ID });
+    @Html.ActionLink("Build and Preview", "GalleryPreview", new { id = this.Model.ID });
 </p>
 
 <p>

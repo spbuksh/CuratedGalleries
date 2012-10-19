@@ -7,11 +7,15 @@ using Corbis.CMS.Entity;
 using System.IO;
 using Corbis.CMS.Repository.Interface.Communication;
 using System.Web.Routing;
+using System.Xml.Xsl;
+using System.Xml;
 
 namespace Corbis.CMS.Web.Code
 {
     public partial class GalleryRuntime
     {
+        #region Gallery file system structure 
+
         /// <summary>
         /// Gets absolute folder path to the gallery based on its identifier
         /// </summary>
@@ -23,34 +27,37 @@ namespace Corbis.CMS.Web.Code
         }
 
         /// <summary>
-        /// 
+        /// This folder contains result gallery for preview. This folder has strict name.
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="htmlfile"></param>
-        /// <param name="context"></param>
+        /// <param name="id">Gallery identifier</param>
         /// <returns></returns>
-        public static string GetGalleryPreviewUrl(int id, string htmlfile, HttpContextBase context = null)
+        public static string GetGalleryOutputPath(int id)
         {
-            if(context == null)
-                context = new HttpContextWrapper(HttpContext.Current);
+            return Path.Combine(GetGalleryPath(id), "Output");
+        }
 
-            return GetGalleryPreviewUrl(id, htmlfile, new RequestContext(context, new RouteData()));
+        /// <summary>
+        /// This folder contains gallery content (images, xml view state file and ect). This folder has strict name.
+        /// </summary>
+        /// <param name="id">Gallery identifier</param>
+        /// <returns></returns>
+        public static string GetGalleryContentPath(int id)
+        {
+            return Path.Combine(GetGalleryPath(id), "Content");
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="id">Gallery identifier</param>
-        /// <param name="htmlfile">Gallery entry point html file</param>
-        /// <param name="context"></param>
+        /// <param name="id"></param>
         /// <returns></returns>
-        public static string GetGalleryPreviewUrl(int id, string htmlfile, RequestContext context)
+        public static string GetGallerySourcePath(int id)
         {
-            var helper = new System.Web.Mvc.UrlHelper(context, RouteTable.Routes);
-
-            //NOTE: RouteConfig.RegisterRoutes has "GalleryPreview" root registration. So if you change this logic it 
-            return helper.RouteUrl("GalleryPreview", new { id = id, filename = htmlfile });
+            var file = Directory.GetFiles(GetGalleryContentPath(id), "*.xml").SingleOrDefault();
+            return string.IsNullOrEmpty(file) ? null : file;
         }
+
+        #endregion Gallery file system structure
 
         /// <summary>
         /// 
@@ -78,6 +85,11 @@ namespace Corbis.CMS.Web.Code
 
             var gallery = rslt.Output;
 
+            Directory.CreateDirectory(GetGalleryPath(gallery.ID));
+            Directory.CreateDirectory(GetGalleryOutputPath(gallery.ID));
+            Directory.CreateDirectory(GetGalleryContentPath(gallery.ID));
+
+
             //find template for the gallery
             var tdir = new DirectoryInfo(GetTemplatePath(gallery.TemplateID));
 
@@ -93,21 +105,12 @@ namespace Corbis.CMS.Web.Code
 
             //create source xml file
 
-            var gdir = tdir.CopyTo(gallery.GetFolderPath());
+            //var gdir = tdir.CopyTo(gallery.GetFolderPath());
 
 
             return gallery;
         }
 
-        /// <summary>
-        /// Absolute path to the gallery content xml file. This file contains gallery data state.
-        /// </summary>
-        /// <param name="id">gallery identifier</param>
-        /// <returns></returns>
-        public static string GetGallerySourcePath(int id)
-        {
-            return Path.Combine(GetGalleryPath(id), "GalleryContent.xml");
-        }
 
         /// <summary>
         /// Gets gallery template
@@ -119,6 +122,60 @@ namespace Corbis.CMS.Web.Code
             return new CuratedGallery() { ID = id, TemplateID = 1 };
 
             //throw new NotImplementedException();
+        }
+
+
+        public static CuratedGallery BuildGalleryOutput(int id)
+        {
+            CuratedGallery gallery = GetGallery(id);
+
+            var outputDir = new DirectoryInfo(GalleryRuntime.GetGalleryOutputPath(id));
+
+            if (outputDir.Exists)
+            {
+                outputDir.Clear();
+            }
+            else
+            {
+                outputDir.Create();
+            }
+
+            BuildOutput(new DirectoryInfo(GalleryRuntime.GetTemplatePath(gallery.TemplateID)), outputDir, GetGallerySourcePath(id));
+
+            return gallery;
+        }
+        public static void BuildOutput(DirectoryInfo source, DirectoryInfo target, string xfilepath)
+        {
+            if (!target.Exists)
+                target.Create();
+
+            foreach (var file in source.GetFiles())
+            {
+                //if (file.Name.ToLower().EndsWith(".xslt"))
+                //{
+                //    var outfilepath = file.Name.Substring(0, file.Name.Length - ".xslt".Length);
+                //    Transform(xfilepath, file.FullName, Path.Combine(source.FullName, outfilepath));
+                //}
+                //else
+                {
+                    file.CopyTo(Path.Combine(target.FullName, file.Name), true);
+                }
+            }
+
+            foreach (var subdir in source.GetDirectories())
+                BuildOutput(subdir, new DirectoryInfo(Path.Combine(target.FullName, subdir.Name)), xfilepath);
+        }
+
+        public static void Transform(string xmlfilepath, string xsltfilepath, string outfilepath)
+        {
+            XslCompiledTransform transform = new XslCompiledTransform();
+
+            using (XmlReader reader = XmlReader.Create(xsltfilepath))
+            {
+                transform.Load(reader);
+            }
+
+            transform.Transform(xmlfilepath, outfilepath);
         }
 
     }

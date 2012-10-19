@@ -105,5 +105,11 @@ namespace Corbis.Common
             Utils.DirectoryCopy(from, dir);
             return dir;
         }
+
+        public static void Clear(this DirectoryInfo dir)
+        {
+            Utils.DirectoryClear(dir);
+        }
+
     }
 }

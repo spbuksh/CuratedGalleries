@@ -22,7 +22,6 @@ using Corbis.Common.Utilities.Password;
 
 namespace Corbis.CMS.Web.Controllers
 {
-    [Authorize]   
     public class AccountController : CMSControllerBase
     {
         [Dependency]

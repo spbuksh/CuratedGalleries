@@ -34,7 +34,7 @@ namespace Corbis.CMS.Web.Controllers.Api
 
             int id = int.Parse(pmtr);
 
-            string uploadRoot = Path.Combine(GalleryRuntime.GetGalleryPath(id), "Images");
+            string uploadRoot = Path.Combine(GalleryRuntime.GetGalleryContentPath(id));
 
             if (!Directory.Exists(uploadRoot))
                 Directory.CreateDirectory(uploadRoot);
@@ -59,7 +59,7 @@ namespace Corbis.CMS.Web.Controllers.Api
                 return this.Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
 
-            return message.CreateResponse(HttpStatusCode.OK, new Uri(filepath).AbsoluteUri);
+            return message.CreateResponse(HttpStatusCode.OK, Corbis.Common.Utils.AbsoluteToVirtual(filepath, this.HttpContext));
         }
 
     }
