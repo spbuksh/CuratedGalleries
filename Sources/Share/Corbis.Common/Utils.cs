@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+using System.Web;
 
 namespace Corbis.Common
 {
@@ -61,5 +62,11 @@ namespace Corbis.Common
                 DirectoryCopy(subdir, to.CreateSubdirectory(subdir.Name));
         }
 
+        public static string AbsoluteToVirtual(string absolutePath, HttpContextBase context = null)
+        {
+            context = (context == null) ? new HttpContextWrapper(HttpContext.Current) : context;
+            string appdir = context.Server.MapPath("~/");
+            return absolutePath.Substring(appdir.Length).Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        }
     }
 }

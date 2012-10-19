@@ -4,16 +4,18 @@
 /// ***********************************************************************
 
 var uploaderOptions = {
-    url: "http://localhost:62506/api/Upload/FileUpload", //it is upload url
-    callback: "callBackImageID",
-    filter: "*.jpg;*.jpeg;*.tif;*.tiff;*.png",
+    url: null, //it is upload url. !!!REQUIRED!!!
+    filter: "*.*", //as extended example: "*.jpg;*.jpeg;*.tif;*.tiff;*.png"
     minFileSize: 0,
     maxFileSize: 62914560,
     bgcolor: "#003300",
+    greetingText: "max file size 60Mb min file size 1 mb \nplease press button for upload images",
+    size: { width: 700, height: 500 },
+    uploadCallBack: null, //!!!REQUIRED!!!
+    errorCallBack: null, //!!!REQUIRED!!!
     id: "SimpleUploader",
     name: "SimpleUploader",
-    greetingText: "max file size 60Mb min file size 1 mb \nplease press button for upload images",
-    size: { width: 700, height: 500 }
+    uploadAttemps: 3
 };
 
 $(function () {
@@ -29,6 +31,9 @@ $(function () {
     flashvars.sizeLimitMin = uploaderOptions.minFileSize ? uploaderOptions.minFileSize.toString() : "0",
     flashvars.uploadURL = uploaderOptions.url;
     flashvars.greetingText = uploaderOptions.greetingText;
+    flashvars.uploadCallBack = uploaderOptions.uploadCallBack;
+    flashvars.errorCallBack = uploaderOptions.errorCallBack;
+    flashvars.uploadAttemps = uploaderOptions.uploadAttemps;
 
     params.quality = "high";
     params.bgcolor = uploaderOptions.bgcolor;

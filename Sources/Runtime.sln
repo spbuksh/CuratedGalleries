@@ -83,6 +83,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GalleryTemplates", "GalleryTemplates", "{6B12592C-6C92-4E08-8809-0B1A642AC077}"
 	ProjectSection(SolutionItems) = preProject
 		Storage\GalleryTemplates\Fashion.zip = Storage\GalleryTemplates\Fashion.zip
+		Storage\GalleryTemplates\readme.txt = Storage\GalleryTemplates\readme.txt
 	EndProjectSection
 EndProject
 Global

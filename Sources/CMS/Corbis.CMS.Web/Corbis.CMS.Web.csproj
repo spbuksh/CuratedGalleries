@@ -180,12 +180,16 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Code\AdminUserPrincipal.cs" />
+    <Compile Include="Code\Gallery\Extensions.Gallery.cs" />
+    <Compile Include="Code\Gallery\Extensions.Template.cs" />
+    <Compile Include="Code\Gallery\GalleryImage.cs" />
     <Compile Include="Code\Gallery\GalleryRuntime.Gallery.cs" />
     <Compile Include="Code\Gallery\GalleryRuntime.Template.cs" />
     <Compile Include="Code\Gallery\CuratedGallerySection.cs" />
     <Compile Include="Code\Gallery\GalleryRuntime.cs" />
     <Compile Include="Code\Extensions.cs" />
     <Compile Include="Code\Gallery\Extensions.cs" />
+    <Compile Include="Code\Gallery\GalleryContent.cs" />
     <Compile Include="Code\RepositoryProvider.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Api\ApiControllerBase.cs" />
@@ -203,6 +207,7 @@
     </Compile>
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\AdminUser.cs" />
+    <Compile Include="Models\GalleryModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -392,7 +397,6 @@
     <Content Include="Views\User\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Upload\Index.cshtml" />
     <Content Include="Views\Gallery\Index.cshtml" />
     <Content Include="Views\Gallery\Gallery.cshtml" />
     <Content Include="Views\Template\Index.cshtml" />

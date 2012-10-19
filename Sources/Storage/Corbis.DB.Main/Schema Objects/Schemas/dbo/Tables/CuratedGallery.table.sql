@@ -5,8 +5,11 @@
     [TemplateID]   INT           NOT NULL,
     [DateCreated]  DATETIME2 (7) NOT NULL,
     [DateModified] DATETIME2 (7) NULL,
-    [Archive]      BIGINT        NULL
+    [Archive]      BIGINT        NULL,
+    [Editor]       INT           NULL
 );
+
+
 
 
 

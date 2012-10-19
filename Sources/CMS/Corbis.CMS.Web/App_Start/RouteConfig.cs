@@ -13,6 +13,11 @@ namespace Corbis.CMS.Web
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
+            //******************************************************************************
+            //Routes must be registered in order from the most specific to the most general
+            //******************************************************************************
+
+            //
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
