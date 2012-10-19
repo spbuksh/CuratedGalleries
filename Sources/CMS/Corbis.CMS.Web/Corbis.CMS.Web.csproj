@@ -197,7 +197,6 @@
     <Compile Include="Controllers\CMSControllerBase.cs" />
     <Compile Include="Controllers\GalleryController.cs" />
     <Compile Include="Controllers\TemplateController.cs" />
-    <Compile Include="Controllers\UploadController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />

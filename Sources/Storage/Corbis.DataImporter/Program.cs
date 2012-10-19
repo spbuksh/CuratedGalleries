@@ -22,8 +22,8 @@ namespace Corbis.DataImporter
         static void Main(string[] args)
         {
             var importContainer = new ImportContainer();
-            //importContainer.AddImporter(new UserImporter());
-            //importContainer.AddImporter(new TemplateImporter());
+            importContainer.AddImporter(new UserImporter());
+            importContainer.AddImporter(new TemplateImporter());
             importContainer.DoImports();
         }
       
