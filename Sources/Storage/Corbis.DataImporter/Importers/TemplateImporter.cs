@@ -17,23 +17,28 @@ using Microsoft.Practices.Unity;
 
 namespace Corbis.DataImporter.Importers
 {
+    /// <summary>
+    /// Class to work with 
+    /// </summary>
     public class TemplateImporter : IImporter
     {
+        /// <summary>
+        /// Imports Data to the System.
+        /// </summary>
         public void DoImport()
         {
             var container = new UnityContainer();
             RepositoryProvider.Register(container, "RepositoryProvider");
             var repository = container.Resolve<ICuratedGalleryRepository>();
-
             var path = ImportHelper.GetPath(ConfigurationManager.AppSettings["TemplatesStorage"]);
-            foreach (string file in Directory.EnumerateFiles(path, "*.zip*", SearchOption.AllDirectories))
+            foreach (var file in Directory.EnumerateFiles(path, "*.zip*", SearchOption.AllDirectories))
             {
                 var fileinfo = new FileInfo(file);
                 using (var stream = fileinfo.OpenRead())
                 {
                     using (var zip = ZipFile.Read(stream))
                     {
-                        string tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+                        var tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
                         zip.ExtractAll(tempDir);
 
                         var files = Directory.GetFiles(tempDir, "*.xml*").ToList();
