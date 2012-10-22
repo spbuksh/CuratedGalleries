@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><Database Name="Corbis.Main" Class="MainDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
-  <Connection Mode="AppSettings" ConnectionString="Data Source=PAVELSM\MSSQL2008;Initial Catalog=Corbis.Main;Integrated Security=True" SettingsObjectName="Corbis.DB.Linq.Properties.Settings" SettingsPropertyName="Corbis_MainConnectionString" Provider="System.Data.SqlClient" />
+  <Connection Mode="AppSettings" ConnectionString="Data Source=YMURASHKA\SQLEXPRESS;Initial Catalog=Corbis.Main;Integrated Security=True" SettingsObjectName="Corbis.DB.Linq.Properties.Settings" SettingsPropertyName="Corbis_MainConnectionString1" Provider="System.Data.SqlClient" />
   <Table Name="dbo.AdminUserMembership" Member="AdminUserMembershipRecords">
     <Type Name="AdminUserMembershipRecord">
       <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -10,7 +10,6 @@
       <Column Name="IsActive" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Column Name="DateCreated" Type="System.DateTime" DbType="DateTime2 NOT NULL" CanBeNull="false" />
       <Association Name="AdminUserMembershipRecord_AdminUserToRoleRecord" Member="AdminUserToRoleRecords" ThisKey="ID" OtherKey="MemberID" Type="AdminUserToRoleRecord" />
-      <Association Name="AdminUserMembershipRecord_CuratedGalleryRecord" Member="CuratedGalleryRecords" ThisKey="ID" OtherKey="Editor" Type="CuratedGalleryRecord" />
       <Association Name="AdminUserProfile_AdminUserMembershipRecord" Member="AdminUserProfileRecord" ThisKey="ProfileID" OtherKey="ID" Type="AdminUserProfileRecord" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
     </Type>
   </Table>
@@ -62,8 +61,6 @@
       <Column Name="DateCreated" Type="System.DateTime" DbType="DateTime2 NOT NULL" CanBeNull="false" />
       <Column Name="DateModified" Type="System.DateTime" DbType="DateTime2" CanBeNull="true" />
       <Column Name="Archive" Type="System.Int64" DbType="BigInt" CanBeNull="true" />
-      <Column Name="Editor" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Association Name="AdminUserMembershipRecord_CuratedGalleryRecord" Member="AdminUserMembershipRecord" ThisKey="Editor" OtherKey="ID" Type="AdminUserMembershipRecord" IsForeignKey="true" />
       <Association Name="FileRecord_CuratedGalleryRecord" Member="FileRecord" ThisKey="Archive" OtherKey="ID" Type="FileRecord" IsForeignKey="true" />
       <Association Name="GalleryTemplateRecord_CuratedGalleryRecord" Member="GalleryTemplateRecord" ThisKey="TemplateID" OtherKey="ID" Type="GalleryTemplateRecord" IsForeignKey="true" />
     </Type>

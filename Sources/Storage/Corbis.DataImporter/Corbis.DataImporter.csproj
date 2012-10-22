@@ -34,7 +34,13 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ionic.Zip">
+      <HintPath>..\..\packages\DotNetZip.1.9.1.8\lib\net20\Ionic.Zip.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
@@ -47,6 +53,7 @@
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -54,6 +61,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ImportContainer\ImportContainer.cs" />
+    <Compile Include="Importers\TemplateImporter.cs" />
+    <Compile Include="Importers\UserImporter.cs" />
+    <Compile Include="ImportHelper\ImportHelper.cs" />
+    <Compile Include="Interface\IImportContainer.cs" />
+    <Compile Include="Interface\IImporter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -79,11 +92,21 @@
       <Project>{12287E8D-E19D-4C15-92E8-EAD5B25DE004}</Project>
       <Name>Corbis.Public.Repository.Interface</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Share\Corbis.Common\Corbis.Common.csproj">
+      <Project>{9A585B1C-B7DA-4BCC-8412-E63278CB5B17}</Project>
+      <Name>Corbis.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Share\Corbis.Presentation.Common\Corbis.Presentation.Common.csproj">
       <Project>{A749A606-1A43-4A0F-8A29-D42B1C0339B4}</Project>
       <Name>Corbis.Presentation.Common</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="AdminUsers\AdminUsers.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

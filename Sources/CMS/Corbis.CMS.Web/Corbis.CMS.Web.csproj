@@ -196,6 +196,7 @@
     <Compile Include="Controllers\Api\UploadController.cs" />
     <Compile Include="Controllers\CMSControllerBase.cs" />
     <Compile Include="Controllers\GalleryController.cs" />
+    <Compile Include="Controllers\TemplateController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -397,6 +398,7 @@
   <ItemGroup>
     <Content Include="Views\Gallery\Index.cshtml" />
     <Content Include="Views\Gallery\Gallery.cshtml" />
+    <Content Include="Views\Template\Index.cshtml" />
     <None Include="Web.config.local">
       <SubType>Designer</SubType>
     </None>
