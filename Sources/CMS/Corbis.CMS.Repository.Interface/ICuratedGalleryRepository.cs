@@ -58,9 +58,9 @@ namespace Corbis.CMS.Repository.Interface
         /// Creates curated gallery
         /// </summary>
         /// <param name="id">Curated gallery unique identifier</param>
-        /// <param name="content"></param>
+        /// <param name="includePackage"></param>
         /// <returns></returns>
-        OperationResult<OperationResults, CuratedGallery> GetGallery(int id, CuratedGalleryContent contect = CuratedGalleryContent.All);
+        OperationResult<OperationResults, CuratedGallery> GetGallery(int id, bool includePackage = false);
 
         /// <summary>
         /// Gets filtered list of curated galleries
@@ -73,9 +73,8 @@ namespace Corbis.CMS.Repository.Interface
         /// Updates curated gallery
         /// </summary>
         /// <param name="gallery">Gallery object</param>
-        /// <param name="content">Describes updating content</param>
         /// <returns></returns>
-        OperationResult<OperationResults, object> UpdateGallery(CuratedGallery gallery, CuratedGalleryContent content = CuratedGalleryContent.All);
+        OperationResult<OperationResults, object> UpdateGallery(CuratedGallery gallery);
 
         #endregion Curated gallery management
 

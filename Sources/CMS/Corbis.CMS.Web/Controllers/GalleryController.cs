@@ -10,6 +10,7 @@ using Corbis.Presentation.Common;
 using Corbis.CMS.Web.Models;
 using System.IO;
 using System.Net;
+using Ionic.Zip;
 
 namespace Corbis.CMS.Web.Controllers
 {
@@ -73,7 +74,7 @@ namespace Corbis.CMS.Web.Controllers
         /// <param name="id">Gallery identifier</param>
         /// <returns></returns>
         [HttpGet]
-        public ActionResult GalleryPreview([Required]Nullable<int> id)
+        public ActionResult BuildGallery([Required]Nullable<int> id)
         {
             var gallery = GalleryRuntime.BuildGalleryOutput(id.Value);
 
@@ -88,6 +89,36 @@ namespace Corbis.CMS.Web.Controllers
             return this.Redirect(string.Format("~/{0}", url.TrimStart('~', '/')));
         }
 
+        /// <summary>
+        /// Downloads gallery as zip archive
+        /// </summary>
+        /// <param name="id">Gallery identifier</param>
+        /// <returns></returns>
+        public ActionResult Download(int id)
+        {
+            //TODO: File/folder filter for package has not been implemented. For example we do not need xml gallery state file.
+            byte[] output = null;
+
+            using (var package = new ZipFile())
+            {
+                var root = GalleryRuntime.GetGalleryPath(id);
+
+                package.AddFiles(Directory.GetFiles(root));
+
+                foreach (var item in Directory.GetDirectories(root))
+                    package.AddDirectory(item, item.Substring(root.Length).TrimStart(Path.DirectorySeparatorChar));
+
+                using(MemoryStream stream = new MemoryStream())
+                {
+                    package.Save(stream);
+
+                    stream.Position = 0;
+                    output = stream.ToArray();
+                }
+            }
+
+            return this.File(output, "application/zip");
+        }
 
         /// <summary>
         /// Uploads images into the gallery
@@ -103,7 +134,7 @@ namespace Corbis.CMS.Web.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Request parameters are not valid");
 
             if (this.Request.Files.Count != 1)
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "");
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Upload image request must have 1 image for uploading");
 
             string uploadRoot = Path.Combine(GalleryRuntime.GetGalleryPath(id.Value), "Images");
 

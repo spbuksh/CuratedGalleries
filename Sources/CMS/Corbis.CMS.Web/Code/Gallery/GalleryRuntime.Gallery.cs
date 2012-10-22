@@ -9,12 +9,28 @@ using Corbis.CMS.Repository.Interface.Communication;
 using System.Web.Routing;
 using System.Xml.Xsl;
 using System.Xml;
+using System.Xml.Serialization;
 
 namespace Corbis.CMS.Web.Code
 {
     public partial class GalleryRuntime
     {
         #region Gallery file system structure 
+
+        /// <summary>
+        /// Gallery output name
+        /// </summary>
+        protected static string GalleryOutputDirName
+        {
+            get { return "Output"; }
+        }
+        /// <summary>
+        /// Gallery content folder name. This folder contains gallery data and gallery state
+        /// </summary>
+        protected static string GalleryContentDirName
+        {
+            get { return "Content"; }
+        }
 
         /// <summary>
         /// Gets absolute folder path to the gallery based on its identifier
@@ -33,7 +49,7 @@ namespace Corbis.CMS.Web.Code
         /// <returns></returns>
         public static string GetGalleryOutputPath(int id)
         {
-            return Path.Combine(GetGalleryPath(id), "Output");
+            return Path.Combine(GetGalleryPath(id), GalleryOutputDirName);
         }
 
         /// <summary>
@@ -43,7 +59,7 @@ namespace Corbis.CMS.Web.Code
         /// <returns></returns>
         public static string GetGalleryContentPath(int id)
         {
-            return Path.Combine(GetGalleryPath(id), "Content");
+            return Path.Combine(GetGalleryPath(id), GalleryContentDirName);
         }
 
         /// <summary>
@@ -53,11 +69,39 @@ namespace Corbis.CMS.Web.Code
         /// <returns></returns>
         public static string GetGallerySourcePath(int id)
         {
-            var file = Directory.GetFiles(GetGalleryContentPath(id), "*.xml").SingleOrDefault();
-            return string.IsNullOrEmpty(file) ? null : file;
+            return Path.Combine(GetGalleryContentPath(id), "GalleryContent.xml");
         }
 
         #endregion Gallery file system structure
+
+        /// <summary>
+        /// Loads gallery content data by gallery identifier
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public static GalleryContent LoadGalleryContent(int id)
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(GalleryContent));
+
+            using (FileStream fstream = new FileStream(GetGallerySourcePath(id), FileMode.Open, FileAccess.Read))
+            {
+                return serializer.Deserialize(fstream) as GalleryContent;
+            }
+        }
+        /// <summary>
+        /// Loads gallery content data by gallery identifier
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public static void SaveGalleryContent(int id, GalleryContent content)
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(GalleryContent));
+
+            using (FileStream fstream = new FileStream(GetGallerySourcePath(id), FileMode.Create, FileAccess.Write))
+            {
+                serializer.Serialize(fstream, content);
+            }
+        }
 
         /// <summary>
         /// 
@@ -67,7 +111,7 @@ namespace Corbis.CMS.Web.Code
         /// <returns></returns>
         public static CuratedGallery CreateGallery(string name, Nullable<int> templateID = null)
         {
-            //try to create gallery
+            //try to create gallery in the storage
             OperationResult<OperationResults, CuratedGallery> rslt = null;
 
             try
@@ -103,9 +147,10 @@ namespace Corbis.CMS.Web.Code
                 //...
             }
 
-            //create source xml file
+            var content = new GalleryContent() { Name = name };
 
-            //var gdir = tdir.CopyTo(gallery.GetFolderPath());
+            gallery.SaveContent(content);
+
 
 
             return gallery;
@@ -113,21 +158,46 @@ namespace Corbis.CMS.Web.Code
 
 
         /// <summary>
-        /// Gets gallery template
+        /// Gets gallery by gallery identifier
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public static CuratedGallery GetGallery(int id)
+        /// <param name="id">Gallery identifier</param>
+        /// <param name="includePackage"></param>
+        /// <returns>Return null if gallery was not found. Otrherwize returns gallery object</returns>
+        public static CuratedGallery GetGallery(int id, bool includePackage = false)
         {
-            return new CuratedGallery() { ID = id, TemplateID = 1 };
+            OperationResult<OperationResults, CuratedGallery> rslt = null;
 
-            //throw new NotImplementedException();
+            try
+            {
+                rslt = GalleryRepository.GetGallery(id, includePackage);
+            }
+            catch(Exception ex)
+            {
+                Logger.WriteError(ex);
+            }
+
+            switch(rslt.Result)
+            {
+                case OperationResults.Success:
+                    break;
+                case OperationResults.NotFound:
+                    return null;
+                case OperationResults.Failure:
+                    throw new Exception(string.Format("Internal server error during gallery(id={0}) retrival from the storage", id));
+                default:
+                    throw new NotImplementedException();
+            }
+
+            return rslt.Output;
         }
 
 
         public static CuratedGallery BuildGalleryOutput(int id)
         {
             CuratedGallery gallery = GetGallery(id);
+
+            if (gallery == null)
+                throw new Exception(string.Format("Gallery with id='{0}' was not found", id));
 
             var outputDir = new DirectoryInfo(GalleryRuntime.GetGalleryOutputPath(id));
 
@@ -144,19 +214,26 @@ namespace Corbis.CMS.Web.Code
 
             return gallery;
         }
-        public static void BuildOutput(DirectoryInfo source, DirectoryInfo target, string xfilepath)
+
+        /// <summary>
+        /// Builds gallery output
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="target"></param>
+        /// <param name="xfilepath"></param>
+        protected static void BuildOutput(DirectoryInfo source, DirectoryInfo target, string xfilepath)
         {
             if (!target.Exists)
                 target.Create();
 
             foreach (var file in source.GetFiles())
             {
-                //if (file.Name.ToLower().EndsWith(".xslt"))
-                //{
-                //    var outfilepath = file.Name.Substring(0, file.Name.Length - ".xslt".Length);
-                //    Transform(xfilepath, file.FullName, Path.Combine(source.FullName, outfilepath));
-                //}
-                //else
+                if (file.Name.ToLower().EndsWith(".xslt"))
+                {
+                    var outfilepath = file.Name.Substring(0, file.Name.Length - ".xslt".Length);
+                    Transform(xfilepath, file.FullName, Path.Combine(target.FullName, outfilepath));
+                }
+                else
                 {
                     file.CopyTo(Path.Combine(target.FullName, file.Name), true);
                 }
@@ -166,7 +243,13 @@ namespace Corbis.CMS.Web.Code
                 BuildOutput(subdir, new DirectoryInfo(Path.Combine(target.FullName, subdir.Name)), xfilepath);
         }
 
-        public static void Transform(string xmlfilepath, string xsltfilepath, string outfilepath)
+        /// <summary>
+        /// Executes xslt transformation
+        /// </summary>
+        /// <param name="xmlfilepath"></param>
+        /// <param name="xsltfilepath"></param>
+        /// <param name="outfilepath"></param>
+        protected static void Transform(string xmlfilepath, string xsltfilepath, string outfilepath)
         {
             XslCompiledTransform transform = new XslCompiledTransform();
 

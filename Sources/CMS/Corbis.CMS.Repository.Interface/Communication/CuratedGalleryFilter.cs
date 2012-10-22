@@ -34,6 +34,6 @@ namespace Corbis.CMS.Repository.Interface.Communication
         /// <summary>
         /// 
         /// </summary>
-        public Nullable<CuratedGalleryContent> GalleryContent { get; set; }
+        //public Nullable<CuratedGalleryContent> GalleryContent { get; set; }
     }
 }

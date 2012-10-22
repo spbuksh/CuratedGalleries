@@ -48,7 +48,6 @@
     <Compile Include="IAdminUserRepository.cs" />
     <Compile Include="ICuratedGalleryRepository.cs" />
     <Compile Include="Communication\CuratedGalleryFilter.cs" />
-    <Compile Include="Communication\CuratedGalleryContent.cs" />
     <Compile Include="Communication\GalleryTemplateContent.cs" />
     <Compile Include="Communication\GalleryTemplateFilter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -21,7 +21,7 @@ namespace Corbis.CMS.Repository.Interface.Communication
         /// <summary>
         /// 
         /// </summary>
-        All = CuratedGalleryContent.Base | CuratedGalleryContent.Archive
+        All = GalleryTemplateContent.Base | GalleryTemplateContent.Archive
     }
 
 }

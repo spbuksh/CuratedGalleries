@@ -63,26 +63,14 @@ namespace Corbis.CMS.Web.Code
             return Corbis.Common.Utils.AbsoluteToVirtual(htmlpath, context);
         }
 
-        //public static GalleryContent Load(this CuratedGallery gallery)
-        //{
-        //    string xmlpath = GalleryRuntime.GetGallerySourcePath(gallery.ID);
-
-
-        //}
-        //public static void Update(this CuratedGallery gallery, GalleryContent content)
-        //{
-        //    string path = Path.Combine(gallery.GetFolderPath(), "GalleryContent.xml");
-
-        //    using (FileStream fstream = new FileStream(path, FileMode.Create, FileAccess.ReadWrite))
-        //    {
- 
-        //        fstream.Write(
-        //    }
-
-        //    XDocument xdoc = XDocument.Load(path);
-        //    xdoc.Save(path);
-
-        //}
+        public static GalleryContent LoadContent(this CuratedGallery gallery)
+        {
+            return GalleryRuntime.LoadGalleryContent(gallery.ID);
+        }
+        public static void SaveContent(this CuratedGallery gallery, GalleryContent content)
+        {
+            GalleryRuntime.SaveGalleryContent(gallery.ID, content);
+        }
 
     }
 }

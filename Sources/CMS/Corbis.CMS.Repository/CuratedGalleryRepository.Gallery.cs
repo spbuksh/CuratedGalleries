@@ -42,8 +42,27 @@ namespace Corbis.CMS.Repository
             return rslt;
         }
 
-        public OperationResult<OperationResults, CuratedGallery> GetGallery(int id, CuratedGalleryContent contect = CuratedGalleryContent.All)
+        public OperationResult<OperationResults, CuratedGallery> GetGallery(int id, bool includePackage = false)
         {
+            using (var context = this.CreateMainContext())
+            {
+                var record = context.CuratedGalleryRecords.Where(x => x.ID == id).SingleOrDefault();
+
+                if (record == null)
+                    return new OperationResult<OperationResults, CuratedGallery>() { Result = OperationResults.NotFound };
+
+                var rslt = new OperationResult<OperationResults, CuratedGallery>() { Result = OperationResults.Success };
+                rslt.Output = this.ObjectMapper.DoMapping<CuratedGallery>(record);
+
+                if (includePackage)
+                {
+                    var frec = record.FileRecord;
+                    rslt.Output.Package = new ZipArchivePackage() { FileName = frec.Name, FileContent = frec.Content.ToArray() };
+                }
+
+                return rslt;
+            }
+
             throw new NotImplementedException();
         }
 
@@ -52,7 +71,7 @@ namespace Corbis.CMS.Repository
             throw new NotImplementedException();
         }
 
-        public OperationResult<OperationResults, object> UpdateGallery(CuratedGallery gallery, CuratedGalleryContent content = CuratedGalleryContent.All)
+        public OperationResult<OperationResults, object> UpdateGallery(CuratedGallery gallery)
         {
             throw new NotImplementedException();
         }

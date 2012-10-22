@@ -21,7 +21,11 @@ namespace Corbis.Common
         /// <summary>
         /// Operation is failed
         /// </summary>
-        Failure
+        Failure,
+        /// <summary>
+        /// Requested data was not found
+        /// </summary>
+        NotFound
     }
 
     /// <summary>
