@@ -87,5 +87,89 @@ namespace Corbis.Common
             foreach (var child in dir.GetDirectories())
                 child.Delete(true);
         }
+
+        /// <summary>
+        /// Generates file path for duplicate
+        /// </summary>
+        /// <param name="filepath">Absolute path for created file</param>
+        /// <returns></returns>
+        public static string GenerateFilePathForDuplicate(string filepath)
+        {
+            if (!File.Exists(filepath))
+                return filepath;
+
+            string filename = Path.GetFileName(filepath);
+
+            string dirpath = Path.GetDirectoryName(filepath);
+
+            int index = filename.LastIndexOf('.');
+
+            string nameonly = index < 0 ? filename : filename.Substring(0, index);
+            string ext = filename.Substring(nameonly.Length);
+
+            List<int> postfixes = new List<int>();
+
+            int findx = 0;
+
+            foreach (var item in Directory.GetFiles(dirpath, nameonly + "*"))
+            {
+                if (item == filepath)
+                    continue;
+
+                string fname = Path.GetFileName(item);
+                string pfx = fname.Substring(0, fname.Length - ext.Length).Substring(nameonly.Length);
+                pfx = pfx.Trim().TrimStart('(').TrimEnd(')').Trim();
+
+                if (int.TryParse(pfx, out findx))
+                    postfixes.Add(findx);
+            }
+
+            filename = string.Format("{0}({1}){2}", nameonly, postfixes.Count == 0 ? 1 : postfixes.Max() + 1, ext);
+            return Path.Combine(dirpath, filename);
+        }
+
+        public static string GetRelativePath(string absPath, string relTo)
+        {
+            string[] absDirs = absPath.Split(Path.DirectorySeparatorChar);
+            string[] relDirs = relTo.Split(Path.DirectorySeparatorChar);
+
+            // Get the shortest of the two paths
+            int len = absDirs.Length < relDirs.Length ? absDirs.Length :
+            relDirs.Length;
+
+            // Use to determine where in the loop we exited
+            int lastCommonRoot = -1;
+            int index;
+
+            // Find common root
+            for (index = 0; index < len; index++)
+            {
+                if (absDirs[index] == relDirs[index]) lastCommonRoot = index;
+                else break;
+            }
+
+            // If we didn't find a common prefix then throw
+            if (lastCommonRoot == -1)
+                throw new ArgumentException("Paths do not have a common base");
+
+            // Build up the relative path
+            StringBuilder relativePath = new StringBuilder();
+
+            // Add on the ..
+            for (index = lastCommonRoot + 1; index < absDirs.Length; index++)
+            {
+                if (absDirs[index].Length > 0) relativePath.Append(@"..\");
+            }
+
+            // Add on the folders
+            for (index = lastCommonRoot + 1; index < relDirs.Length - 1; index++)
+            {
+                relativePath.Append(relDirs[index] + @"\");
+            }
+            relativePath.Append(relDirs[relDirs.Length - 1]);
+
+            return relativePath.ToString();
+        }
+
     }
 }
