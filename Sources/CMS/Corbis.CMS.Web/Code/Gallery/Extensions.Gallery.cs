@@ -15,10 +15,32 @@ namespace Corbis.CMS.Web.Code
         /// </summary>
         /// <param name="gallery">Curated gallery</param>
         /// <returns></returns>
-        public static string GetFolderPath(this CuratedGallery gallery)
+        public static string GetRootPath(this CuratedGallery gallery)
         {
             return GalleryRuntime.GetGalleryPath(gallery.ID);
         }
+
+        /// <summary>
+        /// Gets absolute gallery output folder path. This folder contains output gallery files
+        /// </summary>
+        /// <param name="gallery">Curated gallery</param>
+        /// <returns></returns>
+        public static string GetOutputPath(this CuratedGallery gallery)
+        {
+            return GalleryRuntime.GetGalleryOutputPath(gallery.ID);
+        }
+
+        /// <summary>
+        /// Gets absolute gallery root folder path. All gallery data is located inside this folder
+        /// </summary>
+        /// <param name="gallery">Curated gallery</param>
+        /// <returns></returns>
+        public static string GetContentPath(this CuratedGallery gallery)
+        {
+            return GalleryRuntime.GetGalleryContentPath(gallery.ID);
+        }
+
+
         /// <summary>
         /// 
         /// </summary>
@@ -37,7 +59,7 @@ namespace Corbis.CMS.Web.Code
             if(file == null)
                 throw new Exception("Template must have single entry point file with extension '.html.xslt'");
 
-            string htmlpath = Path.Combine(gallery.GetFolderPath(), file.Name.Substring(0, file.Name.Length - ".xlst".Length));
+            string htmlpath = Path.Combine(gallery.GetOutputPath(), file.Name.Substring(0, file.Name.Length - ".xlst".Length));
             return Corbis.Common.Utils.AbsoluteToVirtual(htmlpath, context);
         }
 

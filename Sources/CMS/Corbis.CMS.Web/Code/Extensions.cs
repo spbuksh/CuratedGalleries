@@ -19,5 +19,11 @@ namespace Corbis.CMS.Web.Code
         {
             return roles.GetItems().Select(x => x.ToString().ToLower()).ToArray();
         }
+
+        public static AdminUserInfo GetCurrentUser(this System.Web.Mvc.WebViewPage page)
+        {
+            return page.ViewBag.CurrentUser as AdminUserInfo;
+        }
+
     }
 }

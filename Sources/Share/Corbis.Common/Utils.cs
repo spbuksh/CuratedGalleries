@@ -68,5 +68,24 @@ namespace Corbis.Common
             string appdir = context.Server.MapPath("~/");
             return absolutePath.Substring(appdir.Length).Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
         }
+        public static string AbsoluteToVirtual(string absolutePath, HttpContext context = null)
+        {
+            context = (context == null) ? HttpContext.Current : context;
+            string appdir = context.Server.MapPath("~/");
+            return absolutePath.Substring(appdir.Length).Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        }
+
+
+        public static void DirectoryClear(DirectoryInfo dir)
+        {
+            foreach (var file in dir.GetFiles())
+            {
+                file.Attributes &= ~FileAttributes.ReadOnly;
+                file.Delete();
+            }
+
+            foreach (var child in dir.GetDirectories())
+                child.Delete(true);
+        }
     }
 }

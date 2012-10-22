@@ -79,6 +79,7 @@
                     <p id="p_title" class="site-title"></p>
                 </div>
                 @if (this.Request.IsAuthenticated) {
+                    var user = this.ViewBag.CurrentUser as AdminUserInfo;
                 <div class="float-right">
                     <section id="login">
                         @Html.Partial("_LoginPartial")
@@ -86,7 +87,8 @@
                     <nav>
                         <ul id="menu">
                             <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                            <li>@Html.ActionLink("Users", "Index", "User")</li>
+                            @if (user.Roles.HasValue && user.Roles.Value.HasFlag(AdminUserRoles.SuperAdmin)) {
+                            <li>@Html.ActionLink("Users", "Index", "User")</li> }
                             <li>@Html.ActionLink("Galleries", "Index", "Gallery")</li>
                         </ul>
                     </nav>

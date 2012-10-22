@@ -13,7 +13,6 @@ using System.Net;
 
 namespace Corbis.CMS.Web.Controllers
 {
-    [Authorize]
     public class GalleryController : CMSControllerBase
     {
         /// <summary>
@@ -76,7 +75,7 @@ namespace Corbis.CMS.Web.Controllers
         [HttpGet]
         public ActionResult GalleryPreview([Required]Nullable<int> id)
         {
-            var gallery = GalleryRuntime.GetGallery(id.Value);
+            var gallery = GalleryRuntime.BuildGalleryOutput(id.Value);
 
             //gallery was not found
             if (gallery == null)
@@ -98,6 +97,8 @@ namespace Corbis.CMS.Web.Controllers
         [AllowAnonymous]
         public ActionResult UploadImage(Nullable<int> id)
         {
+            //TODO: This method does not work // WHY?
+
             if (!this.ModelState.IsValid)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Request parameters are not valid");
 
