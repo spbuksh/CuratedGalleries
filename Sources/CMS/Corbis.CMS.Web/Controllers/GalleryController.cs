@@ -11,11 +11,18 @@ using Corbis.CMS.Web.Models;
 using System.IO;
 using System.Net;
 using Ionic.Zip;
+using Corbis.CMS.Repository.Interface;
+using Microsoft.Practices.Unity;
+using Corbis.Common;
+using Corbis.CMS.Repository.Interface.Communication;
 
 namespace Corbis.CMS.Web.Controllers
 {
     public class GalleryController : CMSControllerBase
     {
+        [Dependency]
+        public ICuratedGalleryRepository GalleryRepository { get; set; }
+
         /// <summary>
         /// Gallety index page
         /// </summary>
@@ -23,7 +30,40 @@ namespace Corbis.CMS.Web.Controllers
         [HttpGet]
         public ActionResult Index()
         {
-            return View("Index");
+            CuratedGalleryFilter filter = null;
+
+            OperationResult<OperationResults, List<CuratedGallery>> rslt = null;
+
+            try
+            {
+                rslt = this.GalleryRepository.GetGalleries(filter);
+            }
+            catch (Exception ex)
+            {
+                this.Logger.WriteError(ex);
+                throw;
+            }
+
+            switch(rslt.Result)
+            {
+                case OperationResults.Success:
+                    break;
+                case OperationResults.NotFound:
+                    break;
+                case OperationResults.Failure:
+                    throw new Exception("...");
+                default:
+                    throw new NotImplementedException();
+            }
+
+            var galleries = new List<GalleryItemModel>();
+
+            foreach (var item in rslt.Output)
+            {
+                galleries.Add(this.ObjectMapper.DoMapping<GalleryItemModel>(item));
+            }
+
+            return View("Index", galleries);
         }
 
         #region Create/Edit Gallery
@@ -39,8 +79,9 @@ namespace Corbis.CMS.Web.Controllers
 
             if (id.HasValue)
             {
-                //TODO: get existing gallery for editing
-                throw new NotImplementedException();
+                var rslt = this.GalleryRepository.GetGallery(id.Value);
+
+                gallery = rslt.Output;
             }
             else
             {
@@ -67,6 +108,17 @@ namespace Corbis.CMS.Web.Controllers
         }
 
         #endregion Create/Edit Gallery
+
+        /// <summary>
+        /// Deletes gallery
+        /// </summary>
+        /// <param name="id">Gallery identifier</param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult DeleteGallery(int id)
+        {
+            return this.Json(new { success = GalleryRuntime.DeleteGallery(id) });
+        }
 
         /// <summary>
         /// NOTE: This ation is used explicitly in route registration. So if you want to rename it then you have to rename in Global.asax.RegisterRoutes too
@@ -119,6 +171,55 @@ namespace Corbis.CMS.Web.Controllers
 
             return this.File(output, "application/zip");
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="galleryID">Gallery identifier</param>
+        /// <param name="id">Image identifier</param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult GetContentImage([Required]Nullable<int> galleryID, [Required]string id)
+        {
+            var content = GalleryRuntime.LoadGalleryContent(galleryID.Value);
+
+            var image = content.Images.Where(x => string.Equals(x.ImageID, id, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
+
+            if (image == null)
+                return this.Json(new { success = false, error = string.Format("Image with id='{0}' was not found. Gallery id='{1}'", id, galleryID.Value) });
+
+            //TODO: create model 
+            var model = new GalleryContentImageModel() { GalleryID = galleryID.Value, ID = image.ImageID, Url = image.ImageUrl, Text = image.Name };
+
+            return this.PartialView("ContentImagePartial", model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="galleryID">Gallery identifier</param>
+        /// <param name="id">Image identifier</param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult DeleteContentImage([Required]Nullable<int> galleryID, [Required]string id)
+        {
+            var content = GalleryRuntime.LoadGalleryContent(galleryID.Value);
+            var image = content.Images.Where(x => string.Equals(x.ImageID, id, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
+
+            if (image != null)
+            {
+                content.Images.Remove(image);
+                content.Images.Sort(delegate(GalleryContentImage x, GalleryContentImage y) { return x.Order - y.Order; });
+
+                for (int i = 0; i < content.Images.Count; i++)
+                    content.Images[i].Order = i + 1;
+
+                GalleryRuntime.SaveGalleryContent(galleryID.Value, content);
+            }
+
+            return this.Json(new { success = true });
+        }
+
 
         /// <summary>
         /// Uploads images into the gallery

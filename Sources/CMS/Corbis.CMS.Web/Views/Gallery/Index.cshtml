@@ -1,8 +1,30 @@
-﻿@{
+﻿@using Corbis.CMS.Web.Models
+@model List<GalleryItemModel>
+@{
     ViewBag.Title = "Curated Galleries";
 }
 
+
+@Scripts.Render("~/Scripts/Corbis/Corbis.Gallery.js")
 <h2>Curated Galleries</h2>
 <p>
     @Html.ActionLink("Create Gallery", "Gallery", "Gallery")
 </p>
+<div>
+@foreach (var item in this.Model)
+{
+    <p class="galleryItem" corbis-item-id="@item.ID">
+        <a href="@Url.Action("BuildGallery", "Gallery", new { id = @item.ID })" target="_blank">@Html.Raw(item.Name)</a>
+        <span>Date created:</span><span>@item.DateCreated.ToString()</span>
+        @Html.ActionLink("Edit", "Gallery", "Gallery", new { id = item.ID }, null)
+        <a href="javascript:void(0)" onclick="DeleteGallery(@item.ID,'@(Url.Action("DeleteGallery", "Gallery"))'); return false;" >Delete</a>
+    </p> 
+}
+</div>
+
+<script type="text/javascript">
+/// ***********  ADD REFERENCES HERE FOR INTELLISENSE SUPPORTING **********
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/Scripts/Corbis/Corbis.Common.js" />
+/// ***********************************************************************
+</script>

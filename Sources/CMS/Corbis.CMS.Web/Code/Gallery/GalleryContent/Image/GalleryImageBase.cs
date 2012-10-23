@@ -23,9 +23,14 @@ namespace Corbis.CMS.Web.Code
         public string ImageID { get; set; }
 
         /// <summary>
-        /// Image url. Gallery will reference to the image using this url
+        /// Relative gallery image url. Gallery will reference to the image using this url
         /// </summary>
         public string Url { get; set; }
+
+        /// <summary>
+        /// Image url 
+        /// </summary>
+        public string ImageUrl { get; set; }
 
         /// <summary>
         /// Image fime name

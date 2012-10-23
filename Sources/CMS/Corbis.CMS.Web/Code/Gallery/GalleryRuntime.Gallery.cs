@@ -156,6 +156,44 @@ namespace Corbis.CMS.Web.Code
             return gallery;
         }
 
+        /// <summary>
+        /// Deletes gallery
+        /// </summary>
+        /// <param name="id">Gallery identifier</param>
+        public static bool DeleteGallery(int id)
+        {
+            OperationResult<OperationResults, Nullable<bool>> rslt = null;
+
+            try
+            {
+                rslt = GalleryRepository.DeleteGallery(id);
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteError(ex);
+                throw;
+            }
+
+            switch (rslt.Result)
+            {
+                case OperationResults.Success:
+                case OperationResults.NotFound:
+                    {
+                        var dir = new DirectoryInfo(GetGalleryPath(id));
+                        if (dir.Exists)
+                        {
+                            dir.Clear();
+                            dir.Delete(true);
+                        }
+                        return true;
+                    }
+                case OperationResults.Failure:
+                    return false;
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
 
         /// <summary>
         /// Gets gallery by gallery identifier

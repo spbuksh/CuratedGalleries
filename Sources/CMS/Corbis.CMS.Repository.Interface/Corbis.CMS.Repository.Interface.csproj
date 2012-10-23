@@ -46,10 +46,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IAdminUserRepository.cs" />
-    <Compile Include="ICuratedGalleryRepository.cs" />
+    <Compile Include="IGalleryRepository.Gallery.cs" />
     <Compile Include="Communication\CuratedGalleryFilter.cs" />
     <Compile Include="Communication\GalleryTemplateContent.cs" />
     <Compile Include="Communication\GalleryTemplateFilter.cs" />
+    <Compile Include="IGalleryRepository.Template.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

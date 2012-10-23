@@ -12,6 +12,15 @@ using System.Text;
 
 namespace Corbis.CMS.Web.Controllers.Api
 {
+    internal class UploadedImageResponse
+    {
+        public int GalleryID { get; set; }
+
+        public string ID { get; set; }
+
+        public string Url { get; set; }
+    }
+
     public class UploadController : ApiControllerBase
     {
         /// <summary>
@@ -62,11 +71,13 @@ namespace Corbis.CMS.Web.Controllers.Api
                 return this.Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
 
+            GalleryContentImage img = null;
+
             try
             {
                 var content = GalleryRuntime.LoadGalleryContent(id.Value);
 
-                var img = new GalleryContentImage()
+                img = new GalleryContentImage()
                 {
                     ID = string.Format("gallery-image{0}", content.Images.Count + 1),
                     ImageID = string.Format("gallery-image_{0}", Guid.NewGuid().ToString("N")),
@@ -75,7 +86,8 @@ namespace Corbis.CMS.Web.Controllers.Api
                     ImageSource = new GalleryImageSource() { Type = ImageSourceTypes.LocalFile, Source = filepath.Substring(GalleryRuntime.GetGalleryPath(id.Value).Length) },
                     Url = string.Format("{0}/{1}", 
                         Corbis.Common.Utils.GetRelativePath(GalleryRuntime.GetGalleryOutputPath(id.Value), contentpath).TrimEnd(Path.DirectorySeparatorChar).Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar), 
-                        filename)
+                        filename),
+                    ImageUrl = Corbis.Common.Utils.AbsoluteToVirtual(filepath, this.HttpContext)
                 };
                 content.Images.Add(img);
 
@@ -89,7 +101,8 @@ namespace Corbis.CMS.Web.Controllers.Api
                 return message.CreateResponse(HttpStatusCode.InternalServerError);
             }
 
-            return message.CreateResponse(HttpStatusCode.OK, Corbis.Common.Utils.AbsoluteToVirtual(filepath, this.HttpContext));
+            var output = new UploadedImageResponse() { GalleryID = id.Value, ID = img.ImageID, Url = img.ImageUrl };
+            return message.CreateResponse <UploadedImageResponse>(HttpStatusCode.OK, output);
         }
 
     }

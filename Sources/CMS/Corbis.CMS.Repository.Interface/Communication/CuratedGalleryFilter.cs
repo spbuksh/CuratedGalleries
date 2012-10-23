@@ -30,10 +30,5 @@ namespace Corbis.CMS.Repository.Interface.Communication
         /// Defines portion of retrived data. If it if null then rest data (from startIndex) will be returned or all entities
         /// </summary>
         public Nullable<int> Count { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        //public Nullable<CuratedGalleryContent> GalleryContent { get; set; }
     }
 }

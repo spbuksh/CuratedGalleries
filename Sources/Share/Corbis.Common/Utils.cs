@@ -66,7 +66,9 @@ namespace Corbis.Common
         {
             context = (context == null) ? new HttpContextWrapper(HttpContext.Current) : context;
             string appdir = context.Server.MapPath("~/");
-            return absolutePath.Substring(appdir.Length).Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            string url = absolutePath.Substring(appdir.Length).Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            if (!url.StartsWith("/")) url = "/" + url;
+            return url;
         }
         public static string AbsoluteToVirtual(string absolutePath, HttpContext context = null)
         {

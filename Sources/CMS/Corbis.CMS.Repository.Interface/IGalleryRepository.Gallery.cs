@@ -8,44 +8,8 @@ using Corbis.CMS.Repository.Interface.Communication;
 
 namespace Corbis.CMS.Repository.Interface
 {
-    public interface ICuratedGalleryRepository
+    public partial interface ICuratedGalleryRepository
     {
-        #region Template Management
-
-        /// <summary>
-        /// Registers template in the system
-        /// </summary>
-        /// <param name="template">Creating template details</param>
-        /// <returns></returns>
-        OperationResult<OperationResults, GalleryTemplate> AddTemplate(GalleryTemplateInfo template);
-
-        /// <summary>
-        /// Removes template from the system
-        /// </summary>
-        /// <param name="templateID">Removed template identifier</param>
-        /// <returns></returns>
-        OperationResult<OperationResults, object> RemoveTemplate(int templateID);
-
-        /// <summary>
-        /// Gets templates based on filter
-        /// </summary>
-        /// <param name="filter"></param>
-        /// <returns></returns>
-        OperationResult<OperationResults, List<GalleryTemplate>> GetTemplates(GalleryTemplateFilter filter = null);
-
-        /// <summary>
-        /// Gets templates based on filter
-        /// </summary>
-        /// <param name="id">Template identifier</param>
-        /// <param name="content">Describes retriving content</param>
-        /// <returns></returns>
-        OperationResult<OperationResults, GalleryTemplate> GetTemplate(int id, GalleryTemplateContent content = GalleryTemplateContent.All);
-
-
-        #endregion Template Management
-
-        #region Curated gallery management
-
         /// <summary>
         /// Creates curated gallery
         /// </summary>
@@ -63,6 +27,14 @@ namespace Corbis.CMS.Repository.Interface
         OperationResult<OperationResults, CuratedGallery> GetGallery(int id, bool includePackage = false);
 
         /// <summary>
+        /// Creates curated gallery
+        /// </summary>
+        /// <param name="id">Curated gallery unique identifier</param>
+        /// <param name="includePackage"></param>
+        /// <returns></returns>
+        OperationResult<OperationResults, Nullable<bool>> DeleteGallery(int id);
+
+        /// <summary>
         /// Gets filtered list of curated galleries
         /// </summary>
         /// <param name="filter"></param>
@@ -75,8 +47,5 @@ namespace Corbis.CMS.Repository.Interface
         /// <param name="gallery">Gallery object</param>
         /// <returns></returns>
         OperationResult<OperationResults, object> UpdateGallery(CuratedGallery gallery);
-
-        #endregion Curated gallery management
-
     }
 }

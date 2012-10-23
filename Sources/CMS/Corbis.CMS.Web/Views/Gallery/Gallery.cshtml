@@ -1,5 +1,5 @@
 ﻿@using Corbis.CMS.Web.Models
-@model Corbis.CMS.Web.Models.GalleryModel
+@model GalleryModel
 @{
     ViewBag.Title = "Add/Edit Gallery";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -32,18 +32,36 @@
 </style>
 
 @Scripts.Render("~/Scripts/Corbis/Uploader.js")
+@Scripts.Render("~/Scripts/Corbis/Corbis.Gallery.js")
 
 <script type="text/javascript">
     uploaderOptions.url = "api/Upload/GalleryImageUpload?id=@this.Model.ID.Value";
-    uploaderOptions.uploadCallBack = "callBackImageID";
-    uploaderOptions.errorCallBack = "errorCallBack";
+    uploaderOptions.uploadCallBack = "uploadImageCallback";
+    uploaderOptions.errorCallBack = "uploadImageErrorCallback";
     uploaderOptions.filter = "*.jpg;*.jpeg;*.tif;*.tiff;*.png"
 
-    function callBackImageID(msg) {
-        alert(msg);
+    function uploadImageCallback(result) {
+        var onsuccess = function (data) {
+            if (data.success === false) {
+                alert(data.error);
+                return;
+            }
+            $('div.galleryContent').append(data);
+        }
+        var onerror = function () {
+            alert('Error');
+        }
+        $.ajax({
+            url: '@this.Url.Action("GetContentImage", "Gallery")',
+            type: 'POST',
+            data: jQuery.parseJSON(result),
+            success: onsuccess,
+            error: onerror
+        });
+
         return "OK";
     }
-    function errorCallBack(type, errorMessage) {
+    function uploadImageErrorCallback(type, errorMessage) {
         alert("[errorCallBack] : " + type + " ::: " + errorMessage);
         return "OK";
     }
@@ -100,3 +118,5 @@
         <!--<![endif]-->
     </object>
 </noscript>
+<div class="galleryContent">
+</div>

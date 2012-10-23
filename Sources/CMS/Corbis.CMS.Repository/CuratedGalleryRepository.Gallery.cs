@@ -7,6 +7,7 @@ using Corbis.Common;
 using Corbis.CMS.Entity;
 using Corbis.CMS.Repository.Interface.Communication;
 using Corbis.DB.Linq;
+using Corbis.Common.ObjectMapping.Interface;
 
 namespace Corbis.CMS.Repository
 {
@@ -42,6 +43,56 @@ namespace Corbis.CMS.Repository
             return rslt;
         }
 
+        public OperationResult<OperationResults, Nullable<bool>> DeleteGallery(int id)
+        {
+            using (var context = this.CreateMainContext())
+            {
+                if (context.Connection.State != System.Data.ConnectionState.Open)
+                    context.Connection.Open();
+
+                context.Transaction = context.Connection.BeginTransaction();
+
+                try
+                {
+                    var record = context.CuratedGalleryRecords.Where(x => x.ID == id).SingleOrDefault();
+
+                    if (record != null)
+                    {
+                        var packageID = record.Archive;
+
+                        context.CuratedGalleryRecords.DeleteOnSubmit(record);
+                        context.SubmitChanges();
+
+                        if(packageID.HasValue)
+                        {
+                            var file = context.FileRecords.Where(x => x.ID == packageID.Value).Single();
+                            context.FileRecords.DeleteOnSubmit(file);
+                            context.SubmitChanges();
+                        }
+                    }
+                    else
+                    {
+                        return new OperationResult<OperationResults, bool?>() { Result = OperationResults.NotFound };
+                    }
+
+                    context.Transaction.Commit();
+                    return new OperationResult<OperationResults, bool?>() { Result = OperationResults.Success, Output = true };
+                }
+                catch (Exception ex)
+                {
+                    this.Logger.WriteError(ex);
+                    context.Transaction.Rollback();
+#if DEBUG
+                    throw;
+#else
+                    return new OperationResult<OperationResults, bool?>() { Result = OperationResults.Failure };
+#endif
+                }
+
+                throw new NotImplementedException();
+            }
+        }
+
         public OperationResult<OperationResults, CuratedGallery> GetGallery(int id, bool includePackage = false)
         {
             using (var context = this.CreateMainContext())
@@ -68,7 +119,46 @@ namespace Corbis.CMS.Repository
 
         public OperationResult<OperationResults, List<CuratedGallery>> GetGalleries(CuratedGalleryFilter filter = null)
         {
-            throw new NotImplementedException();
+            var rslt = new OperationResult<OperationResults, List<CuratedGallery>>() { Result = OperationResults.Success };
+
+            using (var context = this.CreateMainContext())
+            { 
+                IQueryable<CuratedGalleryRecord> query = context.CuratedGalleryRecords;
+
+                if (filter != null)
+                {
+                    //
+                    if (!string.IsNullOrEmpty(filter.NamePattern))
+                        query = query.Where(x => x.Name.ToLower().Contains(filter.NamePattern.ToLower()));
+
+                    if (filter.Enabled.HasValue)
+                        query = query.Where(x => x.Enabled == filter.Enabled.Value);
+
+                    //default sorting
+                    query = query.OrderByDescending(x => x.DateCreated).ThenBy(x => x.Name);
+
+                    //point gallery portion at end of query building
+                    query = query.Skip(filter.StartIndex);
+
+                    if (filter.Count.HasValue)
+                        query.Take(filter.Count.Value);
+                }
+                else
+                {
+                    query = query.OrderByDescending(x => x.DateCreated).ThenBy(x => x.Name);
+                }
+
+                //it converts datetime from UTC to local
+                ActionHandler<object, object> dtHandler = delegate(object from) { return from == null ? (DateTime?)null : ((DateTime)from).ToLocalTime(); };
+
+                MappingData md = new MappingData();
+                md.PropertiesMapping.Add(new MappingDataItem(Utils.GetPropertyName<CuratedGalleryRecord, DateTime>(x => x.DateCreated), null, x => ((DateTime)x).ToLocalTime()));
+                md.PropertiesMapping.Add(new MappingDataItem(Utils.GetPropertyName<CuratedGalleryRecord, DateTime?>(x => x.DateModified), null, x => (x == null ? (DateTime?)null : ((DateTime)x).ToLocalTime())));
+
+                rslt.Output = query.Select(x => this.ObjectMapper.DoMapping<CuratedGallery>(x, md)).ToList();
+            }
+
+            return rslt;
         }
 
         public OperationResult<OperationResults, object> UpdateGallery(CuratedGallery gallery)
