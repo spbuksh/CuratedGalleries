@@ -48,6 +48,7 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Net" />
     <Reference Include="System.Net.Http, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System.Runtime.Serialization" />
@@ -78,6 +79,10 @@
     <Compile Include="OperationResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SingletonProvider.cs" />
+    <Compile Include="Utilities\Image\Enums\DockStyle.cs" />
+    <Compile Include="Utilities\Image\GeneratedImage.cs" />
+    <Compile Include="Utilities\Image\ImageHelper.cs" />
+    <Compile Include="Utilities\Image\Interfaces\IGeneratedImage.cs" />
     <Compile Include="Utilities\Password\IPasswordUtility.cs" />
     <Compile Include="Utilities\Password\PasswordUtility.cs" />
     <Compile Include="Utils.cs" />
@@ -91,6 +96,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
