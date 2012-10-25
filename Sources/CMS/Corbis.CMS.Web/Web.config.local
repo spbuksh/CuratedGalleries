@@ -30,6 +30,7 @@
         <Settings templateDir="CuratedGalleries\Templates\"
 				  galleryDir="CuratedGalleries\Galleries\"
 				  sharedDir="CuratedGalleries\Shared\"
+                  tempDir="CuratedGalleries\Temp\"
 				  defaultTemplateImageUrl=""
 				  minImageSize="0"
 				  maxImageSize="10485760"/> <!--Max size is 10MB-->

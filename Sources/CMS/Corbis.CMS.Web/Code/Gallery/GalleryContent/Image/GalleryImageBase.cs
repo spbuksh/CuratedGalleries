@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Corbis.CMS.Entity;
 
 namespace Corbis.CMS.Web.Code
 {
@@ -13,24 +14,28 @@ namespace Corbis.CMS.Web.Code
     {
         /// <summary>
         /// Unique gallery image identifier for usage in gallery output. 
-        /// In general case 'ID' and 'ImageID' is the same. But image identifier in output can have strict name rules
         /// </summary>
         public string ID { get; set; }
 
-        /// <summary>
-        /// Unique gallery image identifier. It is internal identifier
-        /// </summary>
-        public string ImageID { get; set; }
+        ///// <summary>
+        ///// Relative gallery image url. Gallery will reference to the image using this url
+        ///// </summary>
+        //public string Url { get; set; }
 
         /// <summary>
-        /// Relative gallery image url. Gallery will reference to the image using this url
+        /// Image urls for gallery based on gallery file system
         /// </summary>
-        public string Url { get; set; }
+        public ImageUrlSet GalleryUrls { get; set; }
 
         /// <summary>
-        /// Image url 
+        /// Image urls for site
         /// </summary>
-        public string ImageUrl { get; set; }
+        public ImageUrlSet SiteUrls { get; set; }
+
+        ///// <summary>
+        ///// Image url 
+        ///// </summary>
+        //public string ImageUrl { get; set; }
 
         /// <summary>
         /// Image fime name

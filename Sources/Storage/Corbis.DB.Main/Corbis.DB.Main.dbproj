@@ -233,6 +233,8 @@
     </Build>
     <Build Include="Schema Objects\Schemas\dbo\Tables\GalleryTemplate.table.sql">
       <SubType>Code</SubType>
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
     <Build Include="Schema Objects\Schemas\dbo\Tables\File.table.sql">
       <SubType>Code</SubType>

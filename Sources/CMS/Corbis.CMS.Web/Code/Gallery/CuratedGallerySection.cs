@@ -70,6 +70,16 @@ namespace Corbis.CMS.Web.Code
         }
 
         /// <summary>
+        /// Absolute or relative directory path to folder with templates
+        /// </summary>
+        [ConfigurationProperty("tempDir", IsRequired = true)]
+        public string TemporaryDirectory
+        {
+            get { return this["tempDir"] as string; }
+            set { this["tempDir"] = value; }
+        }
+
+        /// <summary>
         /// Url to the default template image. If template image is absent then this image is used for gallery presentation
         /// </summary>
         [ConfigurationProperty("defaultTemplateImageUrl", IsRequired = true)]

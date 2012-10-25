@@ -1,2 +1,3 @@
-﻿
-This folder contains unziped template archives
+
+
+This folder contains gallery templates

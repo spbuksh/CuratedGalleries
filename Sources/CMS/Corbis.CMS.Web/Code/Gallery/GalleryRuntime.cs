@@ -10,6 +10,7 @@ using Corbis.Common;
 using Ionic.Zip;
 using Corbis.Logging;
 using Corbis.Logging.Interface;
+using Corbis.Common.ObjectMapping.Mappers;
 
 namespace Corbis.CMS.Web.Code
 {
@@ -46,12 +47,22 @@ namespace Corbis.CMS.Web.Code
             get { return LogManagerProvider.Instance; }
         }
 
+        protected static MapperBase ObjectMapper
+        {
+            get { return Common.ObjectMapping.Mappers.ObjectMapper.Instance; }
+        }
+
         #region Environment settings
+
+        /// <summary>
+        /// Absolute directory path to folder with templates. It is template root
+        /// </summary>
+        public static string TemplateDirectory { get; private set; }
 
         /// <summary>
         /// Absolute directory path to folder with templates
         /// </summary>
-        public static string TemplateDirectory { get; private set; }
+        public static string TemporaryDirectory { get; private set; }
 
         /// <summary>
         /// Absolute directory path to folder with (released) curated galleries
@@ -111,6 +122,12 @@ namespace Corbis.CMS.Web.Code
                 Directory.CreateDirectory(TemplateDirectory);
 
             //
+            TemporaryDirectory = GetAbsolutePath(section.Settings.TemporaryDirectory);
+
+            if (!Directory.Exists(TemporaryDirectory))
+                Directory.CreateDirectory(TemporaryDirectory);
+
+            //
             DefaultTemplateImageUrl = new ImageUrlSet() { Large = section.Settings.DefaultTemplateImageUrl };
 
             if (!Directory.Exists(TemplateDirectory))
@@ -122,10 +139,25 @@ namespace Corbis.CMS.Web.Code
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        private static string GetAbsolutePath(string path)
+        protected static string GetAbsolutePath(string path)
         {
             return Path.IsPathRooted(path) ? path :
                 Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path.TrimStart(Path.DirectorySeparatorChar));
+        }
+
+        protected static DirectoryInfo ExtractPackage(ZipArchivePackage package, string dirpath)
+        {
+            var extractdir = new DirectoryInfo(dirpath);
+
+            using (var stream = new MemoryStream(package.FileContent))
+            {
+                using (var zip = ZipFile.Read(stream))
+                {
+                    zip.ExtractAll(extractdir.FullName);
+                }
+            }
+
+            return extractdir;
         }
 
     }

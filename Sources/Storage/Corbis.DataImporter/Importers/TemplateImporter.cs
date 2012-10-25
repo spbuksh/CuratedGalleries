@@ -50,20 +50,6 @@ namespace Corbis.DataImporter.Importers
                         var doc = XDocument.Load(files.First());
                         var discriptor = new GalleryTemplateInfo
                                              {
-                                                 Author = doc.XPathSelectElement("//*/Author").Value,
-                                                 Company = doc.XPathSelectElement("//*/Company").Value,
-                                                 Description = doc.XPathSelectElement("//*/Description").Value,
-                                                 Name = doc.XPathSelectElement("//*/Name").Value,
-                                                 ImagesUploadPath = doc.XPathSelectElement("//*/UploadPath").Value,
-                                                 GalleryIcon = new GalleryIcon
-                                                                   {
-                                                                       GalleryIconType =
-                                                                           (GalleryIconType)
-                                                                           Enum.Parse(typeof (GalleryIconType),
-                                                                                      doc.XPathSelectElement(
-                                                                                          "//*/GalleryIconType").Value),
-                                                                       Value = doc.XPathSelectElement("//*/Value").Value
-                                                                   },
                                                  Package =
                                                      new ZipArchivePackage
                                                          {

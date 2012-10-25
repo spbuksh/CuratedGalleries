@@ -90,6 +90,7 @@
                             @if (user.Roles.HasValue && user.Roles.Value.HasFlag(AdminUserRoles.SuperAdmin)) {
                             <li>@Html.ActionLink("Users", "Index", "User")</li> }
                             <li>@Html.ActionLink("Galleries", "Index", "Gallery")</li>
+                            <li>@Html.ActionLink("Templates", "Index", "Template")</li>
                         </ul>
                     </nav>
                 </div>

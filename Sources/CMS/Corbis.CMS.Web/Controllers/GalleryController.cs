@@ -22,7 +22,6 @@ namespace Corbis.CMS.Web.Controllers
     {
         [Dependency]
         public ICuratedGalleryRepository GalleryRepository { get; set; }
-
         /// <summary>
         /// Gallety index page
         /// </summary>
@@ -79,13 +78,11 @@ namespace Corbis.CMS.Web.Controllers
 
             if (id.HasValue)
             {
-                var rslt = this.GalleryRepository.GetGallery(id.Value);
-
-                gallery = rslt.Output;
+                gallery = GalleryRuntime.GetGallery(id.Value);
             }
             else
             {
-                gallery = GalleryRuntime.CreateGallery("New gallery");
+                gallery = GalleryRuntime.CreateGallery("New gallery", GalleryRuntime.GetTemplates().First().ID);
             }
 
             //
@@ -183,13 +180,13 @@ namespace Corbis.CMS.Web.Controllers
         {
             var content = GalleryRuntime.LoadGalleryContent(galleryID.Value);
 
-            var image = content.Images.Where(x => string.Equals(x.ImageID, id, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
+            var image = content.Images.Where(x => string.Equals(x.ID, id, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
 
             if (image == null)
                 return this.Json(new { success = false, error = string.Format("Image with id='{0}' was not found. Gallery id='{1}'", id, galleryID.Value) });
 
             //TODO: create model 
-            var model = new GalleryContentImageModel() { GalleryID = galleryID.Value, ID = image.ImageID, Url = image.ImageUrl, Text = image.Name };
+            var model = new GalleryContentImageModel() { GalleryID = galleryID.Value, ID = image.ID, Urls = image.SiteUrls, Text = image.Name };
 
             return this.PartialView("ContentImagePartial", model);
         }
@@ -204,7 +201,7 @@ namespace Corbis.CMS.Web.Controllers
         public ActionResult DeleteContentImage([Required]Nullable<int> galleryID, [Required]string id)
         {
             var content = GalleryRuntime.LoadGalleryContent(galleryID.Value);
-            var image = content.Images.Where(x => string.Equals(x.ImageID, id, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
+            var image = content.Images.Where(x => string.Equals(x.ID, id, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
 
             if (image != null)
             {

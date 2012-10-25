@@ -19,36 +19,6 @@ namespace Corbis.CMS.Entity
         }
 
         /// <summary>
-        /// Gallery Template Author
-        /// </summary>
-        public string Author { get; set; }
-
-        /// <summary>
-        /// Gallery Template Company
-        /// </summary>
-        public string Company { get; set; }
-
-        /// <summary>
-        /// Gallery Template Images.
-        /// </summary>
-        public string ImagesUploadPath { get; set; }
-
-        /// <summary>
-        /// Gallery name
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
-        /// Gallery template image url. It is "face" of the gallery
-        /// </summary>
-        public GalleryIcon GalleryIcon { get; set; }
-
-        /// <summary>
-        /// Gallery template description
-        /// </summary>
-        public string Description { get; set; }
-
-        /// <summary>
         /// Is gallery active or not
         /// </summary>
         public bool Enabled { get; set; }

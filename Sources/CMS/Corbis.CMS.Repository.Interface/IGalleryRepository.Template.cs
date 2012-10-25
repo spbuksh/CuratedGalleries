@@ -27,7 +27,7 @@ namespace Corbis.CMS.Repository.Interface
         /// <summary>
         /// Gets templates based on filter
         /// </summary>
-        /// <param name="filter"></param>
+        /// <param name="filter">If it is null then full template data will be returned</param>
         /// <returns></returns>
         OperationResult<OperationResults, List<GalleryTemplate>> GetTemplates(GalleryTemplateFilter filter = null);
 

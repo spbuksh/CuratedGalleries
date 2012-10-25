@@ -111,5 +111,12 @@ namespace Corbis.Common
             Utils.DirectoryClear(dir);
         }
 
+        public static void Remove(this DirectoryInfo dir)
+        {
+            dir.Clear();
+            dir.Delete(true);
+        }
+
+
     }
 }

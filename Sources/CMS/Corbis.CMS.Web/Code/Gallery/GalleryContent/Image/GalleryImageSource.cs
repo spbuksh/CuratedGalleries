@@ -19,8 +19,22 @@ namespace Corbis.CMS.Web.Code
         Url
     }
 
+    public interface IImageSource
+    {
+        /// <summary>
+        /// Image source type
+        /// </summary>
+        ImageSourceTypes Type { get; }
+
+        /// <summary>
+        /// Image source value
+        /// </summary>
+        string Source { get; }
+
+    }
+
     [Serializable]
-    public class GalleryImageSource
+    public class GalleryImageSource : IImageSource
     {
         /// <summary>
         /// Image source type

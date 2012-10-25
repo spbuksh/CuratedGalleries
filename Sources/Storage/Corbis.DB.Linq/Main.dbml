@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><Database Name="Corbis.Main" Class="MainDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
-  <Connection Mode="AppSettings" ConnectionString="Data Source=YMURASHKA\SQLEXPRESS;Initial Catalog=Corbis.Main;Integrated Security=True" SettingsObjectName="Corbis.DB.Linq.Properties.Settings" SettingsPropertyName="Corbis_MainConnectionString1" Provider="System.Data.SqlClient" />
+  <Connection Mode="AppSettings" ConnectionString="Data Source=PAVELSM\MSSQL2008;Initial Catalog=Corbis.Main;Integrated Security=True" SettingsObjectName="Corbis.DB.Linq.Properties.Settings" SettingsPropertyName="Corbis_MainConnectionString" Provider="System.Data.SqlClient" />
   <Table Name="dbo.AdminUserMembership" Member="AdminUserMembershipRecords">
     <Type Name="AdminUserMembershipRecord">
       <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -10,7 +10,7 @@
       <Column Name="IsActive" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Column Name="DateCreated" Type="System.DateTime" DbType="DateTime2 NOT NULL" CanBeNull="false" />
       <Association Name="AdminUserMembershipRecord_AdminUserToRoleRecord" Member="AdminUserToRoleRecords" ThisKey="ID" OtherKey="MemberID" Type="AdminUserToRoleRecord" />
-      <Association Name="AdminUserProfile_AdminUserMembershipRecord" Member="AdminUserProfileRecord" ThisKey="ProfileID" OtherKey="ID" Type="AdminUserProfileRecord" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="AdminUserProfileRecord_AdminUserMembershipRecord" Member="AdminUserProfileRecord" ThisKey="ProfileID" OtherKey="ID" Type="AdminUserProfileRecord" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
     </Type>
   </Table>
   <Table Name="dbo.AdminUserRole" Member="AdminUserRoleRecords">
@@ -34,22 +34,8 @@
       <Column Name="ID" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="Name" Type="System.String" DbType="NChar(50)" CanBeNull="true" />
       <Column Name="Content" Type="System.Data.Linq.Binary" DbType="VarBinary(MAX) NOT NULL" CanBeNull="false" UpdateCheck="Never" />
-      <Association Name="FileRecord_GalleryTemplateRecord" Member="GalleryTemplateRecords" ThisKey="ID" OtherKey="Archive" Type="GalleryTemplateRecord" />
       <Association Name="FileRecord_CuratedGalleryRecord" Member="CuratedGalleryRecords" ThisKey="ID" OtherKey="Archive" Type="CuratedGalleryRecord" />
-    </Type>
-  </Table>
-  <Table Name="dbo.GalleryTemplate" Member="GalleryTemplateRecords">
-    <Type Name="GalleryTemplateRecord">
-      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="Name" Type="System.String" DbType="NVarChar(150) NOT NULL" CanBeNull="false" />
-      <Column Name="Description" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-      <Column Name="ImageUrl" Type="System.String" DbType="NVarChar(2048)" CanBeNull="true" />
-      <Column Name="Enabled" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
-      <Column Name="Archive" Type="System.Int64" DbType="BigInt NOT NULL" CanBeNull="false" />
-      <Column Name="IsDefault" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
-      <Column Name="DateCreated" Type="System.DateTime" DbType="DateTime2 NOT NULL" CanBeNull="false" />
-      <Association Name="GalleryTemplateRecord_CuratedGalleryRecord" Member="CuratedGalleryRecords" ThisKey="ID" OtherKey="TemplateID" Type="CuratedGalleryRecord" />
-      <Association Name="FileRecord_GalleryTemplateRecord" Member="FileRecord" ThisKey="Archive" OtherKey="ID" Type="FileRecord" IsForeignKey="true" />
+      <Association Name="FileRecord_GalleryTemplate" Member="GalleryTemplateRecords" ThisKey="ID" OtherKey="PackageID" Type="GalleryTemplateRecord" />
     </Type>
   </Table>
   <Table Name="dbo.CuratedGallery" Member="CuratedGalleryRecords">
@@ -62,7 +48,7 @@
       <Column Name="DateModified" Type="System.DateTime" DbType="DateTime2" CanBeNull="true" />
       <Column Name="Archive" Type="System.Int64" DbType="BigInt" CanBeNull="true" />
       <Association Name="FileRecord_CuratedGalleryRecord" Member="FileRecord" ThisKey="Archive" OtherKey="ID" Type="FileRecord" IsForeignKey="true" />
-      <Association Name="GalleryTemplateRecord_CuratedGalleryRecord" Member="GalleryTemplateRecord" ThisKey="TemplateID" OtherKey="ID" Type="GalleryTemplateRecord" IsForeignKey="true" />
+      <Association Name="GalleryTemplate_CuratedGalleryRecord" Member="GalleryTemplateRecord" ThisKey="TemplateID" OtherKey="ID" Type="GalleryTemplateRecord" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.AdminUserProfile" Member="AdminUserProfileRecords">
@@ -72,7 +58,18 @@
       <Column Name="MiddleName" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
       <Column Name="LastName" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
       <Column Name="Email" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
-      <Association Name="AdminUserProfile_AdminUserMembershipRecord" Member="AdminUserMembershipRecords" ThisKey="ID" OtherKey="ProfileID" Type="AdminUserMembershipRecord" />
+      <Association Name="AdminUserProfileRecord_AdminUserMembershipRecord" Member="AdminUserMembershipRecords" ThisKey="ID" OtherKey="ProfileID" Type="AdminUserMembershipRecord" />
+    </Type>
+  </Table>
+  <Table Name="dbo.GalleryTemplate" Member="GalleryTemplateRecords">
+    <Type Name="GalleryTemplateRecord">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Enabled" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="PackageID" Type="System.Int64" DbType="BigInt NOT NULL" CanBeNull="false" />
+      <Column Name="IsDefault" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="DateCreated" Type="System.DateTime" DbType="DateTime2 NOT NULL" CanBeNull="false" />
+      <Association Name="GalleryTemplate_CuratedGalleryRecord" Member="CuratedGalleryRecords" ThisKey="ID" OtherKey="TemplateID" Type="CuratedGalleryRecord" />
+      <Association Name="FileRecord_GalleryTemplate" Member="FileRecord" ThisKey="PackageID" OtherKey="ID" Type="FileRecord" IsForeignKey="true" />
     </Type>
   </Table>
 </Database>

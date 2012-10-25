@@ -9,6 +9,8 @@ using System.Web;
 using System.Web.Mvc;
 using Corbis.CMS.Web.Code;
 using System.Text;
+using Corbis;
+using Corbis.CMS.Entity;
 
 namespace Corbis.CMS.Web.Controllers.Api
 {
@@ -18,7 +20,7 @@ namespace Corbis.CMS.Web.Controllers.Api
 
         public string ID { get; set; }
 
-        public string Url { get; set; }
+        public ImageUrlSet Urls { get; set; }
     }
 
     public class UploadController : ApiControllerBase
@@ -29,37 +31,14 @@ namespace Corbis.CMS.Web.Controllers.Api
         /// <param name="message"></param>
         /// <returns></returns>
         [HttpPost]
-        public HttpResponseMessage GalleryImageUpload(HttpRequestMessage message, [System.Web.Http.FromUri, System.ComponentModel.DataAnnotations.Required]Nullable<int> id)
+        public HttpResponseMessage UploadTemplate(HttpRequestMessage message)
         {
             if (this.HttpContext.Request.Files.Count != 1)
                 return this.Request.CreateResponse(HttpStatusCode.NotAcceptable, "There are no files or more then one for uploading in the request");
 
-            var parameters = System.Web.HttpUtility.ParseQueryString(message.RequestUri.Query);
+            var file = this.HttpContext.Request.Files[0];
 
-            if (!id.HasValue)
-                throw new Exception("Target gallery is not pointed. Query strin parameter 'id' is required");
-
-            string contentpath = GalleryRuntime.GetGalleryContentPath(id.Value);
-
-            if (!Directory.Exists(contentpath))
-                Directory.CreateDirectory(contentpath);
-
-            var file = HttpContext.Request.Files[0];
-
-            if (GalleryRuntime.MaxImageSize.HasValue && GalleryRuntime.MaxImageSize.Value < file.ContentLength)
-                return this.Request.CreateResponse<string>(HttpStatusCode.BadRequest, string.Format("Uploading file size is {0}byte. Max file size {1}bytes is exceeded", file.ContentLength, GalleryRuntime.MaxImageSize.Value));
-
-            if (GalleryRuntime.MinImageSize.HasValue && file.ContentLength < GalleryRuntime.MinImageSize.Value)
-                return this.Request.CreateResponse<string>(HttpStatusCode.BadRequest, string.Format("Uploading file size is {0}byte. Min file size is {1}bytes", file.ContentLength, GalleryRuntime.MaxImageSize.Value));
-
-            string filename = file.FileName;
-            string filepath = Path.Combine(contentpath, filename);
-
-            if (File.Exists(filepath))
-            {
-                filepath = Corbis.Common.Utils.GenerateFilePathForDuplicate(filepath);
-                filename = Path.GetFileName(filepath);
-            }
+            string filepath = Path.Combine(GalleryRuntime.TemplateDirectory, "Temp", file.FileName);
 
             try
             {
@@ -71,28 +50,133 @@ namespace Corbis.CMS.Web.Controllers.Api
                 return this.Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
 
+            var buffer = new byte[file.ContentLength];
+            file.InputStream.Read(buffer, 0, buffer.Length);
+            file.InputStream.Close();
+
+            GalleryRuntime.AddTemplate(new ZipArchivePackage() { FileName = file.FileName, FileContent = buffer });
+
+            return message.CreateResponse(HttpStatusCode.OK);
+        }
+
+        /// <summary>
+        /// Method to Upload File to the system.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public HttpResponseMessage UploadGalleryImage(HttpRequestMessage message, [System.Web.Http.FromUri, System.ComponentModel.DataAnnotations.Required]Nullable<int> id)
+        {
+            if (this.HttpContext.Request.Files.Count != 1)
+                return this.Request.CreateResponse(HttpStatusCode.NotAcceptable, "There are no files or more then one for uploading in the request");
+
+            if (!id.HasValue)
+                throw new Exception("Target gallery is not pointed. Query strin parameter 'id' is required");
+
+            var gallery = GalleryRuntime.GetGallery(id.Value);
+            var template = GalleryRuntime.GetTemplate(gallery.TemplateID);
+
+            string contentpath = gallery.GetContentPath();
+
+            if (!Directory.Exists(contentpath))
+                Directory.CreateDirectory(contentpath);
+
+            var file = this.HttpContext.Request.Files[0];
+
+            //TODO: CHANGE VALIDATE LOGIC
+            if (GalleryRuntime.MaxImageSize.HasValue && GalleryRuntime.MaxImageSize.Value < file.ContentLength)
+                return this.Request.CreateResponse<string>(HttpStatusCode.BadRequest, string.Format("Uploading file size is {0}byte. Max file size {1}bytes is exceeded", file.ContentLength, GalleryRuntime.MaxImageSize.Value));
+
+            if (GalleryRuntime.MinImageSize.HasValue && file.ContentLength < GalleryRuntime.MinImageSize.Value)
+                return this.Request.CreateResponse<string>(HttpStatusCode.BadRequest, string.Format("Uploading file size is {0}byte. Min file size is {1}bytes", file.ContentLength, GalleryRuntime.MaxImageSize.Value));
+
+            string filename = file.FileName;
+            string filepath = Path.Combine(contentpath, filename);
+
+            if (File.Exists(filepath))
+            {
+                filepath = Common.Utils.GenerateFilePathForDuplicate(filepath);
+                filename = Path.GetFileName(filepath);
+            }
+
+            //try to save original image
+            try
+            {
+                file.SaveAs(filepath);
+            }
+            catch (Exception ex)
+            {
+                this.Logger.WriteError(ex, string.Format("Uploaded file cannot be saved to '{0}'", filepath));
+                return this.Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
+
+            //this handler return gallery relative image url
+            Common.ActionHandler<string, string> gllrUrlHandler =
+                delegate(string fname)
+                {
+                    return string.Format("{0}/{1}", Common.Utils.GetRelativePath(GalleryRuntime.GetGalleryOutputPath(id.Value), contentpath).TrimEnd('\\').Replace('\\', '/'), fname);
+                };
+
+            var siteUrls = new ImageUrlSet() { Original = Common.Utils.AbsoluteToVirtual(filepath, this.HttpContext) };
+            var gllrUrls = new ImageUrlSet() { Original = gllrUrlHandler(filename) };
+
+            string extension = Path.GetExtension(filename);
+            string filenameonly = extension.Length > 0 ? filename.Remove(filename.Length - extension.Length) : filename;
+
+            if (template.GallerySettings.RequiredImageSizes.HasFlag(GalleryImageSizes.Large))
+            {
+                string fname = string.Format("{0}.lrg", filenameonly);
+                string largepath = Path.Combine(contentpath, string.Format("{0}{1}", fname, extension));
+
+                //TODO: resize image and save it
+                //...
+
+                siteUrls.Large = Common.Utils.AbsoluteToVirtual(largepath, this.HttpContext);
+                gllrUrls.Large = gllrUrlHandler(fname);
+            }
+            if (template.GallerySettings.RequiredImageSizes.HasFlag(GalleryImageSizes.Middle))
+            {
+                string fname = string.Format("{0}.mdl", filenameonly);
+                string middlepath = Path.Combine(contentpath, string.Format("{0}{1}", fname, extension));
+
+                //TODO: resize image and save it
+                //...
+
+                siteUrls.Middle = Common.Utils.AbsoluteToVirtual(middlepath, this.HttpContext);
+                gllrUrls.Middle = gllrUrlHandler(fname);
+            }
+            if (template.GallerySettings.RequiredImageSizes.HasFlag(GalleryImageSizes.Small))
+            {
+                string fname = string.Format("{0}.sml", filenameonly);
+                string smallpath = Path.Combine(contentpath, string.Format("{0}{1}", fname, extension));
+
+                //TODO: resize image and save it
+                //...
+
+                siteUrls.Small = Common.Utils.AbsoluteToVirtual(smallpath, this.HttpContext);
+                gllrUrls.Small = gllrUrlHandler(fname);
+            }
+            
+
             GalleryContentImage img = null;
 
             try
             {
-                var content = GalleryRuntime.LoadGalleryContent(id.Value);
+                var content = gallery.LoadContent();
 
                 img = new GalleryContentImage()
                 {
-                    ID = string.Format("gallery-image{0}", content.Images.Count + 1),
-                    ImageID = string.Format("gallery-image_{0}", Guid.NewGuid().ToString("N")),
+                    ID = string.Format("gallery-image_{0}", Guid.NewGuid().ToString("N")),
                     Name = filename,
                     Order = content.Images.Count + 1,
                     ImageSource = new GalleryImageSource() { Type = ImageSourceTypes.LocalFile, Source = filepath.Substring(GalleryRuntime.GetGalleryPath(id.Value).Length) },
-                    Url = string.Format("{0}/{1}", 
-                        Corbis.Common.Utils.GetRelativePath(GalleryRuntime.GetGalleryOutputPath(id.Value), contentpath).TrimEnd(Path.DirectorySeparatorChar).Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar), 
-                        filename),
-                    ImageUrl = Corbis.Common.Utils.AbsoluteToVirtual(filepath, this.HttpContext)
+                    GalleryUrls = gllrUrls,
+                    SiteUrls = siteUrls
                 };
                 content.Images.Add(img);
 
                 //TODO: We must synchronize file updating
-                GalleryRuntime.SaveGalleryContent(id.Value, content);
+                gallery.SaveContent(content);
             }
             catch (Exception ex)
             {
@@ -101,9 +185,10 @@ namespace Corbis.CMS.Web.Controllers.Api
                 return message.CreateResponse(HttpStatusCode.InternalServerError);
             }
 
-            var output = new UploadedImageResponse() { GalleryID = id.Value, ID = img.ImageID, Url = img.ImageUrl };
+            var output = new UploadedImageResponse() { GalleryID = id.Value, ID = img.ID, Urls = img.SiteUrls };
             return message.CreateResponse <UploadedImageResponse>(HttpStatusCode.OK, output);
         }
+
 
     }
 }

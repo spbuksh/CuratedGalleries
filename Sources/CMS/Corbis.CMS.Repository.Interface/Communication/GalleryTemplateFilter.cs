@@ -31,5 +31,9 @@ namespace Corbis.CMS.Repository.Interface.Communication
         /// </summary>
         public Nullable<int> Count { get; set; }
 
+        /// <summary>
+        /// Indicates include zip packages or not
+        /// </summary>
+        public bool IncludePackage { get; set; }
     }
 }

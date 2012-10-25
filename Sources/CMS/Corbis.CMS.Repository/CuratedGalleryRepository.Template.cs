@@ -31,7 +31,7 @@ namespace Corbis.CMS.Repository
 
 
                     var trec = this.ObjectMapper.DoMapping<GalleryTemplateRecord>(template);
-                    trec.Archive = frec.ID;
+                    trec.PackageID = frec.ID;
                     trec.DateCreated = DateTime.UtcNow;
 
                     if (!context.GalleryTemplateRecords.Any())
@@ -51,7 +51,6 @@ namespace Corbis.CMS.Repository
 
                     output.Result = OperationResults.Success;
                     output.Output = this.ObjectMapper.DoMapping<GalleryTemplate>(trec);
-                    output.Output.PackageID = trec.Archive;
                 }
                 catch (Exception ex)
                 {
@@ -76,6 +75,26 @@ namespace Corbis.CMS.Repository
 
         public OperationResult<OperationResults, List<GalleryTemplate>> GetTemplates(GalleryTemplateFilter filter = null)
         {
+            using (var context = this.CreateMainContext())
+            {
+                if (filter == null)
+                {
+                    var query = from t in context.GalleryTemplateRecords
+                                join f in context.FileRecords on t.PackageID equals f.ID
+                                select new { Template = this.ObjectMapper.DoMapping<GalleryTemplate>(t), Package = new ZipArchivePackage() { FileName = f.Name, FileContent = f.Content.ToArray() } };
+
+                    List<GalleryTemplate> templates = new List<GalleryTemplate>();
+
+                    foreach (var item in query.ToArray())
+                    {
+                        item.Template.Package = item.Package;
+                        templates.Add(item.Template);
+                    }
+
+                    return new OperationResult<OperationResults, List<GalleryTemplate>>() { Result = OperationResults.Success, Output = templates };
+                }
+            }
+
             throw new NotImplementedException();
         }
 

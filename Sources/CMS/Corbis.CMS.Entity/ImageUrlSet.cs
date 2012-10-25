@@ -8,8 +8,31 @@ namespace Corbis.CMS.Entity
     /// <summary>
     /// Set of URLs to the image based on its size category
     /// </summary>
+    [Serializable]
     public class ImageUrlSet
     {
+        /// <summary>
+        /// Url to the original photo
+        /// </summary>
+        public virtual string Original
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(this.m_Original))
+                {
+                    return string.IsNullOrEmpty(this.m_Large) ?
+                        (string.IsNullOrEmpty(this.m_Middle) ? 
+                            (string.IsNullOrEmpty(this.m_Small) ? null : this.m_Small) : this.m_Middle) : this.m_Large;
+                }
+                return this.m_Original;
+            }
+            set
+            {
+                this.m_Original = value;
+            }
+        }
+        private string m_Original = null;
+
         /// <summary>
         /// Url to the image with large size
         /// </summary>

@@ -1,9 +1,17 @@
-﻿@{
-    ViewBag.Title = "Index";
+﻿@using Corbis.CMS.Web.Code
+@model IEnumerable<IGalleryTemplate>
+@{
+    ViewBag.Title = "Templates";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h2>Template</h2>
-<p>
-    @Html.ActionLink("Create Template", "CreateTemplate", "Template")
-</p>
+@using (this.Html.BeginForm("UploadTemplate", "Template", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <input type="file" name="file" />
+    <input type="submit" title="Upload" value="Upload" />
+}
+
+@foreach (var item in this.Model) {
+    <span>@item.Name</span>
+}

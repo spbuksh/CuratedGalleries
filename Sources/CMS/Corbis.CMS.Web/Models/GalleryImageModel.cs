@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Corbis.CMS.Entity;
 
 namespace Corbis.CMS.Web.Models
 {
@@ -17,7 +18,7 @@ namespace Corbis.CMS.Web.Models
         /// <summary>
         /// Image url
         /// </summary>
-        public string Url { get; set; }
+        public ImageUrlSet Urls { get; set; }
 
         /// <summary>
         /// Image descriptor
