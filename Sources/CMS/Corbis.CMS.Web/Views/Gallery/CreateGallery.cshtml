@@ -1,0 +1,68 @@
+﻿@using Corbis.CMS.Web.Models
+@model CreateGalleryModel
+@{
+    ViewBag.Title = "Create Gallery";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("CreateGallery", "Gallery", FormMethod.Post, new { id = "galleryDataForm" }))
+{
+    @Html.ValidationSummary()
+    <input type="hidden" name="templateID" value="@this.Model.TemplateID" />
+    <div class="content">
+        <div class="wrapper">
+            <h2>Create new curated gallery</h2>
+            <section class="name">
+                <h4>Gallery name</h4>
+                @Html.TextBoxFor(x => x.Name)
+            </section>
+            <section>
+            <div class="ddSelect">
+                <h4>Gallery tamplate</h4>
+                @Html.DropDownList("templates", this.Model.Templates.Select(x => new SelectListItem() { Text = x.Name, Value = x.ID.ToString(), Selected = x.IsDefault }))
+            </div>
+            <div class="templPreview">
+                @Html.Partial("GalleryTemplatePreviewPartial", this.Model.Templates.Where(x => x.ID == this.Model.TemplateID).Single())
+            </div>
+            </section>
+            <input type="submit" value="Create" class="save" />
+        </div>
+    </div>    
+}
+<script type="text/javascript">
+    $(function () {
+        $('#templates').change(function () {
+            var id = $(this).children('option:selected').val();
+            $('input[name="templateID"]').val(id);
+
+            var onsuccess = function (result) {
+                try {
+                    var jelem = $('div.templPreview');
+                    jelem.html('');
+                    jelem.html(result);
+                }
+                finally {
+                    endWaitCursor();
+                }
+            };
+            var onerror = function (request, status, error) {
+                try {
+                    alert('Error');
+                }
+                finally {
+                    endWaitCursor();
+                }
+            };
+
+            $.ajax({
+                url: '@Url.Action("GalleryTemplatePreview", "Gallery")',
+                type: 'POST',
+                data: { id: id },
+                success: onsuccess,
+                error: onerror
+            });
+
+            $.ajax();
+        });
+    });
+</script>

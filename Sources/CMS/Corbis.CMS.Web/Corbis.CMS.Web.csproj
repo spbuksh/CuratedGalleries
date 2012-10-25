@@ -216,9 +216,11 @@
     </Compile>
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\AdminUser.cs" />
+    <Compile Include="Models\CreateGalleryModel.cs" />
     <Compile Include="Models\GalleryImageModel.cs" />
     <Compile Include="Models\GalleryItemModel.cs" />
     <Compile Include="Models\GalleryModel.cs" />
+    <Compile Include="Models\GalleryTemplateModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -413,6 +415,8 @@
     <Content Include="Views\Gallery\Gallery.cshtml" />
     <Content Include="Views\Template\Index.cshtml" />
     <Content Include="Views\Gallery\ContentImagePartial.cshtml" />
+    <Content Include="Views\Gallery\CreateGallery.cshtml" />
+    <Content Include="Views\Gallery\GalleryTemplatePreviewPartial.cshtml" />
     <None Include="Web.config.local">
       <SubType>Designer</SubType>
     </None>

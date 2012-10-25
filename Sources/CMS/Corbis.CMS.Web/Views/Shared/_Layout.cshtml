@@ -1,4 +1,5 @@
 ﻿@using Corbis.CMS.Entity
+@using Corbis.CMS.Web.Code
 
 <!DOCTYPE html>
 <html lang="en">
@@ -79,7 +80,7 @@
                     <p id="p_title" class="site-title"></p>
                 </div>
                 @if (this.Request.IsAuthenticated) {
-                    var user = this.ViewBag.CurrentUser as AdminUserInfo;
+                    var user = this.GetCurrentUser();
                 <div class="float-right">
                     <section id="login">
                         @Html.Partial("_LoginPartial")

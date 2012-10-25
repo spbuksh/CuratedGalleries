@@ -8,7 +8,7 @@
 @Scripts.Render("~/Scripts/Corbis/Corbis.Gallery.js")
 <h2>Curated Galleries</h2>
 <p>
-    @Html.ActionLink("Create Gallery", "Gallery", "Gallery")
+    @Html.ActionLink("Create New Gallery", "CreateGallery", "Gallery")
 </p>
 <div>
 @foreach (var item in this.Model)
@@ -16,7 +16,7 @@
     <p class="galleryItem" corbis-item-id="@item.ID">
         <a href="@Url.Action("BuildGallery", "Gallery", new { id = @item.ID })" target="_blank">@Html.Raw(item.Name)</a>
         <span>Date created:</span><span>@item.DateCreated.ToString()</span>
-        @Html.ActionLink("Edit", "Gallery", "Gallery", new { id = item.ID }, null)
+        @Html.ActionLink("Edit", "EditGallery", "Gallery", new { id = item.ID }, null)
         <a href="javascript:void(0)" onclick="DeleteGallery(@item.ID,'@(Url.Action("DeleteGallery", "Gallery"))'); return false;" >Delete</a>
     </p> 
 }

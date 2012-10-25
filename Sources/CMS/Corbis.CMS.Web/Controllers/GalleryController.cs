@@ -22,6 +22,7 @@ namespace Corbis.CMS.Web.Controllers
     {
         [Dependency]
         public ICuratedGalleryRepository GalleryRepository { get; set; }
+
         /// <summary>
         /// Gallety index page
         /// </summary>
@@ -29,13 +30,11 @@ namespace Corbis.CMS.Web.Controllers
         [HttpGet]
         public ActionResult Index()
         {
-            CuratedGalleryFilter filter = null;
-
             OperationResult<OperationResults, List<CuratedGallery>> rslt = null;
 
             try
             {
-                rslt = this.GalleryRepository.GetGalleries(filter);
+                rslt = this.GalleryRepository.GetGalleries();
             }
             catch (Exception ex)
             {
@@ -46,7 +45,6 @@ namespace Corbis.CMS.Web.Controllers
             switch(rslt.Result)
             {
                 case OperationResults.Success:
-                    break;
                 case OperationResults.NotFound:
                     break;
                 case OperationResults.Failure:
@@ -58,21 +56,84 @@ namespace Corbis.CMS.Web.Controllers
             var galleries = new List<GalleryItemModel>();
 
             foreach (var item in rslt.Output)
-            {
                 galleries.Add(this.ObjectMapper.DoMapping<GalleryItemModel>(item));
-            }
 
             return View("Index", galleries);
         }
 
-        #region Create/Edit Gallery
+        #region Create Gallery
+
+        [HttpGet]
+        [ActionName("CreateGallery")]
+        public ActionResult CreateGallery_GET()
+        {
+            var model = new CreateGalleryModel() { Name = null };
+
+            foreach (var template in GalleryRuntime.GetTemplates())
+            {
+                var item = this.Convert(template);
+
+                if (template.IsDefault)
+                    model.TemplateID = item.ID;
+
+                model.Templates.Add(item);
+            }
+
+            return this.View("CreateGallery", model);
+        }
+        [HttpPost]
+        [ActionName("CreateGallery")]
+        public ActionResult CreateGallery_POST([Bind(Exclude = "Templates")]CreateGalleryModel model)
+        {
+            if (!this.ModelState.IsValid)
+            {
+                foreach (var template in GalleryRuntime.GetTemplates())
+                    model.Templates.Add(this.Convert(template));
+
+                return this.View("CreateGallery", model);
+            }
+
+            var gallery = GalleryRuntime.CreateGallery(model.Name, model.TemplateID);
+            return this.RedirectToAction("EditGallery", "Gallery", new { id = gallery.ID });
+        }
+
+        private GalleryTemplateModel Convert(IGalleryTemplate template)
+        {
+            var output = this.ObjectMapper.DoMapping<GalleryTemplateModel>(template);
+
+            if (template.Icon != null)
+            {
+                switch (template.Icon.Type)
+                {
+                    case ImageSourceTypes.Url:
+                        output.ImageUrl = template.Icon.Source;
+                        break;
+                    case ImageSourceTypes.LocalFile:
+                        output.ImageUrl = Utils.AbsoluteToVirtual(Path.Combine(GalleryRuntime.GetTemplatePath(template.ID), template.Icon.Source), this.HttpContext);
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
+            }
+            else
+            {
+                output.ImageUrl = GalleryRuntime.DefaultTemplateImageUrl.Small;
+            }
+
+            return output;
+        }
+
+        #endregion Create/Edit Gallery
+
+        #region Edit Gallery
 
         /// <summary>
         /// Create/Edit gallery
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public ActionResult Gallery(Nullable<int> id)
+        [ActionName("EditGallery")]
+        public ActionResult EditGallery_GET(Nullable<int> id)
         {
             CuratedGallery gallery = null;
 
@@ -104,7 +165,18 @@ namespace Corbis.CMS.Web.Controllers
             throw new NotImplementedException();
         }
 
-        #endregion Create/Edit Gallery
+        #endregion Edit Gallery
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id">Template identifier</param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult GalleryTemplatePreview(int id)
+        {
+            return this.PartialView("GalleryTemplatePreviewPartial", this.Convert(GalleryRuntime.GetTemplate(id)));
+        }
 
         /// <summary>
         /// Deletes gallery

@@ -1,9 +1,9 @@
 ﻿@using Corbis.CMS.Web.Code
 @using Corbis.CMS.Entity
-
 @if (Request.IsAuthenticated) {
+    var user = this.GetCurrentUser();
     <text>
-        Hello, @(Html.Raw((this.ViewBag.CurrentUser as AdminUserInfo).GetFullName()))!
+        Hello, @(Html.Raw(user.GetFullName()))!
         @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" })) {
             @Html.AntiForgeryToken()
             <a href="javascript:document.getElementById('logoutForm').submit()">Log off</a>

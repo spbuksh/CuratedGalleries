@@ -33,18 +33,14 @@ namespace Corbis.CMS.Web.Controllers
             get 
             {
                 if (this.m_CurrentUser == null)
-                {
-                    this.m_CurrentUser = (AdminUserInfo)this.Session["CurrentUser_{50E9BEBB-3352-4259-9487-4B96F9D3E549}"];
-                    this.ViewBag.CurrentUser = this.m_CurrentUser;
-                }
+                    this.m_CurrentUser = this.Session.GetCurrentUser();
 
                 return this.m_CurrentUser;
             }
             set 
             {
                 this.m_CurrentUser = value;
-                this.Session["CurrentUser_{50E9BEBB-3352-4259-9487-4B96F9D3E549}"] = this.m_CurrentUser;
-                this.ViewBag.CurrentUser = this.m_CurrentUser;
+                this.Session.SetCurrentUser(this.m_CurrentUser);
             }
         }
         private AdminUserInfo m_CurrentUser = null;
@@ -155,7 +151,7 @@ namespace Corbis.CMS.Web.Controllers
 
                     //update auth info in cookies
                     this.CurrentUser = restored;
-                    this.SetAuthData(restored);
+                    this.SetAuthData(restored);                    
                 }
                 else
                 {
@@ -168,6 +164,9 @@ namespace Corbis.CMS.Web.Controllers
                 if (this.CurrentUser != null)
                     this.SetAuthData(this.CurrentUser);
             }
+
+            if (this.CurrentUser != null)
+                this.ViewBag.CurrentUser = this.CurrentUser;
         }
 
         /// <summary>
