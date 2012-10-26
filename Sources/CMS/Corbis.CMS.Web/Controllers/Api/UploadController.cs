@@ -123,41 +123,57 @@ namespace Corbis.CMS.Web.Controllers.Api
             string extension = Path.GetExtension(filename);
             string filenameonly = extension.Length > 0 ? filename.Remove(filename.Length - extension.Length) : filename;
 
-            if (template.GallerySettings.RequiredImageSizes.HasFlag(GalleryImageSizes.Large))
+            System.Drawing.Image originalImage = null;
+
+            try
             {
-                string fname = string.Format("{0}.lrg", filenameonly);
-                string largepath = Path.Combine(contentpath, string.Format("{0}{1}", fname, extension));
 
-                //TODO: resize image and save it
-                //...
+                if (template.GallerySettings.RequiredImageSizes.HasFlag(GalleryImageSizes.Large))
+                {
+                    string fname = string.Format("{0}.lrg", filenameonly);
+                    string largepath = Path.Combine(contentpath, string.Format("{0}{1}", fname, extension));
 
-                siteUrls.Large = Common.Utils.AbsoluteToVirtual(largepath, this.HttpContext);
-                gllrUrls.Large = gllrUrlHandler(fname);
+                    if (originalImage == null)
+                        originalImage = System.Drawing.Image.FromFile(filepath);
+
+                    ResizeImage(originalImage, largepath, template.GallerySettings.GetImageSize(GalleryImageSizes.Large).Value);
+
+                    siteUrls.Large = Common.Utils.AbsoluteToVirtual(largepath, this.HttpContext);
+                    gllrUrls.Large = gllrUrlHandler(Path.GetFileName(largepath));
+                }
+                if (template.GallerySettings.RequiredImageSizes.HasFlag(GalleryImageSizes.Middle))
+                {
+                    string fname = string.Format("{0}.mdl", filenameonly);
+                    string middlepath = Path.Combine(contentpath, string.Format("{0}{1}", fname, extension));
+
+                    if (originalImage == null)
+                        originalImage = System.Drawing.Image.FromFile(filepath);
+
+                    ResizeImage(originalImage, middlepath, template.GallerySettings.GetImageSize(GalleryImageSizes.Middle).Value);
+
+                    siteUrls.Middle = Common.Utils.AbsoluteToVirtual(middlepath, this.HttpContext);
+                    gllrUrls.Middle = gllrUrlHandler(Path.GetFileName(middlepath));
+                }
+                if (template.GallerySettings.RequiredImageSizes.HasFlag(GalleryImageSizes.Small))
+                {
+                    string fname = string.Format("{0}.sml", filenameonly);
+                    string smallpath = Path.Combine(contentpath, string.Format("{0}{1}", fname, extension));
+
+                    if (originalImage == null)
+                        originalImage = System.Drawing.Image.FromFile(filepath);
+
+                    ResizeImage(originalImage, smallpath, template.GallerySettings.GetImageSize(GalleryImageSizes.Small).Value);
+
+                    siteUrls.Small = Common.Utils.AbsoluteToVirtual(smallpath, this.HttpContext);
+                    gllrUrls.Small = gllrUrlHandler(Path.GetFileName(smallpath));
+                }
             }
-            if (template.GallerySettings.RequiredImageSizes.HasFlag(GalleryImageSizes.Middle))
+            finally
             {
-                string fname = string.Format("{0}.mdl", filenameonly);
-                string middlepath = Path.Combine(contentpath, string.Format("{0}{1}", fname, extension));
-
-                //TODO: resize image and save it
-                //...
-
-                siteUrls.Middle = Common.Utils.AbsoluteToVirtual(middlepath, this.HttpContext);
-                gllrUrls.Middle = gllrUrlHandler(fname);
-            }
-            if (template.GallerySettings.RequiredImageSizes.HasFlag(GalleryImageSizes.Small))
-            {
-                string fname = string.Format("{0}.sml", filenameonly);
-                string smallpath = Path.Combine(contentpath, string.Format("{0}{1}", fname, extension));
-
-                //TODO: resize image and save it
-                //...
-
-                siteUrls.Small = Common.Utils.AbsoluteToVirtual(smallpath, this.HttpContext);
-                gllrUrls.Small = gllrUrlHandler(fname);
+                if (originalImage != null)
+                    originalImage.Dispose();
             }
             
-
             GalleryContentImage img = null;
 
             try
@@ -189,6 +205,32 @@ namespace Corbis.CMS.Web.Controllers.Api
             return message.CreateResponse <UploadedImageResponse>(HttpStatusCode.OK, output);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="srcImage"></param>
+        /// <param name="toImage"></param>
+        /// <param name="size"></param>
+        protected static void ResizeImage(string srcImage, string toImage, System.Drawing.Size size)
+        {
+            ResizeImage(System.Drawing.Image.FromFile(srcImage), toImage, size);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="srcImage"></param>
+        /// <param name="toImage"></param>
+        /// <param name="size"></param>
+        protected static void ResizeImage(System.Drawing.Image imgFrom, string toImage, System.Drawing.Size size)
+        {
+            if ((imgFrom.Size.Height < size.Height) && (imgFrom.Size.Width < size.Width))
+                size = imgFrom.Size;
+
+            using(var imgTo = Common.Utilities.Image.ImageHelper.ResizeImage(imgFrom, size))
+            {
+                imgTo.Save(toImage);
+            }
+        }
 
     }
 }

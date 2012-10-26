@@ -149,6 +149,16 @@ namespace Corbis.CMS.Web.Controllers
             //
             var model = this.ObjectMapper.DoMapping<GalleryModel>(gallery);
 
+            var content = gallery.LoadContent();
+
+            if (content.Images != null && content.Images.Count != 0)
+            {
+                model.ContentImages = new List<GalleryContentImageModel>();
+
+                foreach (var item in content.Images)
+                    model.ContentImages.Add(new GalleryContentImageModel() { GalleryID = gallery.ID, ID = item.ID, Urls = item.SiteUrls, Text = item.Name });
+            }
+
             return this.View("Gallery", model);
         }
 

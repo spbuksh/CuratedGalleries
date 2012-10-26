@@ -74,6 +74,13 @@
     <span>Gallery Name: </span>@Html.TextBoxFor(x => x.Name)
 </p>
 <div class="galleryContent">
+    @if (this.Model.ContentImages != null)
+    {
+        foreach (var image in this.Model.ContentImages)
+        {
+            @Html.Partial("ContentImagePartial", image);
+        }
+    }
 </div>
 <div id="flashContent">
     <p>

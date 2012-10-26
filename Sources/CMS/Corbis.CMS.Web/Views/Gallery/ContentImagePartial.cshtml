@@ -1,6 +1,6 @@
 ﻿@using Corbis.CMS.Web.Models
 @model GalleryContentImageModel
 <p corbis-item-id="@this.Model.ID">
-    <img src="@this.Model.Urls.Original" alt="@this.Model.Text" />
+    <img src="@this.Model.Urls.Middle" alt="@this.Model.Text" />
     <a href="javascript:void(0)" onclick="DeleteGalleryContentImage('@this.Model.ID', '@Url.Action("DeleteContentImage", "Gallery", new { galleryID = this.Model.GalleryID })'); return false;">Delete</a>
 </p>

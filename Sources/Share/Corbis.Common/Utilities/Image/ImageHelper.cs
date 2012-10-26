@@ -16,7 +16,7 @@ namespace Corbis.Common.Utilities.Image
         /// <param name="imgToResize">Image to resize</param>
         /// <param name="size">Size</param>
         /// <returns>Returns resized BitMap</returns>
-        public static Bitmap ResizeImage(Bitmap imgToResize, Size size)
+        public static System.Drawing.Image ResizeImage(System.Drawing.Image imgToResize, Size size)
         {
             var sourceWidth = imgToResize.Width;
             var sourceHeight = imgToResize.Height;
@@ -58,7 +58,7 @@ namespace Corbis.Common.Utilities.Image
         /// <param name="isBorderRequired">If set to true: it will drow a border around an Image. False by default.</param>
         /// <param name="borderColor">Border color.</param>
         /// <param name="imageFormat"> Image format (PNG by default)</param>
-        public static Bitmap CreateImage(string text, Font textFont, string filePathToSave, string fileName, Color? textColor = null, DockStyle dockStyle = DockStyle.Center, int? imageWidth = null, int? imageHeight = null, bool isBorderRequired = false, Pen borderColor = null, ImageFormat imageFormat = null)
+        public static System.Drawing.Image CreateImage(string text, Font textFont, string filePathToSave, string fileName, Color? textColor = null, DockStyle dockStyle = DockStyle.Center, int? imageWidth = null, int? imageHeight = null, bool isBorderRequired = false, Pen borderColor = null, ImageFormat imageFormat = null)
         {
             var generatedImage = new GeneratedImage(text, textFont, filePathToSave, fileName, textColor, dockStyle,
                                                     imageWidth, imageHeight, isBorderRequired, borderColor, imageFormat);

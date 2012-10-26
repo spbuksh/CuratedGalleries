@@ -18,5 +18,10 @@ namespace Corbis.CMS.Web.Models
         /// </summary>
         [Display(Name = "Gallery Name")]
         public string Name { get; set; }
+
+        /// <summary>
+        /// Gallery content images
+        /// </summary>
+        public List<GalleryContentImageModel> ContentImages { get; set; }
     }
 }
