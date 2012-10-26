@@ -2,16 +2,36 @@
 @model CreateGalleryModel
 @{
     ViewBag.Title = "Create Gallery";
-    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@using (Html.BeginForm("CreateGallery", "Gallery", FormMethod.Post, new { id = "galleryDataForm" }))
+<script type="text/javascript">
+    $(function () {
+        $('#templates').change(function () {
+            var id = $(this).children('option:selected').val();
+            $('input[name="templateID"]').val(id);
+
+            var onsuccess = function (result) {
+                var jelem = $('div.templPreview');
+                jelem.html('');
+                jelem.html(result);
+            };
+
+            $.ajax({
+                url: '@Url.Action("GalleryTemplatePreview", "Gallery")',
+                type: 'POST',
+                data: { id: id },
+                success: onsuccess
+            });
+        });
+    });
+</script>
+@using (Html.BeginForm("CreateGallery", "Gallery", FormMethod.Post))
 {
-    @Html.ValidationSummary()
     <input type="hidden" name="templateID" value="@this.Model.TemplateID" />
     <div class="content">
         <div class="wrapper">
             <h2>Create new curated gallery</h2>
+            @Html.ValidationSummary()
             <section class="name">
                 <h4>Gallery name</h4>
                 @Html.TextBoxFor(x => x.Name)
@@ -29,40 +49,3 @@
         </div>
     </div>    
 }
-<script type="text/javascript">
-    $(function () {
-        $('#templates').change(function () {
-            var id = $(this).children('option:selected').val();
-            $('input[name="templateID"]').val(id);
-
-            var onsuccess = function (result) {
-                try {
-                    var jelem = $('div.templPreview');
-                    jelem.html('');
-                    jelem.html(result);
-                }
-                finally {
-                    endWaitCursor();
-                }
-            };
-            var onerror = function (request, status, error) {
-                try {
-                    alert('Error');
-                }
-                finally {
-                    endWaitCursor();
-                }
-            };
-
-            $.ajax({
-                url: '@Url.Action("GalleryTemplatePreview", "Gallery")',
-                type: 'POST',
-                data: { id: id },
-                success: onsuccess,
-                error: onerror
-            });
-
-            $.ajax();
-        });
-    });
-</script>

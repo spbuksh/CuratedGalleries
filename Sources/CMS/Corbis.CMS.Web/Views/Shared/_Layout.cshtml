@@ -13,8 +13,12 @@
         @Scripts.Render("~/bundles/modernizr")
         @Scripts.Render("~/Scripts/jquery-1.7.1-vsdoc.js")
         @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/Scripts/jquery.validate.js")
+        @Scripts.Render("~/Scripts/jquery.validate.unobtrusive.js")
+        @Scripts.Render("~/Scripts/jquery.unobtrusive-ajax.js")
         @Scripts.Render("~/Scripts/jquery.json-2.3.min.js")
         @Scripts.Render("~/Scripts/jquery.autocomplete.js")
+        @Scripts.Render("~/Scripts/jquery-ui-1.8.20.js")
         @Scripts.Render("~/Scripts/swfobject.js")
         @Scripts.Render("~/Scripts/Corbis/Corbis.Common.js")
         
@@ -99,6 +103,7 @@
             </div>
         </header>
         <div id="body">
+            <div id="loading" style="display:none"></div>
             @RenderSection("featured", required: false)
             <section class="content-wrapper main-content clear-fix">
                 @RenderBody()

@@ -38,7 +38,7 @@
     uploaderOptions.url = "api/Upload/UploadGalleryImage?id=@this.Model.ID.Value";
     uploaderOptions.uploadCallBack = "uploadImageCallback";
     uploaderOptions.errorCallBack = "uploadImageErrorCallback";
-    uploaderOptions.filter = "*.jpg;*.jpeg;*.tif;*.tiff;*.png"
+    uploaderOptions.filter = "*.jpg;*.jpeg";
 
     function uploadImageCallback(result) {
         var onsuccess = function (data) {
@@ -48,15 +48,11 @@
             }
             $('div.galleryContent').append(data);
         }
-        var onerror = function () {
-            alert('Error');
-        }
         $.ajax({
             url: '@this.Url.Action("GetContentImage", "Gallery")',
             type: 'POST',
             data: jQuery.parseJSON(result),
-            success: onsuccess,
-            error: onerror
+            success: onsuccess
         });
 
         return "OK";
@@ -77,6 +73,8 @@
 <p>
     <span>Gallery Name: </span>@Html.TextBoxFor(x => x.Name)
 </p>
+<div class="galleryContent">
+</div>
 <div id="flashContent">
     <p>
         To view this page ensure that Adobe Flash Player version 11.1.0 or greater is installed.
@@ -118,5 +116,3 @@
         <!--<![endif]-->
     </object>
 </noscript>
-<div class="galleryContent">
-</div>

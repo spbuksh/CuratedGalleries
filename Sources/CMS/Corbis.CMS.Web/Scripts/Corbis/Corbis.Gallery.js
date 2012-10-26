@@ -8,30 +8,14 @@ function DeleteGallery(id, url) {
         return false;
 
     var onsuccess = function (result) {
-        try {
-            if (result.success) {
-                var jelem = $('p.galleryItem[corbis-item-id="' + id + '"]').remove();
-            }
-        }
-        finally {
-            endWaitCursor();
-        }
+        if (result.success)
+            $('p.galleryItem[corbis-item-id="' + id + '"]').remove();
     };
-    var onerror = function (request, status, error) {
-        try {
-            alert('Error');
-        }
-        finally {
-            endWaitCursor();
-        }
-    };
-
     $.ajax({
         url: url,
         type: 'POST',
         data: { id: id },
-        success: onsuccess,
-        error: onerror
+        success: onsuccess
     });
 }
 function DeleteGalleryContentImage(id, url) {
@@ -39,30 +23,14 @@ function DeleteGalleryContentImage(id, url) {
         return;
 
     var onsuccess = function (result) {
-        try {
-            if (result.success) {
-                $('p[corbis-item-id="' + id + '"]').remove();
-            }
-        }
-        finally {
-            endWaitCursor();
-        }
+        if (result.success)
+            $('p[corbis-item-id="' + id + '"]').remove();
     };
-    var onerror = function (request, status, error) {
-        try {
-            alert('Error');
-        }
-        finally {
-            endWaitCursor();
-        }
-    };
-
     $.ajax({
         url: url,
         type: 'POST',
         data: { id: id },
-        success: onsuccess,
-        error: onerror
+        success: onsuccess
     });
 }
 
