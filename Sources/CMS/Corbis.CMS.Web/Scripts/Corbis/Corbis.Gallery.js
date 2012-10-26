@@ -34,6 +34,23 @@ function DeleteGalleryContentImage(id, url) {
     });
 }
 
+function ClearGalleryContent(id, url) {
+    if (!confirm("Do you really want to detele all gallery images?"))
+        return;
+
+    var onsuccess = function (result) {
+        if (result.success)
+            $('div.galleryContent').html('');
+    };
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: { id: id },
+        success: onsuccess
+    });
+}
+
+
 
 
 

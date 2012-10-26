@@ -163,16 +163,17 @@ namespace Corbis.CMS.Web.Controllers
         }
 
         /// <summary>
-        /// Create/Edit gallery
+        /// Clears gallery content
         /// </summary>
+        /// <param name="id">Gallery identifier</param>
         /// <returns></returns>
         [HttpPost]
-        [ActionName("Gallery")]
-        public ActionResult UpdateGallery()
+        public ActionResult ClearGalleryContent([Required]Nullable<int> id)
         {
-            //save updates and transform xslt to html
-
-            throw new NotImplementedException();
+            var content = GalleryRuntime.LoadGalleryContent(id.Value);
+            content.DeleteContentImages(content.Images.Select(x => x.ID), this.HttpContext);
+            GalleryRuntime.SaveGalleryContent(id.Value, content);
+            return this.Json(new { success = true });
         }
 
         #endregion Edit Gallery
@@ -283,19 +284,8 @@ namespace Corbis.CMS.Web.Controllers
         public ActionResult DeleteContentImage([Required]Nullable<int> galleryID, [Required]string id)
         {
             var content = GalleryRuntime.LoadGalleryContent(galleryID.Value);
-            var image = content.Images.Where(x => string.Equals(x.ID, id, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
-
-            if (image != null)
-            {
-                content.Images.Remove(image);
-                content.Images.Sort(delegate(GalleryContentImage x, GalleryContentImage y) { return x.Order - y.Order; });
-
-                for (int i = 0; i < content.Images.Count; i++)
-                    content.Images[i].Order = i + 1;
-
-                GalleryRuntime.SaveGalleryContent(galleryID.Value, content);
-            }
-
+            content.DeleteContentImages(new string[] { id }, this.HttpContext);
+            GalleryRuntime.SaveGalleryContent(galleryID.Value, content);
             return this.Json(new { success = true });
         }
 

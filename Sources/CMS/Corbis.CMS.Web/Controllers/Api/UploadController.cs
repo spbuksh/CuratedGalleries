@@ -31,40 +31,6 @@ namespace Corbis.CMS.Web.Controllers.Api
         /// <param name="message"></param>
         /// <returns></returns>
         [HttpPost]
-        public HttpResponseMessage UploadTemplate(HttpRequestMessage message)
-        {
-            if (this.HttpContext.Request.Files.Count != 1)
-                return this.Request.CreateResponse(HttpStatusCode.NotAcceptable, "There are no files or more then one for uploading in the request");
-
-            var file = this.HttpContext.Request.Files[0];
-
-            string filepath = Path.Combine(GalleryRuntime.TemplateDirectory, "Temp", file.FileName);
-
-            try
-            {
-                file.SaveAs(filepath);
-            }
-            catch (Exception ex)
-            {
-                this.Logger.WriteError(ex, string.Format("Uploaded file cannot be saved to '{0}'", filepath));
-                return this.Request.CreateResponse(HttpStatusCode.InternalServerError);
-            }
-
-            var buffer = new byte[file.ContentLength];
-            file.InputStream.Read(buffer, 0, buffer.Length);
-            file.InputStream.Close();
-
-            GalleryRuntime.AddTemplate(new ZipArchivePackage() { FileName = file.FileName, FileContent = buffer });
-
-            return message.CreateResponse(HttpStatusCode.OK);
-        }
-
-        /// <summary>
-        /// Method to Upload File to the system.
-        /// </summary>
-        /// <param name="message"></param>
-        /// <returns></returns>
-        [HttpPost]
         public HttpResponseMessage UploadGalleryImage(HttpRequestMessage message, [System.Web.Http.FromUri, System.ComponentModel.DataAnnotations.Required]Nullable<int> id)
         {
             if (this.HttpContext.Request.Files.Count != 1)
@@ -108,6 +74,10 @@ namespace Corbis.CMS.Web.Controllers.Api
             {
                 this.Logger.WriteError(ex, string.Format("Uploaded file cannot be saved to '{0}'", filepath));
                 return this.Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
+            finally
+            {
+                file.InputStream.Close();
             }
 
             //this handler return gallery relative image url

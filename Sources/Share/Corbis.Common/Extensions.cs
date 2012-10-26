@@ -114,7 +114,11 @@ namespace Corbis.Common
         public static void Remove(this DirectoryInfo dir)
         {
             dir.Clear();
-            dir.Delete(true);
+
+            dir.Refresh();
+
+            if (Directory.Exists(dir.FullName))
+                Directory.Delete(dir.FullName, true);
         }
 
 

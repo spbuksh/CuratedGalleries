@@ -180,11 +180,19 @@ namespace Corbis.CMS.Web.Code
                 case OperationResults.NotFound:
                     {
                         var dir = new DirectoryInfo(GetGalleryPath(id));
+
                         if (dir.Exists)
                         {
-                            dir.Clear();
-                            dir.Delete(true);
+                            try
+                            {
+                                dir.Remove();
+                            }
+                            catch (Exception ex)
+                            {
+                                Logger.WriteError(ex);
+                            }
                         }
+
                         return true;
                     }
                 case OperationResults.Failure:

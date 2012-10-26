@@ -68,26 +68,54 @@ namespace Corbis.Common
             string appdir = context.Server.MapPath("~/");
             string url = absolutePath.Substring(appdir.Length).Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
             if (!url.StartsWith("/")) url = "/" + url;
+
+            string vd = System.Configuration.ConfigurationManager.AppSettings["virtualDirPath"];
+
+            if (!string.IsNullOrEmpty(vd))
+                url = string.Format("/{0}/{1}", vd.Trim('/').Trim('\\').Replace('\\', '/'), url);
+
             return url;
         }
         public static string AbsoluteToVirtual(string absolutePath, HttpContext context = null)
         {
-            context = (context == null) ? HttpContext.Current : context;
-            string appdir = context.Server.MapPath("~/");
-            return absolutePath.Substring(appdir.Length).Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            var cntx = new HttpContextWrapper((context == null) ? HttpContext.Current : context);
+            return AbsoluteToVirtual(absolutePath, cntx);
         }
 
 
         public static void DirectoryClear(DirectoryInfo dir)
         {
+            if (!dir.Exists)
+                return;
+
             foreach (var file in dir.GetFiles())
             {
                 file.Attributes &= ~FileAttributes.ReadOnly;
                 file.Delete();
             }
 
+            dir.Refresh();
+
             foreach (var child in dir.GetDirectories())
-                child.Delete(true);
+            {
+                DirectoryClear(child);
+
+                child.Refresh();
+
+                foreach (var item in child.GetDirectories())
+                {
+                    item.Refresh();
+
+                    if (Directory.Exists(item.FullName))
+                        Directory.Delete(item.FullName, true);
+                }
+
+                child.Refresh();
+
+                child.Delete();
+            }
+
+            dir.Refresh();
         }
 
         /// <summary>

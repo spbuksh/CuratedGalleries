@@ -15,7 +15,7 @@ var uploaderOptions = {
     errorCallBack: null, //!!!REQUIRED!!!
     id: "SimpleUploader",
     name: "SimpleUploader",
-    uploadAttemps: 3
+    uploadAttemps: 1
 };
 
 $(function () {
