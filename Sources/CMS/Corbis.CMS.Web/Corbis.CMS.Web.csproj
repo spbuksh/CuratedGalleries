@@ -279,18 +279,11 @@
     <Content Include="Content\themes\base\minified\jquery.ui.slider.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.tabs.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
-    <Content Include="CuratedGalleries\Galleries\readme.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="CuratedGalleries\readme.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="CuratedGalleries\Shared\readme.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="CuratedGalleries\Templates\readme.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Content Include="CuratedGalleries\Galleries\readme.txt" />
+    <Content Include="CuratedGalleries\readme.txt" />
+    <Content Include="CuratedGalleries\Shared\readme.txt" />
+    <Content Include="CuratedGalleries\Templates\readme.txt" />
+    <Content Include="CuratedGalleries\Temp\readme.txt" />
     <Content Include="Errors\default.htm" />
     <Content Include="Errors\error.htm" />
     <Content Include="favicon.ico" />
