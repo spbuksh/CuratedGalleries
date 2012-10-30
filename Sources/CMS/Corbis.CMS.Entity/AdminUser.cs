@@ -15,13 +15,13 @@ namespace Corbis.CMS.Entity
     public enum AdminUserRoles
     {
         /// <summary>
-        /// Super admin role
-        /// </summary>
-        SuperAdmin = 1,
-        /// <summary>
         /// Regular admin user role
         /// </summary>
-        Admin = 2
+        Admin = 1,
+        /// <summary>
+        /// Super admin role
+        /// </summary>
+        SuperAdmin = 3
     }
 
 
