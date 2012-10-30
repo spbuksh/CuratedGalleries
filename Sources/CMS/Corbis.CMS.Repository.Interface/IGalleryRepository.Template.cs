@@ -39,5 +39,12 @@ namespace Corbis.CMS.Repository.Interface
         /// <returns></returns>
         OperationResult<OperationResults, GalleryTemplate> GetTemplate(int id, GalleryTemplateContent content = GalleryTemplateContent.All);
 
+        /// <summary>
+        /// Deletes curated gallery template
+        /// </summary>
+        /// <param name="id">Curated gallery template unique identifier</param>
+        /// <returns></returns>
+        OperationResult<OperationResults, Nullable<bool>> DeleteTemplate(int id);
+
     }
 }

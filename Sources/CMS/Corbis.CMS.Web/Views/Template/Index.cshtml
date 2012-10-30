@@ -1,17 +1,62 @@
 ﻿@using Corbis.CMS.Web.Code
-@model IEnumerable<IGalleryTemplate>
+@model IEnumerable<Corbis.CMS.Web.Models.GalleryTemplateModel>
 @{
     ViewBag.Title = "Templates";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    @Scripts.Render("~/Scripts/Corbis/Corbis.Template.js")
 }
-
-<h2>Template</h2>
+<h2>
+    Template</h2>
 @using (this.Html.BeginForm("UploadTemplate", "Template", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     <input type="file" name="file" />
     <input type="submit" title="Upload" value="Upload" />
 }
-
-@foreach (var item in this.Model) {
-    <span>@item.Name</span>
+<ul class="hoverbox">
+    @foreach (var item in Model)
+    {
+        <li class="templateItem" corbis-item-id="@item.ID">
+            <div id="image_@item.ID-panel" class="result_image-panel search-image-border">
+                <div id="image_thumb_@item.ID-panel" class="image_thumbnail">
+                    <img src="@item.ImageUrl" id="preview_@item.ID" class="preview" />
+                </div>
+                <div id="image_details_@item.ID-panel" class="image_detail-panel">
+                    <div id="action_@item.ID-panel">
+                        <div id="rfcd_@item.ID-panel" class="rfcd-panel">
+                            <div class="rmrs-icon">
+                                <div class="rmrs-label" title="Date Created">@item.Name</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="info_@item.ID-panel" class="image_details-panel">
+                        <div id="details_@item.ID-panel">
+                            <div id="collection_detail_@item.ID" class="image_collection-text">@item.Description</div>
+                            <div id="category_detail_@item.ID" class="image_category-text">@item.Author</div>
+                            <div id="title_detail_@item.ID" class="image_title-text">@item.DateCreated.ToShortDateString()</div>
+                            @if (item.CanModify)
+                            {
+                                <div id="category_detail_@item.ID" class="image_category-text">
+                                    <a href="javascript:void(0)"  onclick="DeleteTemplate(@item.ID,'@(Url.Action("DeleteTemplate", "Template"))'); return false;" >
+                                    Delete</a>
+                                </div>
+                                
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </li>
+    }
+</ul>
+@*<div>*@
+@*@foreach (var item in this.Model)
+{
+    <p class="templateItem" corbis-item-id="@item.ID">
+        <span>@item.Name</span>
+       
+    </p> 
 }
+</div>*@ @*@foreach (var item in this.Model) {
+   
+}
+*@

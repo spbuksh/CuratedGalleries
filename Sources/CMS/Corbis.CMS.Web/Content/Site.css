@@ -785,11 +785,10 @@ width: 172px;
 .image_thumbnail {
 border: 1px solid #333;
 display: block;
-cursor: pointer;
 font-size: 60px;
 position: relative;
 text-align: center;
-width: 170px;
+width: 190px;
 }
 
 .rfcd-panel {
@@ -897,8 +896,8 @@ p a:hover
 	color: inherit;
 	padding: 2px;
 	vertical-align: top;
-	width: 100px;
-	height: 75px;
+	width: 185px;
+	height: 120px;
 }
 
 
@@ -918,7 +917,7 @@ float: left;
 margin: 3px;
 padding: 5px;
 position: relative;
-width: 185px;
+width: 200px;
 height: 220px;
 }
 

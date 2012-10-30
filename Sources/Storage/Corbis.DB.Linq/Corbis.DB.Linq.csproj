@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entity\GalleryTemplateRecord.cs" />
     <Compile Include="Main.designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

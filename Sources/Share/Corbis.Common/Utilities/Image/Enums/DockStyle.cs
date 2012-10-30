@@ -5,10 +5,17 @@
     /// </summary>
     public enum DockStyle
     {
-        Top = 1,
-        Bottom = 2,
-        Left = 3,
+        Center = 1,
+        CenterTop = 2,
+        CenterBottom = 3,
+
         Right = 4,
-        Center = 5
+        RightTop = 5,
+        RightBottom = 6,
+
+        Left = 7,
+        LeftTop = 8,
+        LeftBottom = 9
+
     }
 }

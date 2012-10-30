@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using Corbis.CMS.Repository.Interface;
@@ -83,6 +84,8 @@ namespace Corbis.CMS.Repository
                                 join f in context.FileRecords on t.PackageID equals f.ID
                                 select new { Template = this.ObjectMapper.DoMapping<GalleryTemplate>(t), Package = new ZipArchivePackage() { FileName = f.Name, FileContent = f.Content.ToArray() } };
 
+
+
                     List<GalleryTemplate> templates = new List<GalleryTemplate>();
 
                     foreach (var item in query.ToArray())
@@ -103,5 +106,38 @@ namespace Corbis.CMS.Repository
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Deletes curated gallery template
+        /// </summary>
+        /// <param name="id">Curated gallery template unique identifier</param>
+        /// <returns></returns>
+        public OperationResult<OperationResults, bool?> DeleteTemplate(int id)
+        {
+
+            try
+            {
+                using (var context = this.CreateMainContext())
+                {
+                    context.Connection.Open();
+                    context.Transaction = context.Connection.BeginTransaction();
+                    var templateToDelete = context.GalleryTemplateRecords.Include(_=>_.FileRecord).FirstOrDefault(_ => _.ID == id);
+
+                    if (templateToDelete != null)
+                    {
+                        context.GalleryTemplateRecords.DeleteOnSubmit(templateToDelete);
+                        context.FileRecords.DeleteOnSubmit(templateToDelete.FileRecord);
+                        context.SubmitChanges();
+                        context.Transaction.Commit();
+                        return new OperationResult<OperationResults, bool?>() { Result = OperationResults.Success, Output = true };
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteError(ex);
+            }
+           
+            return new OperationResult<OperationResults, bool?>() { Result = OperationResults.Failure, Output = false };
+        }
     }
 }
