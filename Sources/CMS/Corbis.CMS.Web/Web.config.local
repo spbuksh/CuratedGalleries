@@ -64,7 +64,7 @@
 
     <system.web>
         <!-- We upload images. So we must increase request size-->
-        <httpRuntime maxRequestLength="209715200" />
+        <httpRuntime maxRequestLength="524288000" />
         <compilation debug="true" targetFramework="4.0" />
 
         <!-- Session timeout must be equal to authentication.forms.timeout -->
