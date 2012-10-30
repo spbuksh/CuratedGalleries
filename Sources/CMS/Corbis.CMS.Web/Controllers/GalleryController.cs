@@ -218,7 +218,7 @@ namespace Corbis.CMS.Web.Controllers
 
             //TODO: Transfer problem!!!
             //return new TransferActionResult(string.Format("~/{0}", url.TrimStart('/')), true);
-            return this.Redirect(string.Format("~/{0}", url.TrimStart('~', '/')));
+            return this.Redirect(url);
         }
 
         /// <summary>

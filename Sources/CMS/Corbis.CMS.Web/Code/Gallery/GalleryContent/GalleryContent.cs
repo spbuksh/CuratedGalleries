@@ -85,10 +85,10 @@ namespace Corbis.CMS.Web.Code
                     }
                 };
 
-                delHandler(context.Server.MapPath(image.SiteUrls.Original));
-                delHandler(context.Server.MapPath(image.SiteUrls.Large));
-                delHandler(context.Server.MapPath(image.SiteUrls.Middle));
-                delHandler(context.Server.MapPath(image.SiteUrls.Small));
+                delHandler(Corbis.Common.Utils.VirtualToAbsolute(image.SiteUrls.Original, context));
+                delHandler(Corbis.Common.Utils.VirtualToAbsolute(image.SiteUrls.Large, context));
+                delHandler(Corbis.Common.Utils.VirtualToAbsolute(image.SiteUrls.Middle, context));
+                delHandler(Corbis.Common.Utils.VirtualToAbsolute(image.SiteUrls.Small, context));
 
                 this.Images.Remove(image);
             }

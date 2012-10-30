@@ -42,11 +42,11 @@ namespace Corbis.CMS.Web.Code
 
 
         /// <summary>
-        /// 
+        /// Gets url to the entry point html file
         /// </summary>
         /// <param name="gallery">Curated gallery</param>
         /// <returns></returns>
-        public static string GetPreviewUrl(this CuratedGallery gallery, HttpContextBase context = null)
+        public static string GetPreviewUrl(this CuratedGallery gallery, HttpContextBase context = null, bool vdirProcess = true)
         {
             var dir = new DirectoryInfo(GalleryRuntime.GetTemplatePath(gallery.TemplateID));
 
@@ -60,7 +60,7 @@ namespace Corbis.CMS.Web.Code
                 throw new Exception("Template must have single entry point file with extension '.html.xslt'");
 
             string htmlpath = Path.Combine(gallery.GetOutputPath(), file.Name.Substring(0, file.Name.Length - ".xlst".Length));
-            return Corbis.Common.Utils.AbsoluteToVirtual(htmlpath, context);
+            return Corbis.Common.Utils.AbsoluteToVirtual(htmlpath, context, vdirProcess);
         }
 
         public static GalleryContent LoadContent(this CuratedGallery gallery)
