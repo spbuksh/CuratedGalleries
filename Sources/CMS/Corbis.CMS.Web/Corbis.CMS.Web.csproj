@@ -302,6 +302,7 @@
     <Content Include="Images\trash.png" />
     <Content Include="Scripts\Corbis\Corbis.Gallery.js" />
     <Content Include="Scripts\Corbis\Corbis.Common.js" />
+    <Content Include="Scripts\Corbis\Corbis.Template.js" />
     <Content Include="Scripts\Corbis\EditGallery.js" />
     <Content Include="Scripts\Corbis\Uploader.js" />
     <Content Include="Scripts\jquery-1.7.1-vsdoc.js" />

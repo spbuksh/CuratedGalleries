@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Corbis.CMS.Repository.Interface;
 using Corbis.Common;
 using Ionic.Zip;
 using System.IO;
@@ -17,6 +18,7 @@ namespace Corbis.CMS.Web.Code
 {
     public partial class GalleryRuntime
     {
+
         /// <summary>
         /// Gets absolute folder path to the template based on its identifier
         /// </summary>
@@ -88,7 +90,7 @@ namespace Corbis.CMS.Web.Code
             }
             finally
             {
-                if (extractdir!= null && extractdir.Exists)
+                if (extractdir != null && extractdir.Exists)
                 {
                     try
                     {
@@ -200,6 +202,26 @@ namespace Corbis.CMS.Web.Code
             }
 
             return output;
+        }
+        /// <summary>
+        /// Deletes Template
+        /// </summary>
+        /// <param name="id">Template identifier</param>
+        public static bool DeleteTemplate(int id)
+        {
+            OperationResult<OperationResults, Nullable<bool>> rslt = null;
+
+            rslt = GalleryRepository.DeleteTemplate(id);
+
+            switch (rslt.Result)
+            {
+                case OperationResults.Success:
+                    return true;
+                case OperationResults.Failure:
+                    return false;
+                default:
+                    throw new NotImplementedException();
+            }
         }
 
     }

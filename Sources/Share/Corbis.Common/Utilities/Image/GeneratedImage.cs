@@ -90,6 +90,7 @@ namespace Corbis.Common.Utilities.Image
 
         /// <summary>
         /// Style to determinate text position relatively to image size.
+        /// Center by  default.
         /// </summary>
         public DockStyle DockStyle
         {
@@ -99,10 +100,60 @@ namespace Corbis.Common.Utilities.Image
                 _dockStyle = value;
                 switch (value)
                 {
-                    case DockStyle.Center:
+                    case DockStyle.Left:
+                        {
+                            _stringFormat.Alignment = StringAlignment.Near;
+                            _stringFormat.LineAlignment = StringAlignment.Center;
+                            break;
+                        }
+                    case DockStyle.LeftTop:
+                        {
+
+                            _stringFormat.Alignment = StringAlignment.Near;
+                            _stringFormat.LineAlignment = StringAlignment.Near;
+                            break;
+                        }
+                    case DockStyle.LeftBottom:
+                        {
+                            _stringFormat.Alignment = StringAlignment.Near;
+                            _stringFormat.LineAlignment = StringAlignment.Far;
+                            break;
+                        }
+                    case DockStyle.RightBottom:
+                        {
+                            _stringFormat.Alignment = StringAlignment.Far;
+                            _stringFormat.LineAlignment = StringAlignment.Far;
+                            break;
+                        }
+                    case DockStyle.RightTop:
+                        {
+                            _stringFormat.Alignment = StringAlignment.Far;
+                            _stringFormat.LineAlignment = StringAlignment.Near;
+                            break;
+                        }
+                    case DockStyle.Right:
+                        {
+                            _stringFormat.Alignment = StringAlignment.Far;
+                            _stringFormat.LineAlignment = StringAlignment.Center;
+                            break;
+                        }
+                    case DockStyle.CenterTop:
                         {
                             _stringFormat.Alignment = StringAlignment.Center;
                             _stringFormat.LineAlignment = StringAlignment.Near;
+                            break;
+                        }
+                    case DockStyle.CenterBottom:
+                        {
+                            _stringFormat.Alignment = StringAlignment.Center;
+                            _stringFormat.LineAlignment = StringAlignment.Far;
+                            break;
+                        }
+                    default:
+                        {
+
+                            _stringFormat.Alignment = StringAlignment.Center;
+                            _stringFormat.LineAlignment = StringAlignment.Center;
                             break;
                         }
                 }

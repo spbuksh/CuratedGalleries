@@ -52,6 +52,11 @@ namespace Corbis.CMS.Web.Code
         bool Enabled { get; }
 
         /// <summary>
+        /// Flag that indicates that record can be delted or not.
+        /// </summary>
+        bool CanModify { get; }
+
+        /// <summary>
         /// Template date registration
         /// </summary>
         Nullable<DateTime> DateCreated { get; }

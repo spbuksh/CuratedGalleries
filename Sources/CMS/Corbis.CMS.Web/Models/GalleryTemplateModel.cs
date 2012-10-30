@@ -31,5 +31,17 @@ namespace Corbis.CMS.Web.Models
         /// Is this gallery default or not
         /// </summary>
         public bool IsDefault { get; set; }
+
+        /// <summary>
+        /// Flag to indicate if record can be modified or not.
+        /// </summary>
+        public bool CanModify { get; set; }
+
+        public DateTime DateCreated { get; set; }
+
+
+        public string Author { get; set; }
+
+        public string Company { get; set; }
     }
 }

@@ -16,7 +16,14 @@ namespace Corbis.CMS.Entity
         {
             this.Enabled = true;
             this.IsDefault = false;
+            this.CanModify = true;
+
         }
+
+        /// <summary>
+        /// Flag to indicate that record can be deleted or not.
+        /// </summary>
+        public bool CanModify { get; set; }
 
         /// <summary>
         /// Is gallery active or not
