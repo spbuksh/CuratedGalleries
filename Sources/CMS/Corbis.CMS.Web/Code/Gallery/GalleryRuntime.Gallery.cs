@@ -103,6 +103,14 @@ namespace Corbis.CMS.Web.Code
             }
         }
 
+        public static void UpdateGalleryContentImage(int galleryID, string imageID, Action<GalleryContentImage> handler)
+        {
+            var content = LoadGalleryContent(galleryID);
+            var image = content.Images.Where(x => x.ID == imageID).Single();
+            handler(image);
+            SaveGalleryContent(galleryID, content);
+        }
+
         /// <summary>
         /// 
         /// </summary>

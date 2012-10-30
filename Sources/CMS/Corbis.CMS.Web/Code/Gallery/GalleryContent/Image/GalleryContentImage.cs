@@ -20,7 +20,7 @@ namespace Corbis.CMS.Web.Code
         /// </summary>
         public GalleryContentImage()
         {
-            //TODO; It is temporary due to bad gallery template
+            //TODO: It is temporary due to bad gallery template
             this.ImageContentName = string.Empty;
             this.ImageContentUrl = string.Empty;
         }

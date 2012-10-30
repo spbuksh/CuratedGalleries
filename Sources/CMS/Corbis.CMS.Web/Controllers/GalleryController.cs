@@ -127,6 +127,38 @@ namespace Corbis.CMS.Web.Controllers
 
         #region Edit Gallery
 
+        protected GalleryContentImageModel Convert(GalleryContentImage item, int galleryID)
+        {
+            var model = new GalleryContentImageModel() { GalleryID = galleryID, ID = item.ID, Urls = item.SiteUrls, Text = item.Name };
+
+            if (item.TextContent != null)
+            {
+                switch (item.TextContent.ContentType)
+                {
+                    case TextContents.None:
+                        model.TextContent = this.ObjectMapper.DoMapping<EmptyTextContentModel>(item.TextContent);
+                        break;
+                    case TextContents.QnA:
+                        model.TextContent = this.ObjectMapper.DoMapping<QnATextContentModel>(item.TextContent);
+                        break;
+                    case TextContents.Pullquote:
+                        model.TextContent = this.ObjectMapper.DoMapping<PullQuotedTextContentModel>(item.TextContent);
+                        break;
+                    case TextContents.BodyCopy:
+                        model.TextContent = this.ObjectMapper.DoMapping<BodyCopyTextContentModel>(item.TextContent);
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
+            }
+            else
+            {
+                model.TextContent = new EmptyTextContentModel() { Position = null };
+            }
+
+            return model;
+        }
+
         /// <summary>
         /// Create/Edit gallery
         /// </summary>
@@ -156,7 +188,7 @@ namespace Corbis.CMS.Web.Controllers
                 model.ContentImages = new List<GalleryContentImageModel>();
 
                 foreach (var item in content.Images)
-                    model.ContentImages.Add(new GalleryContentImageModel() { GalleryID = gallery.ID, ID = item.ID, Urls = item.SiteUrls, Text = item.Name });
+                    model.ContentImages.Add(this.Convert(item, gallery.ID));
             }
 
             return this.View("Gallery", model);
@@ -173,6 +205,49 @@ namespace Corbis.CMS.Web.Controllers
             var content = GalleryRuntime.LoadGalleryContent(id.Value);
             content.DeleteContentImages(content.Images.Select(x => x.ID), this.HttpContext);
             GalleryRuntime.SaveGalleryContent(id.Value, content);
+            return this.Json(new { success = true });
+        }
+
+        
+        [HttpPost]
+        public ActionResult SetEmptyContent(int galleryID, string imageID, EmptyTextContentModel model)
+        {
+            Action<GalleryContentImage> handler = delegate(GalleryContentImage item) { item.TextContent = this.ObjectMapper.DoMapping<EmptyTextContent>(model); };
+            GalleryRuntime.UpdateGalleryContentImage(galleryID, imageID, handler);
+
+            return this.Json(new { success = true });
+        }
+        [HttpPost]
+        public ActionResult SetQnAContent(int galleryID, string imageID, QnATextContentModel model)
+        {
+            if (!this.ModelState.IsValid)
+                this.PartialView("QnATextContentPartial", model);
+
+            Action<GalleryContentImage> handler = delegate(GalleryContentImage item) { item.TextContent = this.ObjectMapper.DoMapping<QnATextContent>(model); };
+            GalleryRuntime.UpdateGalleryContentImage(galleryID, imageID, handler);
+
+            return this.Json(new { success = true });
+        }
+        [HttpPost]
+        public ActionResult SetPullQuotedContent(int galleryID, string imageID, PullQuotedTextContentModel model)
+        {
+            if(!this.ModelState.IsValid)
+                return this.PartialView("PullQuotedTextContentPartial", model);
+
+            Action<GalleryContentImage> handler = delegate(GalleryContentImage item) { item.TextContent = this.ObjectMapper.DoMapping<PullQuotedTextContent>(model); };
+            GalleryRuntime.UpdateGalleryContentImage(galleryID, imageID, handler);
+
+            return this.Json(new { success = true });
+        }
+        [HttpPost]
+        public ActionResult SetBodyCopyContent(int galleryID, string imageID, BodyCopyTextContentModel model)
+        {
+            if(!this.ModelState.IsValid)
+                this.PartialView("BodyCopyTextContentPartial", model);
+
+            Action<GalleryContentImage> handler = delegate(GalleryContentImage item) { item.TextContent = this.ObjectMapper.DoMapping<BodyCopyTextContent>(model); };
+            GalleryRuntime.UpdateGalleryContentImage(galleryID, imageID, handler);
+
             return this.Json(new { success = true });
         }
 
@@ -268,10 +343,7 @@ namespace Corbis.CMS.Web.Controllers
             if (image == null)
                 return this.Json(new { success = false, error = string.Format("Image with id='{0}' was not found. Gallery id='{1}'", id, galleryID.Value) });
 
-            //TODO: create model 
-            var model = new GalleryContentImageModel() { GalleryID = galleryID.Value, ID = image.ID, Urls = image.SiteUrls, Text = image.Name };
-
-            return this.PartialView("ContentImagePartial", model);
+            return this.PartialView("ContentImagePartial", this.Convert(image, galleryID.Value));
         }
 
         /// <summary>

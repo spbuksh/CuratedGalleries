@@ -10,9 +10,7 @@ namespace Corbis.CMS.Web.Controllers
     {
         public ActionResult Index()
         {
-            ViewBag.Message = "Modify this template to jump-start your ASP.NET MVC application.";
-
-            return View();
+            return this.RedirectToAction("Index", "Gallery");
         }
 
         public ActionResult About()

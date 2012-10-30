@@ -188,6 +188,8 @@
     <Compile Include="Code\Gallery\GalleryContent\Image\GalleryCoverImage.cs" />
     <Compile Include="Code\Gallery\GalleryContent\Image\GalleryImageBase.cs" />
     <Compile Include="Code\Gallery\GalleryContent\Image\GalleryImageSource.cs" />
+    <Compile Include="Code\Gallery\GalleryContent\Text\BodyCopyTextContent.cs" />
+    <Compile Include="Code\Gallery\GalleryContent\Text\EmptyTextContent.cs" />
     <Compile Include="Code\Gallery\GalleryContent\Text\ImageTextContentBase.cs" />
     <Compile Include="Code\Gallery\GalleryContent\Text\PullQuotedTextContent.cs" />
     <Compile Include="Code\Gallery\GalleryContent\Text\QnATextContent.cs" />
@@ -221,6 +223,7 @@
     <Compile Include="Models\GalleryItemModel.cs" />
     <Compile Include="Models\GalleryModel.cs" />
     <Compile Include="Models\GalleryTemplateModel.cs" />
+    <Compile Include="Models\ImageTextContentModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -295,7 +298,6 @@
     <Content Include="Images\trash.png" />
     <Content Include="Scripts\Corbis\Corbis.Gallery.js" />
     <Content Include="Scripts\Corbis\Corbis.Common.js" />
-    <Content Include="Scripts\Corbis\EditGallery.js" />
     <Content Include="Scripts\Corbis\Uploader.js" />
     <Content Include="Scripts\jquery-1.7.1-vsdoc.js" />
     <Content Include="Scripts\jquery-1.7.1.js" />
@@ -410,6 +412,10 @@
     <Content Include="Views\Gallery\ContentImagePartial.cshtml" />
     <Content Include="Views\Gallery\CreateGallery.cshtml" />
     <Content Include="Views\Gallery\GalleryTemplatePreviewPartial.cshtml" />
+    <Content Include="Views\Gallery\QnATextContentPartial.cshtml" />
+    <Content Include="Views\Gallery\PullQuotedTextContentPartial.cshtml" />
+    <Content Include="Views\Gallery\BodyCopyTextContentPartial.cshtml" />
+    <Content Include="Views\Gallery\EmptyTextContentPartial.cshtml" />
     <None Include="Web.config.local">
       <SubType>Designer</SubType>
     </None>

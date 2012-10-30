@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Corbis.CMS.Entity;
+using Corbis.CMS.Web.Code;
 
 namespace Corbis.CMS.Web.Models
 {
@@ -24,5 +25,10 @@ namespace Corbis.CMS.Web.Models
         /// Image descriptor
         /// </summary>
         public string Text { get; set; }
+
+        /// <summary>
+        /// Image text content attached to the image
+        /// </summary>
+        public ImageTextContentModelBase TextContent { get; set; }
     }
 }

@@ -159,6 +159,8 @@ namespace Corbis.CMS.Web.Controllers.Api
                     GalleryUrls = gllrUrls,
                     SiteUrls = siteUrls
                 };
+                img.TextContent = new EmptyTextContent();
+
                 content.Images.Add(img);
 
                 //TODO: We must synchronize file updating

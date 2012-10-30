@@ -91,11 +91,10 @@
                     </section>
                     <nav>
                         <ul id="menu">
-                            <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                            @if (user.Roles.HasValue && user.Roles.Value.HasFlag(AdminUserRoles.SuperAdmin)) {
-                            <li>@Html.ActionLink("Users", "Index", "User")</li> }
                             <li>@Html.ActionLink("Galleries", "Index", "Gallery")</li>
                             <li>@Html.ActionLink("Templates", "Index", "Template")</li>
+                            @if (user.Roles.HasValue && user.Roles.Value.HasFlag(AdminUserRoles.SuperAdmin)) {
+                            <li>@Html.ActionLink("Users", "Index", "User")</li> }
                         </ul>
                     </nav>
                 </div>

@@ -25,7 +25,12 @@ namespace Corbis.CMS.Web.Code
         /// Pull quoted text
         /// </summary>
         Pullquote,
+        /// <summary>
+        /// TODO: what is this?
+        /// </summary>
+        BodyCopy
     }
+
     /// <summary>
     /// Text content position
     /// </summary>
@@ -47,7 +52,11 @@ namespace Corbis.CMS.Web.Code
         /// <summary>
         /// Text stands at bottom part of the refult displayed gallery image
         /// </summary>
-        Bottom
+        Bottom,
+        /// <summary>
+        /// Text stands at center of the refult displayed gallery image
+        /// </summary>
+        Center
     }
 
     /// <summary>
@@ -56,6 +65,8 @@ namespace Corbis.CMS.Web.Code
     [Serializable]
     [XmlInclude(typeof(QnATextContent))]
     [XmlInclude(typeof(PullQuotedTextContent))]
+    [XmlInclude(typeof(BodyCopyTextContent))]
+    [XmlInclude(typeof(EmptyTextContent))]
     public abstract class ImageTextContentBase
     {
         /// <summary>
