@@ -947,11 +947,18 @@ padding: 0 1.5%;
     margin-bottom: 15px;
 }
 /*gallery styles*/
+.galleryItem{ overflow: hidden;margin-bottom: 15px;}
+.galleryItem:last-of-type{margin-bottom: 0px;}
+.galleryItem .imgWrapper{ border: 1px solid #666;width: 100px;height: 100px;float: left;}
+.galleryItem .infoWrapper{height: 80px;margin-left: 110px;}
+.galleryItem .galleryTitle{ font-weight: bold;margin-bottom: 10px;}
+.galleryItem .galleryTitle div{ display: inline;margin-left: 190px;font-weight: normal;}
+.galleryItem .createDate{ padding-left: 3px;margin-bottom: 16px;}
 .globalToolbar{ background-color: #000;overflow: hidden;margin-top: 10px;}
 .globalToolbar ul{ list-style: none;padding: 0;margin: 0;margin-left: 32%;}
 .globalToolbar ul li{ float: left;}
 .globalToolbar ul li a{ color: #fff;display: block;height: 34px;padding: 0 10px;line-height: 34px;}
-.globalToolbar ul li a:hover{ background-color: #666;}
+.globalToolbar ul li a:hover{ background-color: #666;text-decoration: none;}
 .contentImage{margin-bottom: 20px;border: 1px solid #666;padding: 10px 30px 10px 10px;position: relative;}
 .contentImage:hover{-moz-box-shadow: 0 0 10px rgba(0,0,0,0.5); /* Для Firefox */
     -webkit-box-shadow: 0 0 10px rgba(0,0,0,0.5); /* Для Safari и Chrome */
@@ -975,10 +982,11 @@ padding: 0 1.5%;
 .txtArea .radioGroup{ margin-bottom: 10px;}
 .txtArea .radioGroup label{cursor:pointer;margin-right:5px;display: inline;font-weight: normal;}
 .txtArea .radioGroup input[type=radio]{margin-right:10px;cursor:pointer;width: auto;}
+.txtInputs{ overflow: hidden;width: 512px;}
 .txtInputs form label{ text-align: left;}
 .txtInputs textarea{height:90px;resize: none;padding: 5px;border:1px solid #666;}
 .txtInputs input[type=text]{border:1px solid #666;width: 500px;}
-.txtInputs input[type=button]{-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;float:right;cursor: pointer;border:1px solid #666;}
+.txtInputs input[type=submit]{float:right;}
 .up_down{ position: absolute;right: 0;top: 50%;background-color: #000;margin-right: -10px;margin-top: -40px;display: none;background: url('../Images/up_down_button.png') no-repeat top left;width: 20px;height: 80px;}
 .up_down a{ display: block;background-position: 0 0; width: 20px;height: 40px;}
 .up_down a.up{background: url('../Images/up_down_button.png') no-repeat;background-position: 0 0;}

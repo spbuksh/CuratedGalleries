@@ -70,7 +70,7 @@ $(function () {
             }
         };
         $.ajax({
-            url: '/Gallery/SwapImageOrder',
+            url: GalleryPageMngr.swapImageOrderURL,
             type: 'POST',
             data: { galleryID: GalleryPageMngr.galleryID, imageID1: jimag1.attr('corbis-item-id'), imageID2: jimag2.attr('corbis-item-id') },
             success: onsuccess
@@ -167,7 +167,7 @@ function DeleteGalleryContentImage(data) {
             jimage.remove();
     };
     $.ajax({
-        url: '/Gallery/DeleteContentImage',
+        url: GalleryPageMngr.deleteContentImageURL,
         type: 'POST',
         data: { galleryID: GalleryPageMngr.galleryID, id: jimage.attr('corbis-item-id') },
         success: onsuccess

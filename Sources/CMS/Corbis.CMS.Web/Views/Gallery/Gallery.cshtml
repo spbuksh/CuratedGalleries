@@ -36,6 +36,8 @@
 
 <script type="text/javascript">
     GalleryPageMngr.galleryID = @(this.Model.ID.Value);
+    GalleryPageMngr.deleteContentImageURL = '@Url.Action("DeleteContentImage", "Gallery")';
+    GalleryPageMngr.swapImageOrderURL = '@Url.Action("SwapImageOrder", "Gallery")';
 
     uploaderOptions.url = "api/Upload/UploadGalleryImage?id=@this.Model.ID.Value";
     uploaderOptions.uploadCallBack = "uploadImageCallback";

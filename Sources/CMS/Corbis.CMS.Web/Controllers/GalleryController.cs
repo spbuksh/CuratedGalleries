@@ -278,6 +278,8 @@ namespace Corbis.CMS.Web.Controllers
             images[0].Order = images[1].Order;
             images[1].Order = order;
 
+            content.Images.Sort(delegate(GalleryContentImage x, GalleryContentImage y) { return x.Order - y.Order; });
+
             GalleryRuntime.SaveGalleryContent(galleryID, content);
 
             return this.Json(new { success = true });

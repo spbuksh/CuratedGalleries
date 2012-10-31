@@ -13,12 +13,27 @@
 <div>
 @foreach (var item in this.Model)
 {
-    <p class="galleryItem" corbis-item-id="@item.ID">
+    <div class="galleryItem" corbis-item-id="@item.ID">
+        <div class="imgWrapper"></div>
+        <div class="infoWrapper">
+            <div class="galleryTitle">
         <a href="@Url.Action("BuildGallery", "Gallery", new { id = @item.ID })" target="_blank">@Html.Raw(item.Name)</a>
-        <span>Date created:</span><span>@item.DateCreated.ToString()</span>
+                <div>
         @Html.ActionLink("Edit", "EditGallery", "Gallery", new { id = item.ID }, null)
         <a href="javascript:void(0)" onclick="DeleteGallery(@item.ID,'@(Url.Action("DeleteGallery", "Gallery"))'); return false;" >Delete</a>
-    </p> 
+                </div>
+            </div>
+            <div class="createDate">
+            <table>
+                <tr>
+                    <td>Date created:</td>
+                    <td>@item.DateCreated.ToString()</td>
+                </tr>
+            </table>
+            </div>
+           
+        </div>
+    </div> 
 }
 </div>
 
