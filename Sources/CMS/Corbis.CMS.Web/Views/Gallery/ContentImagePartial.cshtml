@@ -23,30 +23,37 @@
                                 (bc != null ? bodycopyClass : null)));
  }
 <div class="contentImage" corbis-item-id="@this.Model.ID">
+    <span class="toolbar">
+        <a href="javascript:void(0)" class="minimal"></a>
+        <a href="javascript:void(0)" class="close"></a>
+    </span>
+    <span class="up_down">
+        <a class="up" href="javascript:void(0)"></a>
+        <a class="down" href="javascript:void(0)"></a>
+    </span>
     <div class="imgArea">
         <div class="imgToolbar">
             <a href="javascript:void(0)">Upload</a>
-            <a href="javascript:void(0)" onclick="DeleteGalleryContentImage('@this.Model.ID', '@Url.Action("DeleteContentImage", "Gallery", new { galleryID = this.Model.GalleryID })'); return false;">Delete</a>
         </div>
         <div class="imgPresenter">
             <img src="@this.Model.Urls.Middle" alt="@this.Model.Text" />
         </div>
         <div class="txtAlign">
             <ul>
-                <li corbis-data-position="left" class="left"><a href="javascript:void(0)">Left</a></li>
-                <li corbis-data-position="right" class="right"><a href="javascript:void(0)">Right</a></li>
-                <li corbis-data-position="center" class="center"><a href="javascript:void(0)">Center</a></li>
-                <li corbis-data-position="bottom" class="bottom"><a href="javascript:void(0)">Bottom</a></li>
-                <li corbis-data-position="top" class="top"><a href="javascript:void(0)">Top</a></li>
+                <li corbis-data-position="left" class="left"><a href="javascript:void(0)"></a></li>
+                <li corbis-data-position="right" class="right"><a href="javascript:void(0)"></a></li>
+                <li corbis-data-position="center" class="center"><a href="javascript:void(0)"></a></li>
+                <li corbis-data-position="bottom" class="bottom"><a href="javascript:void(0)"></a></li>
+                <li corbis-data-position="top" class="top"><a href="javascript:void(0)"></a></li>
             </ul>
         </div>
     </div>
     <div class="txtArea">
         <div class="radioGroup"> 
-            <label>None</label><input name="radioGroup_@this.Model.ID" corbis-txt-type="@emptyClass" checked="checked" type="radio" />       
-            <label>Q&amp;A</label><input name="radioGroup_@this.Model.ID" corbis-txt-type="@QnAClass" type="radio" />
-            <label>Pullquote</label><input name="radioGroup_@this.Model.ID" corbis-txt-type="@pullquoteClass" type="radio" />
-            <label>Body copy</label><input name="radioGroup_@this.Model.ID" corbis-txt-type="@bodycopyClass" type="radio" />            
+            <label for="empty_@this.Model.ID">None</label><input name="radioGroup_@this.Model.ID" id="empty_@this.Model.ID" corbis-txt-type="@emptyClass" checked="checked" type="radio" />       
+            <label for="qa_@this.Model.ID">Q&amp;A</label><input name="radioGroup_@this.Model.ID" id="qa_@this.Model.ID" corbis-txt-type="@QnAClass" type="radio" />
+            <label for="pq_@this.Model.ID">Pullquote</label><input name="radioGroup_@this.Model.ID" id="pq_@this.Model.ID" corbis-txt-type="@pullquoteClass" type="radio" />
+            <label for="bc_@this.Model.ID">Body copy</label><input name="radioGroup_@this.Model.ID" id="bc_@this.Model.ID" corbis-txt-type="@bodycopyClass" type="radio" />            
         </div>
         <div class="txtInputs">
             @{ 
@@ -119,5 +126,6 @@
             });
         });
     </script>
+    <div class="clear-fix"></div>
 </div>
 

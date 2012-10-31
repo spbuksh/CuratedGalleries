@@ -17,6 +17,11 @@ namespace Corbis.CMS.Web.Models
         public string ID { get; set; }
 
         /// <summary>
+        /// Image order number
+        /// </summary>
+        public int Order { get; set; }
+
+        /// <summary>
         /// Image url
         /// </summary>
         public ImageUrlSet Urls { get; set; }

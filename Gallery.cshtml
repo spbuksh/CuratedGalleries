@@ -1,0 +1,132 @@
+﻿@using Corbis.CMS.Web.Models
+@model GalleryModel
+@{
+    ViewBag.Title = "Add/Edit Gallery";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Html.Hidden("GalleryID", this.Model.ID.Value);
+<h2>Add/Edit Gallery</h2>
+
+<style type="text/css" media="screen">
+    html, body
+    {
+        height: 100%;
+    }
+    body
+    {
+        margin: 0;
+        padding: 0;
+        overflow: auto;
+        text-align: center;
+        background-color: #ffffff;
+    }
+    object:focus
+    {
+        outline: none;
+    }
+    #flashContent
+    {
+        display: none;
+    }
+</style>
+
+@Scripts.Render("~/Scripts/Corbis/Uploader.js")
+@Scripts.Render("~/Scripts/Corbis/Corbis.Gallery.js")
+
+<script type="text/javascript">
+    uploaderOptions.url = "api/Upload/UploadGalleryImage?id=@this.Model.ID.Value";
+    uploaderOptions.uploadCallBack = "uploadImageCallback";
+    uploaderOptions.errorCallBack = "uploadImageErrorCallback";
+    uploaderOptions.filter = "*.jpg;*.jpeg";
+
+    function uploadImageCallback(result) {
+        var onsuccess = function (data) {
+            if (data.success === false) {
+                alert(data.error);
+                return;
+            }
+            $('div.galleryContent').append(data);
+        }
+        $.ajax({
+            url: '@this.Url.Action("GetContentImage", "Gallery")',
+            type: 'POST',
+            data: jQuery.parseJSON(result),
+            success: onsuccess
+        });
+
+        return "OK";
+    }
+    function uploadImageErrorCallback(type, errorMessage) {
+        alert("[errorCallBack] : " + type + " ::: " + errorMessage);
+        return "OK";
+    }
+</script>
+<div class="globalToolbar">
+    <ul>
+        <li>
+            @Html.ActionLink("Build and Preview", "BuildGallery", "Gallery", new { id = this.Model.ID }, null)
+        </li>
+        <li>
+            @Html.ActionLink("Download Gallery", "Download", "Gallery", new { id = this.Model.ID }, null)
+        </li>
+        <li>
+            <a href="javascript:void(0)" onclick="ClearGalleryContent(@this.Model.ID, '@Url.Action("ClearGalleryContent", "Gallery")'); return false;">Clear content</a>
+        </li>
+    </ul>
+</div>
+
+
+<p>
+    <span>Gallery Name: </span>@Html.TextBoxFor(x => x.Name)
+</p>
+<div class="galleryContent">
+    @if (this.Model.ContentImages != null)
+    {
+        foreach (var image in this.Model.ContentImages)
+        {
+            @Html.Partial("ContentImagePartial", image);
+        }
+    }
+</div>
+<div id="flashContent">
+    <p>
+        To view this page ensure that Adobe Flash Player version 11.1.0 or greater is installed.
+    </p>
+    <script type="text/javascript">
+        var pageHost = ((document.location.protocol == "https:") ? "https://" : "http://");
+        document.write("<a href='http://www.adobe.com/go/getflashplayer'><img src='"
+								+ pageHost + "www.adobe.com/images/shared/download_buttons/get_flash_player.gif' alt='Get Adobe Flash player' /></a>"); 
+    </script>
+</div>
+<noscript>
+    <object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="100%" height="100%"
+        id="SimpleUploader">
+        <param name="movie" value="SimpleUploader.swf" />
+        <param name="quality" value="high" />
+        <param name="bgcolor" value="#ffffff" />
+        <param name="allowScriptAccess" value="sameDomain" />
+        <param name="allowFullScreen" value="true" />
+        <!--[if !IE]>-->
+        <object type="application/x-shockwave-flash" data="~SimpleUploader.swf"
+            width="100%" height="100%">
+            <param name="quality" value="high" />
+            <param name="bgcolor" value="#ffffff" />
+            <param name="allowScriptAccess" value="sameDomain" />
+            <param name="allowFullScreen" value="true" />
+            <!--<![endif]-->
+            <!--[if gte IE 6]>-->
+            <p>
+                Either scripts and active content are not permitted to run or Adobe Flash Player
+                version 11.1.0 or greater is not installed.
+            </p>
+            <!--<![endif]-->
+            <a href="http://www.adobe.com/go/getflashplayer">
+                <img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif"
+                    alt="Get Adobe Flash Player" />
+            </a>
+            <!--[if !IE]>-->
+        </object>
+        <!--<![endif]-->
+    </object>
+</noscript>

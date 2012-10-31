@@ -15,7 +15,8 @@ var uploaderOptions = {
     errorCallBack: null, //!!!REQUIRED!!!
     id: "SimpleUploader",
     name: "SimpleUploader",
-    uploadAttemps: 1
+    uploadAttemps: 1,
+    viewMode: "multiple" // "multiple" "single"
 };
 
 $(function () {
@@ -34,6 +35,7 @@ $(function () {
     flashvars.uploadCallBack = uploaderOptions.uploadCallBack;
     flashvars.errorCallBack = uploaderOptions.errorCallBack;
     flashvars.uploadAttemps = uploaderOptions.uploadAttemps;
+    flashvars.viewMode = uploaderOptions.viewMode;
 
     params.quality = "high";
     params.bgcolor = uploaderOptions.bgcolor;

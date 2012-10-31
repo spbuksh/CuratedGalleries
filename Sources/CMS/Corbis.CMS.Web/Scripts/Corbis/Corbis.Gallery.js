@@ -4,30 +4,84 @@
 /// ***********************************************************************
 
 
+var GalleryPageMngr =
+{
+    galleryID: null
+}
 
 $(function () {
-    //****** it activates/deactivates image text input data *************
+    var jimageRoots = $('div.contentImage');
+
+    //****** it activates/deactivates image text input data
     var handler = function (jradio) {
         jradio.closest('div.txtArea').find('div.' + jradio.attr('corbis-txt-type')).show().siblings().hide();
     };
 
-    var jitems = $('div.contentImage div.radioGroup input:radio');
+    var jradios = jimageRoots.find('div.radioGroup input:radio');
 
-    jitems.live('click', function () {
+    jradios.live('click', function () {
         handler($(this));
     });
 
-    handler(jitems.filter(':checked'));
-
+    handler(jradios.filter(':checked'));
 
     $('div.contentImage div.txtAlign a').live('click', function () {
         var jthis = $(this);
         _setTextPosition(jthis.closest('div.contentImage'), null, jthis.closest('li'));
     });
-    //*******************************************************************
+    //******* image toolbar handling
+    //delete image
+    $('div.contentImage span.toolbar a.close').live('click', function () {
+        DeleteGalleryContentImage($(this).closest('div.contentImage'));
+    });
+
+    //****** move images up/down
+    //Move image up
+    $('div.contentImage span.up_down a.up').live('click', function () {
+        var jcurImg = $(this).closest('div.contentImage');
+
+        var jimg = jcurImg.prev('div.contentImage');
+
+        if (jimg.length == 0)
+            return;
+
+        _swapImages(jcurImg, jimg);
+    });
+
+    //Move image down
+    $('div.contentImage span.up_down a.down').live('click', function () {
+        var jcurImg = $(this).closest('div.contentImage');
+
+        var jimg = jcurImg.next('div.contentImage');
+
+        if (jimg.length == 0)
+            return;
+
+        _swapImages(jcurImg, jimg);
+    });
+
+    var _swapImages = function (jimag1, jimag2) {
+        var onsuccess = function (result) {
+            if (result.success) {
+                jimag1.swapWith(jimag2);
+            }
+            else {
+                alert(result.error ? result.error : 'Error. Please update the page');
+            }
+        };
+        $.ajax({
+            url: '/Gallery/SwapImageOrder',
+            type: 'POST',
+            data: { galleryID: GalleryPageMngr.galleryID, imageID1: jimag1.attr('corbis-item-id'), imageID2: jimag2.attr('corbis-item-id') },
+            success: onsuccess
+        });
+    };
+
 });
 
-
+function _getContentImageJElem(imageID) {
+    return $('div.contentImage[corbis-item-id="' + imageID + '"]');
+}
 function _setTextPosition(jroot, position, jli) {
     jroot.find('div.txtArea input[name=position]').val(position);
     if (position && !jli) {
@@ -45,6 +99,13 @@ function _setTextPosition(jroot, position, jli) {
 function _onTextContentSaveSuccess(data, selector) {
     if (data.success) {
         alert('Image updated successfully');
+
+        var jvs = $(selector).closest('form').find('div.validation-summary-errors');
+
+        if (jvs.length != 0) {
+            var helper = new validationSummaryHelper(jvs);
+            helper.reset();
+        }
     }
     else {
         var jelem = $(selector);
@@ -54,7 +115,7 @@ function _onTextContentSaveSuccess(data, selector) {
 }
 
 function InitContentImage(options) {
-    var jroot = $('div.contentImage[corbis-item-id="' + options.imageID + '"]');
+    var jroot = _getContentImageJElem(options.imageID);
 
     if (options.position)
         _setTextPosition(jroot, options.position, null);
@@ -79,22 +140,6 @@ function DeleteGallery(id, url) {
         success: onsuccess
     });
 }
-function DeleteGalleryContentImage(id, url) {
-    if (!confirm("Do you really want to detele this image?"))
-        return;
-
-    var onsuccess = function (result) {
-        if (result.success)
-            $('div.contentImage[corbis-item-id="' + id + '"]').remove();
-    };
-    $.ajax({
-        url: url,
-        type: 'POST',
-        data: { id: id },
-        success: onsuccess
-    });
-}
-
 function ClearGalleryContent(id, url) {
     if (!confirm("Do you really want to detele all gallery images?"))
         return;
@@ -110,6 +155,25 @@ function ClearGalleryContent(id, url) {
         success: onsuccess
     });
 }
+
+function DeleteGalleryContentImage(data) {
+    var jimage = (typeof data == "string") ? _getContentImageJElem(data) : data;
+
+    if (!confirm("Do you really want to detele this image?"))
+        return;
+
+    var onsuccess = function (result) {
+        if (result.success)
+            jimage.remove();
+    };
+    $.ajax({
+        url: '/Gallery/DeleteContentImage',
+        type: 'POST',
+        data: { galleryID: GalleryPageMngr.galleryID, id: jimage.attr('corbis-item-id') },
+        success: onsuccess
+    });
+}
+
 
 
 

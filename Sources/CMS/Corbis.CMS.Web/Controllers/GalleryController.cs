@@ -129,7 +129,7 @@ namespace Corbis.CMS.Web.Controllers
 
         protected GalleryContentImageModel Convert(GalleryContentImage item, int galleryID)
         {
-            var model = new GalleryContentImageModel() { GalleryID = galleryID, ID = item.ID, Urls = item.SiteUrls, Text = item.Name };
+            var model = new GalleryContentImageModel() { GalleryID = galleryID, ID = item.ID, Urls = item.SiteUrls, Text = item.Name, Order = item.Order };
 
             if (item.TextContent != null)
             {
@@ -189,9 +189,23 @@ namespace Corbis.CMS.Web.Controllers
 
                 foreach (var item in content.Images)
                     model.ContentImages.Add(this.Convert(item, gallery.ID));
+
+                model.ContentImages.Sort(delegate(GalleryContentImageModel x, GalleryContentImageModel y) { return x.Order - y.Order; });
             }
 
             return this.View("Gallery", model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id">Gallery id</param>
+        /// <param name="name">New gallery name</param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult RenameGallery(int id, string name)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -247,6 +261,24 @@ namespace Corbis.CMS.Web.Controllers
 
             Action<GalleryContentImage> handler = delegate(GalleryContentImage item) { item.TextContent = this.ObjectMapper.DoMapping<BodyCopyTextContent>(model); };
             GalleryRuntime.UpdateGalleryContentImage(galleryID, imageID, handler);
+
+            return this.Json(new { success = true });
+        }
+
+        public ActionResult SwapImageOrder(int galleryID, string imageID1, string imageID2)
+        {
+            var content = GalleryRuntime.LoadGalleryContent(galleryID);
+
+            var images = content.Images.Where(x => x.ID == imageID1 || x.ID == imageID2).ToArray();
+
+            if (images.Length != 2)
+                return this.Json(new { success = false, error = "Page data is obsolete. Please refresh page and try again"});
+
+            var order = images[0].Order;
+            images[0].Order = images[1].Order;
+            images[1].Order = order;
+
+            GalleryRuntime.SaveGalleryContent(galleryID, content);
 
             return this.Json(new { success = true });
         }

@@ -1,12 +1,12 @@
 ﻿@using Corbis.CMS.Web.Models
 @model GalleryModel
 @{
-    ViewBag.Title = "Add/Edit Gallery";
+    ViewBag.Title = "Edit Gallery";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 @Html.Hidden("GalleryID", this.Model.ID.Value);
-<h2>Add/Edit Gallery</h2>
+<h2>Edit Gallery</h2>
 
 <style type="text/css" media="screen">
     html, body
@@ -35,10 +35,15 @@
 @Scripts.Render("~/Scripts/Corbis/Corbis.Gallery.js")
 
 <script type="text/javascript">
+    GalleryPageMngr.galleryID = @(this.Model.ID.Value);
+
     uploaderOptions.url = "api/Upload/UploadGalleryImage?id=@this.Model.ID.Value";
     uploaderOptions.uploadCallBack = "uploadImageCallback";
     uploaderOptions.errorCallBack = "uploadImageErrorCallback";
     uploaderOptions.filter = "*.jpg;*.jpeg";
+
+//    uploaderOptions.viewMode = "single";
+//    uploaderOptions.size = { width: 330, height: 40 }
 
     function uploadImageCallback(result) {
         var onsuccess = function (data) {
@@ -62,16 +67,18 @@
         return "OK";
     }
 </script>
-<div>
-    <p>
-        @Html.ActionLink("Build and Preview", "BuildGallery", "Gallery", new { id = this.Model.ID }, null)
-    </p>
-    <p>
-        @Html.ActionLink("Download Gallery", "Download", "Gallery", new { id = this.Model.ID }, null)
-    </p>
-    <p>
-        <a href="javascript:void(0)" onclick="ClearGalleryContent(@this.Model.ID, '@Url.Action("ClearGalleryContent", "Gallery")'); return false;">Clear content</a>
-    </p>
+<div class="globalToolbar">
+    <ul>
+        <li>
+            @Html.ActionLink("Build and Preview", "BuildGallery", "Gallery", new { id = this.Model.ID }, null)
+        </li>
+        <li>
+            @Html.ActionLink("Download Gallery", "Download", "Gallery", new { id = this.Model.ID }, null)
+        </li>
+        <li>
+            <a href="javascript:void(0)" onclick="ClearGalleryContent(@this.Model.ID, '@Url.Action("ClearGalleryContent", "Gallery")'); return false;">Clear content</a>
+        </li>
+    </ul>
 </div>
 
 
