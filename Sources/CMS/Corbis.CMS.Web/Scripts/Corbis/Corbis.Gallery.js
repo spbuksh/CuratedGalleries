@@ -34,6 +34,19 @@ $(function () {
     $('div.contentImage span.toolbar a.close').live('click', function () {
         DeleteGalleryContentImage($(this).closest('div.contentImage'));
     });
+    $('div.contentImage span.toolbar a.minimal').live('click', function () {
+        var parent = $(this).closest('div.contentImage');
+        var jcol = parent.find('div.collapsed');
+        var jexp = $(jcol).siblings('div.expanded');
+        if (jcol.is(':visible')) {
+            jcol.hide();
+            jexp.show();
+        }
+        else {
+            jcol.show();
+            jexp.hide();
+        }
+    });
 
     //****** move images up/down
     //Move image up
@@ -78,6 +91,15 @@ $(function () {
     };
 
 });
+
+function ExpandImagesAll() {
+    $('div.contentImage div.collapsed').hide();
+    $('div.contentImage div.expanded').show();
+}
+function CollapseImagesAll() {
+    $('div.contentImage div.collapsed').show();
+    $('div.contentImage div.expanded').hide();
+}
 
 function _getContentImageJElem(imageID) {
     return $('div.contentImage[corbis-item-id="' + imageID + '"]');
