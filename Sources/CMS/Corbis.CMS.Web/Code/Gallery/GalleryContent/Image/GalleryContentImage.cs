@@ -31,11 +31,6 @@ namespace Corbis.CMS.Web.Code
         public ImageTextContentBase TextContent { get; set; }
 
         /// <summary>
-        /// Image order number in the gallery
-        /// </summary>
-        public int Order { get; set; }
-
-        /// <summary>
         /// png image urls for gallery based on gallery file system (likewise 'GalleryUrls' property)
         /// </summary>
         public string ImageContentUrl { get; set; }

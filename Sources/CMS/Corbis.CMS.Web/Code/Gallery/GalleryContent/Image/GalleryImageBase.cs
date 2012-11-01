@@ -17,10 +17,10 @@ namespace Corbis.CMS.Web.Code
         /// </summary>
         public string ID { get; set; }
 
-        ///// <summary>
-        ///// Relative gallery image url. Gallery will reference to the image using this url
-        ///// </summary>
-        //public string Url { get; set; }
+        /// <summary>
+        /// Image order number in the gallery
+        /// </summary>
+        public int Order { get; set; }
 
         /// <summary>
         /// Image urls for gallery based on gallery file system
@@ -32,10 +32,10 @@ namespace Corbis.CMS.Web.Code
         /// </summary>
         public ImageUrlSet SiteUrls { get; set; }
 
-        ///// <summary>
-        ///// Image url 
-        ///// </summary>
-        //public string ImageUrl { get; set; }
+        /// <summary>
+        /// Image urls for edit views inside gallery creation logic
+        /// </summary>
+        public ImageUrlSet EditUrls { get; set; }
 
         /// <summary>
         /// Image fime name

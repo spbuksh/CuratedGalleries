@@ -11,6 +11,7 @@ using Ionic.Zip;
 using Corbis.Logging;
 using Corbis.Logging.Interface;
 using Corbis.Common.ObjectMapping.Mappers;
+using System.Drawing;
 
 namespace Corbis.CMS.Web.Code
 {
@@ -89,6 +90,16 @@ namespace Corbis.CMS.Web.Code
         /// </summary>
         public static ImageUrlSet DefaultTemplateImageUrl { get; private set; }
 
+        /// <summary>
+        /// Large image size in edit mode
+        /// </summary>
+        public static Size EditedLargeImageSize { get; private set; }
+
+        /// <summary>
+        /// Small image size in edit mode
+        /// </summary>
+        public static Size EditedSmallImageSize { get; private set; }
+
         #endregion Environment settings
 
         /// <summary>
@@ -108,6 +119,9 @@ namespace Corbis.CMS.Web.Code
             //
             MaxImageSize = section.Settings.MaxImageSize;
             MinImageSize = section.Settings.MinImageSize;
+
+            EditedLargeImageSize = new Size() { Width = section.Settings.ImageEditMode.LargeImageSizePx.Width, Height = section.Settings.ImageEditMode.LargeImageSizePx.Height };
+            EditedSmallImageSize = new Size() { Width = section.Settings.ImageEditMode.SmallImageSizePx.Width, Height = section.Settings.ImageEditMode.SmallImageSizePx.Height };
 
             //
             SharedDirectory = GetAbsolutePath(section.Settings.SharedDirectory);

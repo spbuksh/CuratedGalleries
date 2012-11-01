@@ -1,0 +1,55 @@
+﻿@using Corbis.CMS.Web.Models
+@model GalleryCoverImageModel
+
+
+<div class="coverImage" corbis-item-id="@this.Model.ID">
+    <span class="toolbar">
+        <a href="javascript:void(0)" class="minimal"></a>
+        <a href="javascript:void(0)" class="close"></a>
+    </span>
+    <span class="up_down">
+        <a class="up" href="javascript:void(0)"></a>
+        <a class="down" href="javascript:void(0)"></a>
+    </span>
+    <div class="collapsed" style="display: none;">
+        <img src="@this.Model.Urls.Small" alt="" />
+    </div>
+    <div class="expanded">
+        <div class="imgArea">
+            <div class="imgToolbar">
+                <a href="javascript:void(0)">Upload</a>
+            </div>
+            <div class="imgPresenter">
+                <img src="@this.Model.Urls.Large" alt="@this.Model.Text" />
+            </div>
+            <div class="txtAlign">
+                <ul>
+                    <li corbis-data-position="topleft" class="tLeft"><a href="javascript:void(0)">TopLeft</a></li>
+                    <li corbis-data-position="topright" class="tRight"><a href="javascript:void(0)">TopRight</a></li>
+                    <li corbis-data-position="center" class="center"><a href="javascript:void(0)">Center</a></li>
+                    <li corbis-data-position="bottomleft" class="bLeft"><a href="javascript:void(0)">BottomLeft</a></li>
+                    <li corbis-data-position="bottomright" class="bRight"><a href="javascript:void(0)">BottomRight</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="txtArea">
+
+            <div class="txtInputs">
+                <div>
+                    @using (Ajax.BeginForm("SetEmptyContent", "Gallery", new { id = this.Model.GalleryID }, new AjaxOptions() { HttpMethod = "POST", OnBegin = "onBeginMsAjaxRequest", OnComplete = "onCompleteMsAjaxRequest" }))
+                    {
+                        @Html.Hidden("position")
+
+                        <input value="Apply" type="submit" />
+                    }
+
+                </div>
+                <div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="clear-fix"></div>
+    <script type="text/javascript">
+    </script>
+</div>

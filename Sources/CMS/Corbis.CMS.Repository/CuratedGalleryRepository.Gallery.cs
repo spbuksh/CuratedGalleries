@@ -161,9 +161,47 @@ namespace Corbis.CMS.Repository
             return rslt;
         }
 
-        public OperationResult<OperationResults, object> UpdateGallery(CuratedGallery gallery)
+        public OperationResult<OperationResults, object> UpdateGallery(CuratedGallery gallery, bool includePackage = false)
         {
-            throw new NotImplementedException();
+            using (var context = this.CreateMainContext())
+            {
+                if (context.Connection.State != System.Data.ConnectionState.Open)
+                    context.Connection.Open();
+
+                try
+                {
+                    context.Transaction = context.Connection.BeginTransaction();
+
+                    var grec = context.CuratedGalleryRecords.Where(x => x.ID == gallery.ID).SingleOrDefault();
+
+                    if (grec == null)
+                        return new OperationResult<OperationResults, object>() { Result = OperationResults.NotFound };
+
+                    this.ObjectMapper.DoMapping(gallery, grec, new MappingData(new string[] { "ID", "DateCreated", "Package" }));
+
+                    if (includePackage)
+                    {
+                        var frec = context.FileRecords.Where(x => x.ID == grec.Archive).Single();
+                        frec.Content = new System.Data.Linq.Binary(gallery.Package.FileContent);
+                        frec.Name = gallery.Package.FileName;
+                    }
+
+                    context.SubmitChanges();
+
+                    context.Transaction.Commit();
+                }
+                catch(Exception ex)
+                {
+                    if (context.Transaction != null)
+                        context.Transaction.Rollback();
+
+                    this.Logger.WriteError(ex);
+
+                    throw;
+                }
+            }
+
+            return new OperationResult<OperationResults, object>() { Result = OperationResults.Success };
         }
     }
 }

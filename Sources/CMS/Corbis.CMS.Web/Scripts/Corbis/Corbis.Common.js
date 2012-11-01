@@ -56,4 +56,13 @@ validationSummaryHelper.prototype.reset = function reset() {
 }
 
 
+function onBeginMsAjaxRequest() {
+    beginWaitCursor();
+}
+function onCompleteMsAjaxRequest() {
+    endWaitCursor();
+}
+
+
+
 

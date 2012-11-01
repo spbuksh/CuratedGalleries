@@ -46,6 +46,6 @@ namespace Corbis.CMS.Repository.Interface
         /// </summary>
         /// <param name="gallery">Gallery object</param>
         /// <returns></returns>
-        OperationResult<OperationResults, object> UpdateGallery(CuratedGallery gallery);
+        OperationResult<OperationResults, object> UpdateGallery(CuratedGallery gallery, bool includePackage = false);
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Configuration;
 using Corbis.Common.Configuration;
+using System.Drawing;
 
 namespace Corbis.CMS.Web.Code
 {
@@ -107,6 +108,62 @@ namespace Corbis.CMS.Web.Code
         {
             get { return (Nullable<long>)this["maxImageSize"]; }
             set { this["maxImageSize"] = value; }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [ConfigurationProperty("imageEditMode", IsRequired = true)]
+        public CuratedGalleryImageEditModeSettings ImageEditMode
+        {
+            get { return (CuratedGalleryImageEditModeSettings)this["imageEditMode"]; }
+            set { this["imageEditMode"] = value; }
+        }
+    }
+
+    public class CuratedGalleryImageEditModeSettings : ConfigurationElement
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        [ConfigurationProperty("largeImageSizePx", IsRequired = true)]
+        public CuratedGalleryImageSize LargeImageSizePx
+        {
+            get { return (CuratedGalleryImageSize)this["largeImageSizePx"]; }
+            set { this["largeImageSizePx"] = value; }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [ConfigurationProperty("smallImageSizePx", IsRequired = true)]
+        public CuratedGalleryImageSize SmallImageSizePx
+        {
+            get { return (CuratedGalleryImageSize)this["smallImageSizePx"]; }
+            set { this["smallImageSizePx"] = value; }
+        }
+
+    }
+    public class CuratedGalleryImageSize : ConfigurationElement 
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        [ConfigurationProperty("width", IsRequired = true)]
+        public int Width
+        {
+            get { return (int)this["width"]; }
+            set { this["width"] = value; }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [ConfigurationProperty("height", IsRequired = true)]
+        public int Height
+        {
+            get { return (int)this["height"]; }
+            set { this["height"] = value; }
         }
     }
 }

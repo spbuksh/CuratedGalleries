@@ -155,7 +155,11 @@ namespace Corbis.CMS.Web.Code
                 //...
             }
 
-            var content = new GalleryContent() { Name = name };
+            var content = new GalleryContent() 
+            { 
+                Name = name, 
+                Font = new GalleryFont() { FamilyName = System.Drawing.FontFamily.Families[0].Name } 
+            };
 
             gallery.SaveContent(content);
 
@@ -243,6 +247,28 @@ namespace Corbis.CMS.Web.Code
             }
 
             return rslt.Output;
+        }
+
+        /// <summary>
+        /// Updates gallery data
+        /// </summary>
+        /// <param name="gallery"></param>
+        /// <returns></returns>
+        public static OperationResults UpdateGallery(CuratedGallery gallery, bool includePackage = false)
+        {
+            OperationResult<OperationResults, object> rslt = null;
+
+            try
+            {
+                rslt = GalleryRepository.UpdateGallery(gallery, includePackage);
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteError(ex);
+                throw;
+            }
+
+            return rslt.Result;
         }
 
 

@@ -1,8 +1,11 @@
-﻿@using Corbis.CMS.Web.Models
+﻿@using System.Drawing
+@using Corbis.CMS.Web.Models
 @model GalleryModel
 @{
     ViewBag.Title = "Edit Gallery";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    
+    var culture = System.Threading.Thread.CurrentThread.CurrentCulture;
 }
 
 @Html.Hidden("GalleryID", this.Model.ID.Value);
@@ -38,6 +41,7 @@
     GalleryPageMngr.galleryID = @(this.Model.ID.Value);
     GalleryPageMngr.deleteContentImageURL = '@Url.Action("DeleteContentImage", "Gallery")';
     GalleryPageMngr.swapImageOrderURL = '@Url.Action("SwapImageOrder", "Gallery")';
+    GalleryPageMngr.fontFamiliesURL = '@Url.Action("GetFontFamilies", "Gallery")';
 
     uploaderOptions.url = "api/Upload/UploadGalleryImage?id=@this.Model.ID.Value";
     uploaderOptions.uploadCallBack = "uploadImageCallback";
@@ -55,10 +59,13 @@
             }
             $('div.galleryContent').append(data);
         }
+
+        var data = jQuery.parseJSON(result);
+
         $.ajax({
-            url: '@this.Url.Action("GetContentImage", "Gallery")',
+            url: data.IsCover ? '@this.Url.Action("GetCoverImage", "Gallery")' : '@this.Url.Action("GetContentImage", "Gallery")',
             type: 'POST',
-            data: jQuery.parseJSON(result),
+            data: data,
             success: onsuccess
         });
 
@@ -90,15 +97,44 @@
     </ul>
 </div>
 
-
-<p>
-    <span>Gallery Name: </span>@Html.TextBoxFor(x => x.Name)
-</p>
+@using (Ajax.BeginForm("SaveGalleryAttributes", "Gallery", new { id = this.Model.ID }, new AjaxOptions() { OnBegin = "onBeginMsAjaxRequest", OnComplete = "onCompleteMsAjaxRequest", OnSuccess = "onSaveGalleryAttributes" }, new { id = "galleryAttributesForm" })) {
+    @Html.ValidationSummary();
+<div>     
+    <table>
+        <tbody>
+            <tr>
+                <td>Gallery Name</td>
+                <td>@Html.TextBoxFor(x => x.Name)</td>
+            </tr>
+            <tr>
+                <td>Font Family</td>
+                <td>
+                    <select name="fontFamily">
+                    @{        
+                        var ff = !string.IsNullOrEmpty(this.Model.FontFamily) ? FontFamily.Families.Where(x => x.Name == this.Model.FontFamily).SingleOrDefault() : null;
+                    }
+                    @if (ff != null)
+                    {
+                        <option value="@this.Model.FontFamily">@ff.GetName(culture.LCID)</option>
+                    }
+                    else
+                    { 
+                        <option>Select</option>
+                    }
+                    </select>                
+                </td>
+            </tr>
+        </tbody>
+    </table>                        
+    <input type="submit" value="Save" />
+</div>
+}
 <div class="galleryContent">
-    @if (this.Model.ContentImages != null)
-    {
-        foreach (var image in this.Model.ContentImages)
-        {
+    @if (this.Model.CoverImage != null) { 
+        @Html.Partial("CoverImagePartial", this.Model.CoverImage)
+    }
+    @if (this.Model.ContentImages != null) {
+        foreach (var image in this.Model.ContentImages) {
             @Html.Partial("ContentImagePartial", image);
         }
     }

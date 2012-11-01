@@ -21,6 +21,10 @@ namespace Corbis.CMS.Web.Controllers.Api
         public string ID { get; set; }
 
         public ImageUrlSet Urls { get; set; }
+
+        public ImageUrlSet EditUrls { get; set; }
+
+        public bool IsCover { get; set; }
     }
 
     public class UploadController : ApiControllerBase
@@ -88,6 +92,7 @@ namespace Corbis.CMS.Web.Controllers.Api
                 };
 
             var siteUrls = new ImageUrlSet() { Original = Common.Utils.AbsoluteToVirtual(filepath, this.HttpContext) };
+            var editUrls = new ImageUrlSet() { Original = Common.Utils.AbsoluteToVirtual(filepath, this.HttpContext) };
             var gllrUrls = new ImageUrlSet() { Original = gllrUrlHandler(filename) };
 
             string extension = Path.GetExtension(filename);
@@ -97,7 +102,32 @@ namespace Corbis.CMS.Web.Controllers.Api
 
             try
             {
+                //resize images for development
+                {
+                    string fname = string.Format("{0}.lrgedit", filenameonly);
+                    string editpath = Path.Combine(contentpath, string.Format("{0}{1}", fname, extension));
 
+                    if (originalImage == null)
+                        originalImage = System.Drawing.Image.FromFile(filepath);
+
+                    ResizeImage(originalImage, editpath, GalleryRuntime.EditedLargeImageSize);
+
+                    editUrls.Large = Common.Utils.AbsoluteToVirtual(editpath, this.HttpContext);
+                }
+                {
+                    string fname = string.Format("{0}.smledit", filenameonly);
+                    string editpath = Path.Combine(contentpath, string.Format("{0}{1}", fname, extension));
+
+                    if (originalImage == null)
+                        originalImage = System.Drawing.Image.FromFile(filepath);
+
+                    ResizeImage(originalImage, editpath, GalleryRuntime.EditedSmallImageSize);
+
+                    editUrls.Small = Common.Utils.AbsoluteToVirtual(editpath, this.HttpContext);
+                }
+
+
+                //images for galleries
                 if (template.GallerySettings.RequiredImageSizes.HasFlag(GalleryImageSizes.Large))
                 {
                     string fname = string.Format("{0}.lrg", filenameonly);
@@ -143,25 +173,52 @@ namespace Corbis.CMS.Web.Controllers.Api
                 if (originalImage != null)
                     originalImage.Dispose();
             }
-            
-            GalleryContentImage img = null;
+
+            GalleryImageBase img = null;
 
             try
             {
                 var content = gallery.LoadContent();
 
-                img = new GalleryContentImage()
+                if ((content.Images != null && content.Images.Count != 0) || content.CoverImage != null)
                 {
-                    ID = string.Format("gallery-image_{0}", Guid.NewGuid().ToString("N")),
-                    Name = filename,
-                    Order = content.Images.Count + 1,
-                    ImageSource = new GalleryImageSource() { Type = ImageSourceTypes.LocalFile, Source = filepath.Substring(GalleryRuntime.GetGalleryPath(id.Value).Length) },
-                    GalleryUrls = gllrUrls,
-                    SiteUrls = siteUrls
-                };
-                img.TextContent = new EmptyTextContent();
+                    var cimg = new GalleryContentImage()
+                    {
+                        ID = string.Format("gallery-image_{0}", Guid.NewGuid().ToString("N")),
+                        Name = filename,
+                        Order = content.Images.Count + 1,
+                        ImageSource = new GalleryImageSource() { Type = ImageSourceTypes.LocalFile, Source = filepath.Substring(GalleryRuntime.GetGalleryPath(id.Value).Length) },
+                        GalleryUrls = gllrUrls,
+                        SiteUrls = siteUrls,
+                        EditUrls = editUrls
+                    };
+                    cimg.TextContent = new EmptyTextContent();
 
-                content.Images.Add(img);
+                    content.Images.Add(cimg);
+
+                    img = cimg;
+                }
+                else
+                {
+                    var cimg = new GalleryCoverImage()
+                    {
+                        ID = string.Format("gallery-image_{0}", Guid.NewGuid().ToString("N")),
+                        Name = filename,
+                        Order = 0,
+                        ImageSource = new GalleryImageSource() { Type = ImageSourceTypes.LocalFile, Source = filepath.Substring(GalleryRuntime.GetGalleryPath(id.Value).Length) },
+                        GalleryUrls = gllrUrls,
+                        SiteUrls = siteUrls,
+                        EditUrls = editUrls
+                    };
+
+                    //TODO: we can get default values from gallery template
+                    cimg.Headline = new CoverTextItem() { FontSize = 40 };
+                    cimg.Standfirst = new CoverTextItem() { FontSize = 12 };
+
+                    content.CoverImage = cimg;
+
+                    img = cimg;
+                }
 
                 //TODO: We must synchronize file updating
                 gallery.SaveContent(content);
@@ -173,7 +230,7 @@ namespace Corbis.CMS.Web.Controllers.Api
                 return message.CreateResponse(HttpStatusCode.InternalServerError);
             }
 
-            var output = new UploadedImageResponse() { GalleryID = id.Value, ID = img.ID, Urls = img.SiteUrls };
+            var output = new UploadedImageResponse() { GalleryID = id.Value, ID = img.ID, Urls = img.SiteUrls, EditUrls = img.EditUrls, IsCover = img is GalleryCoverImage };
             return message.CreateResponse <UploadedImageResponse>(HttpStatusCode.OK, output);
         }
 

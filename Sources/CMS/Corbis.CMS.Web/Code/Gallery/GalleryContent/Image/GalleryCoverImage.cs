@@ -10,5 +10,18 @@ namespace Corbis.CMS.Web.Code
     /// </summary>
     [Serializable]
     public class GalleryCoverImage : GalleryImageBase
-    { }
+    {
+        public CoverTextItem Headline { get; set; }
+
+        public CoverTextItem Standfirst { get; set; }
+
+        public string Biography { get; set; }
+    }
+
+    public class CoverTextItem
+    { 
+        public string Text { get; set; }
+
+        public float FontSize { get; set; }
+    }
 }

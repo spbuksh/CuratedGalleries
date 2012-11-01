@@ -7,7 +7,7 @@ using Corbis.CMS.Web.Code;
 
 namespace Corbis.CMS.Web.Models
 {
-    public class GalleryContentImageModel
+    public class GalleryImageModelBase
     {
         public int GalleryID { get; set; }
 
@@ -30,10 +30,18 @@ namespace Corbis.CMS.Web.Models
         /// Image descriptor
         /// </summary>
         public string Text { get; set; }
+    }
 
+    public class GalleryContentImageModel : GalleryImageModelBase
+    {
         /// <summary>
         /// Image text content attached to the image
         /// </summary>
         public ImageTextContentModelBase TextContent { get; set; }
     }
+
+    public class GalleryCoverImageModel : GalleryImageModelBase
+    {
+    }
+
 }

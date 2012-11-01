@@ -15,6 +15,8 @@ using Corbis.CMS.Repository.Interface;
 using Microsoft.Practices.Unity;
 using Corbis.Common;
 using Corbis.CMS.Repository.Interface.Communication;
+using System.Drawing;
+using System.Threading;
 
 namespace Corbis.CMS.Web.Controllers
 {
@@ -129,7 +131,7 @@ namespace Corbis.CMS.Web.Controllers
 
         protected GalleryContentImageModel Convert(GalleryContentImage item, int galleryID)
         {
-            var model = new GalleryContentImageModel() { GalleryID = galleryID, ID = item.ID, Urls = item.SiteUrls, Text = item.Name, Order = item.Order };
+            var model = new GalleryContentImageModel() { GalleryID = galleryID, ID = item.ID, Urls = item.EditUrls, Text = item.Name, Order = item.Order };
 
             if (item.TextContent != null)
             {
@@ -158,6 +160,12 @@ namespace Corbis.CMS.Web.Controllers
 
             return model;
         }
+        protected GalleryCoverImageModel Convert(GalleryCoverImage item, int galleryID)
+        {
+            var model = new GalleryCoverImageModel() { GalleryID = galleryID, ID = item.ID, Urls = item.EditUrls, Text = item.Name, Order = item.Order };
+
+            return model;
+        }
 
         /// <summary>
         /// Create/Edit gallery
@@ -172,16 +180,23 @@ namespace Corbis.CMS.Web.Controllers
             if (id.HasValue)
             {
                 gallery = GalleryRuntime.GetGallery(id.Value);
+
+                if (gallery == null)
+                    return this.RedirectToAction("Index", "Gallery");
             }
             else
             {
                 gallery = GalleryRuntime.CreateGallery("New gallery", GalleryRuntime.GetTemplates().First().ID);
             }
 
-            //
             var model = this.ObjectMapper.DoMapping<GalleryModel>(gallery);
 
             var content = gallery.LoadContent();
+
+            model.FontFamily = content.Font.FamilyName;
+
+            if (content.CoverImage != null)
+                model.CoverImage = this.Convert(content.CoverImage, gallery.ID);
 
             if (content.Images != null && content.Images.Count != 0)
             {
@@ -203,9 +218,49 @@ namespace Corbis.CMS.Web.Controllers
         /// <param name="name">New gallery name</param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult RenameGallery(int id, string name)
+        public ActionResult SaveGalleryAttributes([Required]Nullable<int> id, [Required]string fontFamily, [Required]string name)
         {
-            throw new NotImplementedException();
+            if (!this.ModelState.IsValid)
+                throw new NotImplementedException();
+
+            var gallery = GalleryRuntime.GetGallery(id.Value);
+            gallery.Name = name;
+            var result = GalleryRuntime.UpdateGallery(gallery);
+
+            switch(result)
+            {
+                case OperationResults.Success:
+                    {
+                        var content = gallery.LoadContent();
+                        content.Name = name;
+                        content.Font.FamilyName = fontFamily;
+                        gallery.SaveContent(content);
+                        return this.Json(new { success = true });
+                    }
+                case OperationResults.NotFound:
+                    {
+                        return this.Json(new { success = true, error = "The gallery was not found in the storage. Please update the page" });
+                    }
+                case OperationResults.Failure:
+                    {
+                        return this.Json(new { success = true, error = "Internal server error" });
+                    }
+                default:
+                    throw new NotImplementedException();
+
+            }
+        }
+
+        /// <summary>
+        /// Returns all available font families
+        /// It is done for page optimization not to load all families at once
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public ActionResult GetFontFamilies()
+        { 
+            int lcid = Thread.CurrentThread.CurrentCulture.LCID;
+            return this.Json(FontFamily.Families.Select(x => new { text = x.GetName(lcid), value = x.Name }).ToArray(), JsonRequestBehavior.AllowGet);
         }
 
         /// <summary>
@@ -217,7 +272,7 @@ namespace Corbis.CMS.Web.Controllers
         public ActionResult ClearGalleryContent([Required]Nullable<int> id)
         {
             var content = GalleryRuntime.LoadGalleryContent(id.Value);
-            content.DeleteContentImages(content.Images.Select(x => x.ID), this.HttpContext);
+            content.Clear(this.HttpContext);
             GalleryRuntime.SaveGalleryContent(id.Value, content);
             return this.Json(new { success = true });
         }
@@ -379,6 +434,19 @@ namespace Corbis.CMS.Web.Controllers
 
             return this.PartialView("ContentImagePartial", this.Convert(image, galleryID.Value));
         }
+        [HttpPost]
+        public ActionResult GetCoverImage([Required]Nullable<int> galleryID, [Required]string id)
+        {
+            var content = GalleryRuntime.LoadGalleryContent(galleryID.Value);
+
+            var image = content.CoverImage;
+
+            if (image == null)
+                return this.Json(new { success = false, error = string.Format("Image with id='{0}' was not found. Gallery id='{1}'", id, galleryID.Value) });
+
+            return this.PartialView("CoverImagePartial", this.Convert(image, galleryID.Value));
+        }
+
 
         /// <summary>
         /// 

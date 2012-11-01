@@ -417,6 +417,7 @@
     <Content Include="Views\Gallery\PullQuotedTextContentPartial.cshtml" />
     <Content Include="Views\Gallery\BodyCopyTextContentPartial.cshtml" />
     <Content Include="Views\Gallery\EmptyTextContentPartial.cshtml" />
+    <Content Include="Views\Gallery\CoverImagePartial.cshtml" />
     <None Include="Web.config.local">
       <SubType>Designer</SubType>
     </None>
@@ -437,7 +438,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>13376</DevelopmentServerPort>
+          <DevelopmentServerPort>56057</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

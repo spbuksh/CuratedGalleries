@@ -9,6 +9,7 @@ var GalleryPageMngr =
     galleryID: null
 }
 
+//LOAD DOCUMENT
 $(function () {
     var jimageRoots = $('div.contentImage');
 
@@ -90,7 +91,41 @@ $(function () {
         });
     };
 
+    //load font famili combobox content
+    $('select[name=fontFamily]').click(function () {
+        var jthis = $(this);
+
+        if (jthis.attr('corbis-data-loaded'))
+            return;
+
+        $.getJSON(GalleryPageMngr.fontFamiliesURL, function (data) {
+
+            var selvalue = jthis.children('option:selected').val();
+            jthis.html('');
+
+            $.each(data, function (index, item) {
+                jthis.append("<option value='" + item.value + "'>" + item.text + "</option>");
+            });
+
+            if (selvalue && selvalue != '') {
+                jthis.children('option[value="' + selvalue + '"]').attr('selected', 'selected');
+            }
+
+            jthis.attr('corbis-data-loaded', '1');
+        });
+    });
 });
+
+
+function onSaveGalleryAttributes(data) {
+    if (data.success) {
+        alert('Gallery updated successfully');
+        var helper = new validationSummaryHelper($('#galleryAttributesForm div.validation-summary-errors'));
+        helper.reset();
+    }
+    else { 
+    }
+}
 
 function ExpandImagesAll() {
     $('div.contentImage div.collapsed').hide();
@@ -153,7 +188,7 @@ function DeleteGallery(id, url) {
 
     var onsuccess = function (result) {
         if (result.success)
-            $('p.galleryItem[corbis-item-id="' + id + '"]').remove();
+            $('div.galleryItem[corbis-item-id="' + id + '"]').remove();
     };
     $.ajax({
         url: url,
