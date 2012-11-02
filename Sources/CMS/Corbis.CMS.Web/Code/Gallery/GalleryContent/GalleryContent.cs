@@ -30,6 +30,11 @@ namespace Corbis.CMS.Web.Code
         public GalleryFont Font { get; set; }
 
         /// <summary>
+        /// 
+        /// </summary>
+        public bool TransitionsIncluded { get; set; }
+
+        /// <summary>
         /// Gallery cover image
         /// </summary>
         public GalleryCoverImage CoverImage { get; set; }

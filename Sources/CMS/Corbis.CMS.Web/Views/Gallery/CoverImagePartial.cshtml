@@ -36,13 +36,27 @@
 
             <div class="txtInputs">
                 <div>
-                    @using (Ajax.BeginForm("SetEmptyContent", "Gallery", new { id = this.Model.GalleryID }, new AjaxOptions() { HttpMethod = "POST", OnBegin = "onBeginMsAjaxRequest", OnComplete = "onCompleteMsAjaxRequest" }))
+                    @using (Ajax.BeginForm("SetCoverContent", "Gallery", 
+                        new { id = this.Model.GalleryID }, 
+                        new AjaxOptions() { HttpMethod = "POST", OnBegin = "onBeginMsAjaxRequest", OnComplete = "onCompleteMsAjaxRequest", OnSuccess = "onCoverContentSaveSuccess" }, 
+                        new { id = "coverTextContentForm" }))
                     {
+                        @Html.ValidationSummary()
                         @Html.Hidden("position")
-
+                        <div>
+                            <label>Headline copy</label>@Html.TextBoxFor(x => x.HeadlineCopyText)
+                            <label>Size</label>@Html.TextBoxFor(x => x.HeadlineCopyFontSize)
+                        </div>
+                        <div>
+                            <label>Standfirst</label>@Html.TextBoxFor(x => x.StandfirstText)
+                            <label>Size</label>@Html.TextBoxFor(x => x.StandfirstFontSize)
+                        </div>
+                        <div>
+                            <label>Biography</label>
+                            @Html.TextAreaFor(x => x.Biography)
+                        </div>
                         <input value="Apply" type="submit" />
                     }
-
                 </div>
                 <div>
                 </div>

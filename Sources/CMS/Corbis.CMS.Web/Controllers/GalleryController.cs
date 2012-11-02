@@ -162,7 +162,21 @@ namespace Corbis.CMS.Web.Controllers
         }
         protected GalleryCoverImageModel Convert(GalleryCoverImage item, int galleryID)
         {
-            var model = new GalleryCoverImageModel() { GalleryID = galleryID, ID = item.ID, Urls = item.EditUrls, Text = item.Name, Order = item.Order };
+            var model = new GalleryCoverImageModel() 
+            { 
+                GalleryID = galleryID, 
+                ID = item.ID, 
+                Urls = item.EditUrls, 
+                Text = item.Name, 
+                Order = item.Order, 
+                Biography = item.Biography 
+            };
+
+            model.HeadlineCopyText = item.Headline.Text;
+            model.HeadlineCopyFontSize = item.Headline.FontSize;
+
+            model.StandfirstText = item.Standfirst.Text;
+            model.StandfirstFontSize = item.Standfirst.FontSize;
 
             return model;
         }
@@ -194,6 +208,7 @@ namespace Corbis.CMS.Web.Controllers
             var content = gallery.LoadContent();
 
             model.FontFamily = content.Font.FamilyName;
+            model.TransitionsIncluded = content.TransitionsIncluded;
 
             if (content.CoverImage != null)
                 model.CoverImage = this.Convert(content.CoverImage, gallery.ID);
@@ -218,7 +233,7 @@ namespace Corbis.CMS.Web.Controllers
         /// <param name="name">New gallery name</param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult SaveGalleryAttributes([Required]Nullable<int> id, [Required]string fontFamily, [Required]string name)
+        public ActionResult SaveGalleryAttributes([Required]Nullable<int> id, [Required]string fontFamily, [Required]string name, bool transitionsIncluded)
         {
             if (!this.ModelState.IsValid)
                 throw new NotImplementedException();
@@ -234,6 +249,7 @@ namespace Corbis.CMS.Web.Controllers
                         var content = gallery.LoadContent();
                         content.Name = name;
                         content.Font.FamilyName = fontFamily;
+                        content.TransitionsIncluded = transitionsIncluded;
                         gallery.SaveContent(content);
                         return this.Json(new { success = true });
                     }
@@ -336,6 +352,23 @@ namespace Corbis.CMS.Web.Controllers
             content.Images.Sort(delegate(GalleryContentImage x, GalleryContentImage y) { return x.Order - y.Order; });
 
             GalleryRuntime.SaveGalleryContent(galleryID, content);
+
+            return this.Json(new { success = true });
+        }
+
+        [HttpPost]
+        public ActionResult SetCoverContent(int id, GalleryCoverImageModel model)
+        {
+            if(!this.ModelState.IsValid)
+                return this.Json(new { success = false });
+
+            var content = GalleryRuntime.LoadGalleryContent(id);
+            content.CoverImage.Biography = model.Biography;
+            content.CoverImage.Headline.Text = model.HeadlineCopyText;
+            content.CoverImage.Headline.FontSize = model.HeadlineCopyFontSize;
+            content.CoverImage.Standfirst.Text = model.StandfirstText;
+            content.CoverImage.Standfirst.FontSize = model.StandfirstFontSize;
+            GalleryRuntime.SaveGalleryContent(id, content);
 
             return this.Json(new { success = true });
         }
