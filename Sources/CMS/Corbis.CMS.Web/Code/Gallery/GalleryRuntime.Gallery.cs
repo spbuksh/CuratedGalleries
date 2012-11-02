@@ -215,6 +215,34 @@ namespace Corbis.CMS.Web.Code
         }
 
 
+        public static List<CuratedGallery> GetGalleries()
+        {
+            OperationResult<OperationResults, List<CuratedGallery>> rslt = null;
+
+            try
+            {
+                rslt = GalleryRepository.GetGalleries();
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteError(ex);
+                throw;
+            }
+
+            switch (rslt.Result)
+            {
+                case OperationResults.Success:
+                case OperationResults.NotFound:
+                    break;
+                case OperationResults.Failure:
+                    throw new Exception("...");
+                default:
+                    throw new NotImplementedException();
+            }
+            return rslt.Output;
+        }
+
+
         /// <summary>
         /// Gets gallery by gallery identifier
         /// </summary>
