@@ -46,6 +46,8 @@ namespace Corbis.CMS.Web.Models
     /// </summary>
     public class GalleryCoverImageModel : GalleryImageModelBase
     {
+        public CoverTextContentPositions TextPosition { get; set; }
+
         [Required(ErrorMessage = "Headline copy must not be empty")]
         public string HeadlineCopyText { get; set; }
 

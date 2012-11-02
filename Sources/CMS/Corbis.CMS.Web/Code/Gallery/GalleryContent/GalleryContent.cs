@@ -40,6 +40,17 @@ namespace Corbis.CMS.Web.Code
         public GalleryCoverImage CoverImage { get; set; }
 
         /// <summary>
+        /// Contains gallery relevant file pathes which were created by the system and must be ignored during gallery output creation
+        /// </summary>
+        [XmlArray("SystemFiles")]
+        [XmlArrayItem("File", typeof(string))]
+        public List<string> SystemFilePathes 
+        {
+            get { return this.m_IgnoredFilePathes; } 
+        }
+        private readonly List<string> m_IgnoredFilePathes = new List<string>();
+
+        /// <summary>
         /// Gallery images
         /// </summary>
         [XmlArray("Images")]

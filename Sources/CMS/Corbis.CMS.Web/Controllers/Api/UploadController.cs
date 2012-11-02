@@ -47,6 +47,7 @@ namespace Corbis.CMS.Web.Controllers.Api
             var template = GalleryRuntime.GetTemplate(gallery.TemplateID);
 
             string contentpath = gallery.GetContentPath();
+            string rootpath = gallery.GetRootPath();
 
             if (!Directory.Exists(contentpath))
                 Directory.CreateDirectory(contentpath);
@@ -91,6 +92,8 @@ namespace Corbis.CMS.Web.Controllers.Api
                     return string.Format("{0}/{1}", Common.Utils.GetRelativePath(GalleryRuntime.GetGalleryOutputPath(id.Value), contentpath).TrimEnd('\\').Replace('\\', '/'), fname);
                 };
 
+            var content = gallery.LoadContent();
+
             var siteUrls = new ImageUrlSet() { Original = Common.Utils.AbsoluteToVirtual(filepath, this.HttpContext) };
             var editUrls = new ImageUrlSet() { Original = Common.Utils.AbsoluteToVirtual(filepath, this.HttpContext) };
             var gllrUrls = new ImageUrlSet() { Original = gllrUrlHandler(filename) };
@@ -113,6 +116,8 @@ namespace Corbis.CMS.Web.Controllers.Api
                     ResizeImage(originalImage, editpath, GalleryRuntime.EditedLargeImageSize);
 
                     editUrls.Large = Common.Utils.AbsoluteToVirtual(editpath, this.HttpContext);
+
+                    content.SystemFilePathes.Add(editpath.Substring(rootpath.Length));
                 }
                 {
                     string fname = string.Format("{0}.smledit", filenameonly);
@@ -124,6 +129,8 @@ namespace Corbis.CMS.Web.Controllers.Api
                     ResizeImage(originalImage, editpath, GalleryRuntime.EditedSmallImageSize);
 
                     editUrls.Small = Common.Utils.AbsoluteToVirtual(editpath, this.HttpContext);
+
+                    content.SystemFilePathes.Add(editpath.Substring(rootpath.Length));
                 }
 
 
@@ -177,9 +184,7 @@ namespace Corbis.CMS.Web.Controllers.Api
             GalleryImageBase img = null;
 
             try
-            {
-                var content = gallery.LoadContent();
-
+            {                
                 if ((content.Images != null && content.Images.Count != 0) || content.CoverImage != null)
                 {
                     var cimg = new GalleryContentImage()

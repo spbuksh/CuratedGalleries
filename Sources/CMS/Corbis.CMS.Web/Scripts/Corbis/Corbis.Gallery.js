@@ -30,6 +30,12 @@ $(function () {
         var jthis = $(this);
         _setTextPosition(jthis.closest('div.contentImage'), null, jthis.closest('li'));
     });
+
+    $('div.coverImage div.txtAlign a').live('click', function () {
+        var jthis = $(this);
+        _setCoverTextPosition(jthis.closest('li'));
+    });
+
     //******* image toolbar handling
     //delete image
     $('div.contentImage span.toolbar a.close').live('click', function () {
@@ -91,7 +97,7 @@ $(function () {
         });
     };
 
-    //load font famili combobox content
+    //load font family combobox content
     $('select[name=fontFamily]').click(function () {
         var jthis = $(this);
 
@@ -159,6 +165,12 @@ function _setTextPosition(jroot, position, jli) {
     }
     jli.addClass('active');
     jli.siblings('li').removeClass('active');
+}
+function _setCoverTextPosition(data) {
+    var jli = (typeof data == "string") ? $('div.coverImage div.txtAlign li[corbis-data-position="' + data + '"]') : data;
+    jli.addClass('active');
+    jli.siblings('li').removeClass('active');
+    jli.closest('div.coverImage').find('div.txtInputs input[name="TextPosition"]').val(jli.attr('corbis-data-position'));
 }
 function _onTextContentSaveSuccess(data, selector) {
     if (data.success) {

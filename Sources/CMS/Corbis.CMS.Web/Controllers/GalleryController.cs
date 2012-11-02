@@ -169,7 +169,8 @@ namespace Corbis.CMS.Web.Controllers
                 Urls = item.EditUrls, 
                 Text = item.Name, 
                 Order = item.Order, 
-                Biography = item.Biography 
+                Biography = item.Biography,
+                TextPosition = item.TextPosition
             };
 
             model.HeadlineCopyText = item.Headline.Text;
@@ -368,6 +369,7 @@ namespace Corbis.CMS.Web.Controllers
             content.CoverImage.Headline.FontSize = model.HeadlineCopyFontSize;
             content.CoverImage.Standfirst.Text = model.StandfirstText;
             content.CoverImage.Standfirst.FontSize = model.StandfirstFontSize;
+            content.CoverImage.TextPosition = model.TextPosition;
             GalleryRuntime.SaveGalleryContent(id, content);
 
             return this.Json(new { success = true });

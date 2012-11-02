@@ -33,7 +33,6 @@
             </div>
         </div>
         <div class="txtArea">
-
             <div class="txtInputs">
                 <div>
                     @using (Ajax.BeginForm("SetCoverContent", "Gallery", 
@@ -42,7 +41,7 @@
                         new { id = "coverTextContentForm" }))
                     {
                         @Html.ValidationSummary()
-                        @Html.Hidden("position")
+                        @Html.HiddenFor(x => x.TextPosition);
                         <div>
                             <label>Headline copy</label>@Html.TextBoxFor(x => x.HeadlineCopyText)
                             <label>Size</label>@Html.TextBoxFor(x => x.HeadlineCopyFontSize)
@@ -65,5 +64,8 @@
     </div>
     <div class="clear-fix"></div>
     <script type="text/javascript">
+        $(function () {
+            _setCoverTextPosition('@(this.Model.TextPosition.ToString().ToLower())');
+        });
     </script>
 </div>
