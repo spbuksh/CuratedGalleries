@@ -124,6 +124,13 @@
                     </select>                
                 </td>
             </tr>
+            <tr>
+                <td>Transitions</td>
+                <td>
+                    <label for="transitionsOff">Off</label>@Html.RadioButtonFor(x => x.TransitionsIncluded, false, new { id = "transitionsOff" })
+                    <label for="transitionsOn">On</label>@Html.RadioButtonFor(x => x.TransitionsIncluded, true, new { id = "transitionsOn" })
+                </td>
+            </tr>
         </tbody>
     </table>                        
     <input type="submit" value="Save" />

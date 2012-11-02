@@ -21,6 +21,11 @@ namespace Corbis.CMS.Web.Models
         public string Name { get; set; }
 
         /// <summary>
+        /// 
+        /// </summary>
+        public bool TransitionsIncluded { get; set; }
+
+        /// <summary>
         /// Gallery cover
         /// </summary>
         public GalleryCoverImageModel CoverImage { get; set; }

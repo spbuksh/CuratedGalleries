@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using Corbis.CMS.Entity;
 using Corbis.CMS.Web.Code;
+using System.ComponentModel.DataAnnotations;
 
 namespace Corbis.CMS.Web.Models
 {
@@ -40,8 +41,23 @@ namespace Corbis.CMS.Web.Models
         public ImageTextContentModelBase TextContent { get; set; }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class GalleryCoverImageModel : GalleryImageModelBase
     {
+        [Required(ErrorMessage = "Headline copy must not be empty")]
+        public string HeadlineCopyText { get; set; }
+
+        public float HeadlineCopyFontSize { get; set; }
+
+        [Required(ErrorMessage = "Standfirst must not be empty")]
+        public string StandfirstText { get; set; }
+
+        public float StandfirstFontSize { get; set; }
+
+        [Required]
+        public string Biography { get; set; }
     }
 
 }

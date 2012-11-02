@@ -117,6 +117,13 @@ $(function () {
 });
 
 
+function onCoverContentSaveSuccess(data) {
+    if (data.success) {
+        var helper = new validationSummaryHelper($('form#coverTextContentForm').find('div.validation-summary-errors'));
+        helper.reset();
+        alert('Cover text content was saved successfully');
+    }
+}
 function onSaveGalleryAttributes(data) {
     if (data.success) {
         alert('Gallery updated successfully');
