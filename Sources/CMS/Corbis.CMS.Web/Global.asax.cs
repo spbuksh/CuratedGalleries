@@ -6,6 +6,7 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using Corbis.CMS.Web.GarbageCollector;
 using Corbis.Presentation.Common.RepositoryProvider;
 using Corbis.Presentation.Common;
 using Microsoft.Practices.Unity;
@@ -20,6 +21,17 @@ namespace Corbis.CMS.Web
 
     public class MvcApplication : System.Web.HttpApplication
     {
+        public MvcApplication()
+        {
+            BeginRequest += MvcApplicationBeginRequest;
+        }
+
+        static void MvcApplicationBeginRequest(object sender, EventArgs e)
+        {
+            CorbisGarbageCollector.Collect();
+        }
+       
+
         /// <summary>
         /// Root unity container for the entire application
         /// </summary>
@@ -28,6 +40,7 @@ namespace Corbis.CMS.Web
 
         protected void Application_Start()
         {
+            
             AreaRegistration.RegisterAllAreas();
 
             WebApiConfig.Register(GlobalConfiguration.Configuration);
