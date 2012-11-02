@@ -141,12 +141,12 @@ function onSaveGalleryAttributes(data) {
 }
 
 function ExpandImagesAll() {
-    $('div.contentImage div.collapsed').hide();
-    $('div.contentImage div.expanded').show();
+    $('div.contentImage div.collapsed,div.coverImage div.collapsed').hide();
+    $('div.contentImage div.expanded,div.coverImage div.expanded').show();
 }
 function CollapseImagesAll() {
-    $('div.contentImage div.collapsed').show();
-    $('div.contentImage div.expanded').hide();
+    $('div.contentImage div.collapsed,div.coverImage div.collapsed').show();
+    $('div.contentImage div.expanded,div.coverImage div.expanded').hide();
 }
 
 function _getContentImageJElem(imageID) {
