@@ -16,6 +16,7 @@ namespace Corbis.CMS.Web.Code.Gallery.GalleryContent.ImageContentGenerator
         public static string GererateImage(GalleryContentImage image,int galleryId)
         {
             var text = string.Empty;
+            var textColor = Color.Black;
             switch (image.TextContent.ContentType)
             {
                     case TextContents.QnA:
@@ -32,6 +33,7 @@ namespace Corbis.CMS.Web.Code.Gallery.GalleryContent.ImageContentGenerator
                 case TextContents.Pullquote:
                     {
                         var result = image.TextContent as PullQuotedTextContent;
+                        textColor = Color.White;
                         text = result.Text;
                         break;
                     }
@@ -86,7 +88,7 @@ namespace Corbis.CMS.Web.Code.Gallery.GalleryContent.ImageContentGenerator
             }
 
 
-            return ImageHelper.SaveImage(text, objFont, GalleryRuntime.GetGalleryContentPath(galleryId), Path.GetFileNameWithoutExtension(image.Name), Color.Black, dock, 400, 500,
+            return ImageHelper.SaveImage(text, objFont, GalleryRuntime.GetGalleryContentPath(galleryId), Path.GetFileNameWithoutExtension(image.Name), textColor, dock, 400, 500,
                                   false, null, ImageFormat.Png);
         }
     }
