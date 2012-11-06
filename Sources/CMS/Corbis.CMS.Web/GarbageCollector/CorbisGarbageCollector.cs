@@ -9,6 +9,7 @@ using Corbis.CMS.Web.Code;
 using Corbis.Common;
 using Corbis.Logging;
 using Corbis.Logging.Interface;
+using System.Configuration;
 
 namespace Corbis.CMS.Web.GarbageCollector
 {
@@ -35,9 +36,18 @@ namespace Corbis.CMS.Web.GarbageCollector
         {
             get
             {
-                return @"Data Source=.\SQLEXPRESS;AttachDbFilename=" + Path.Combine(System.Web.HttpContext.Current.Server.MapPath("~/App_Data"), "Corbis_Garbage.mdf") + ";Integrated Security=True;User Instance=True";
+                if (string.IsNullOrEmpty(m_ConnectionString))
+                {
+                    lock (typeof(CorbisGarbageCollector))
+                    {
+                        if (string.IsNullOrEmpty(m_ConnectionString))
+                            m_ConnectionString = ConfigurationManager.ConnectionStrings["FGC"].ConnectionString;
+                    }
+                }
+                return m_ConnectionString;
             }
         }
+        private static string m_ConnectionString = null;
 
         #endregion
 
@@ -54,6 +64,9 @@ namespace Corbis.CMS.Web.GarbageCollector
             {
                 using (var connection = SqlHelper.GetConnection(ConnectionString))
                 {
+                    if (connection.State != ConnectionState.Open)
+                        connection.Open();
+
                     using (var command = connection.GetCommand("SELECT TOP 1 ID, LastTimeCollected FROM Tasks  ORDER BY LastTimeCollected", CommandType.Text))
                     {
                         using (var reader = command.ExecuteReader())
@@ -158,10 +171,17 @@ namespace Corbis.CMS.Web.GarbageCollector
         /// </summary>
         public static void Collect()
         {
-            if (!Check()) return;
-            CollectTemplates();
-            CollectGalleries();
-            ApplyResults();
+            try
+            {
+                if (!Check()) return;
+                CollectTemplates();
+                CollectGalleries();
+                ApplyResults();
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteError(ex);
+            }
         }
 
         #endregion

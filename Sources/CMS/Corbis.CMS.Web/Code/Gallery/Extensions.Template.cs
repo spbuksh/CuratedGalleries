@@ -18,5 +18,15 @@ namespace Corbis.CMS.Web.Code
             return GalleryRuntime.GetTemplatePath(template.ID);
         }
 
+        /// <summary>
+        /// Gets absolute folder path to the template
+        /// </summary>
+        /// <param name="template"></param>
+        /// <returns></returns>
+        public static string GetRootPath(this IGalleryTemplate template)
+        {
+            return GalleryRuntime.GetTemplatePath(template.ID);
+        }
+
     }
 }

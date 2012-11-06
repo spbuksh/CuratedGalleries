@@ -3,6 +3,7 @@
 
 
 <div class="coverImage" corbis-item-id="@this.Model.ID">
+    <span class="dragndrop"></span>
     <span class="toolbar">
         <a href="javascript:void(0)" class="minimal"></a>
         <a href="javascript:void(0)" class="close"></a>
@@ -17,18 +18,20 @@
     <div class="expanded">
         <div class="imgArea">
             <div class="imgToolbar">
-                <a href="javascript:void(0)">Upload</a>
+                <form name="imageUploadForm" action="/api/Upload/UploadGalleryImage" method="POST" enctype="multipart/form-data">
+                    <input type="file" id="coverImageUploader" /><input type="submit" value="Upload" onclick="return ajaxCoverImageUpload();" />
+                </form>
             </div>
             <div class="imgPresenter">
                 <img src="@this.Model.Urls.Large" alt="@this.Model.Text" />
             </div>
             <div class="txtAlign">
                 <ul>
-                    <li corbis-data-position="topleft" class="tLeft"><a href="javascript:void(0)">TopLeft</a></li>
-                    <li corbis-data-position="topright" class="tRight"><a href="javascript:void(0)">TopRight</a></li>
-                    <li corbis-data-position="center" class="center"><a href="javascript:void(0)">Center</a></li>
-                    <li corbis-data-position="bottomleft" class="bLeft"><a href="javascript:void(0)">BottomLeft</a></li>
-                    <li corbis-data-position="bottomright" class="bRight"><a href="javascript:void(0)">BottomRight</a></li>
+                    <li corbis-data-position="topleft" class="tLeft"><a href="javascript:void(0)"></a></li>
+                    <li corbis-data-position="topright" class="tRight"><a href="javascript:void(0)"></a></li>
+                    <li corbis-data-position="center" class="center"><a href="javascript:void(0)"></a></li>
+                    <li corbis-data-position="bottomleft" class="bLeft"><a href="javascript:void(0)"></a></li>
+                    <li corbis-data-position="bottomright" class="bRight"><a href="javascript:void(0)"></a></li>
                 </ul>
             </div>
         </div>
@@ -44,11 +47,11 @@
                         @Html.HiddenFor(x => x.TextPosition);
                         <div>
                             <label>Headline copy</label>@Html.TextBoxFor(x => x.HeadlineCopyText)
-                            <label>Size</label>@Html.TextBoxFor(x => x.HeadlineCopyFontSize)
+                            <label>Size</label>@Html.TextBoxFor(x => x.HeadlineCopyFontSize, new { @class = "size" })
                         </div>
                         <div>
                             <label>Standfirst</label>@Html.TextBoxFor(x => x.StandfirstText)
-                            <label>Size</label>@Html.TextBoxFor(x => x.StandfirstFontSize)
+                            <label>Size</label>@Html.TextBoxFor(x => x.StandfirstFontSize, new { @class = "size" })
                         </div>
                         <div>
                             <label>Biography</label>
@@ -67,5 +70,21 @@
         $(function () {
             _setCoverTextPosition('@(this.Model.TextPosition.ToString().ToLower())');
         });
+        function ajaxCoverImageUpload() {
+            $.ajaxFileUpload({
+                url: '/Gallery/UploadImage',
+                params: { id: GalleryPageMngr.galleryID },
+                secureuri: false,
+                fileElementId: 'coverImageUploader',
+                dataType: 'json',
+                success: function (data, status) {
+                    alert(status);
+                },
+                error: function (data, status, e) {
+                    alert(e);
+                }
+            });
+            return false;
+        }
     </script>
 </div>

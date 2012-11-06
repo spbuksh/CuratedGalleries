@@ -1,6 +1,5 @@
 ﻿@using Corbis.CMS.Entity
 @using Corbis.CMS.Web.Code
-
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -23,57 +22,8 @@
         @Scripts.Render("~/Scripts/Corbis/Corbis.Common.js")
         
        <script type="text/javascript">
-
-       
-        $(window).error(
-                function (errObj) {
-                    logError(errObj.originalEvent.currentTarget.navigator.userAgent,
-            errObj.originalEvent.filename,
-            errObj.originalEvent.message);
-                }
-            );
-          
-
-        window.onerror = function (errorMessage, fileName, lineNumber) {
-                logError(navigator.appName,
-        fileName,
-        errorMessage);
-            }
-        
-
-        
-        function logError(nvgtr, pageExc, messageExc) {
-                var usr = getCookie('Login');
-            $.ajax({
-                type: "POST",
-                url: "/Error/LogClientError",
-                data: $.toJSON({
-                    "browser": nvgtr,
-                    "page": pageExc,
-                    "message": messageExc,
-                    "user": usr
-                }),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (response) {                 
-                }
-            });
-        }
-
-
-        function getCookie(c_name) {
-            if (document.cookie.length > 0) {
-                c_start = document.cookie.indexOf(c_name + "=");
-                if (c_start != -1 && (c_start == 0 || (document.cookie.charAt(c_start - 1) === ' '))) {
-                    c_start += c_name.length + 1;
-                    c_end = document.cookie.indexOf(";", c_start);
-                    if (c_end == -1) { c_end = document.cookie.length; }
-                    return unescape(document.cookie.substring(c_start, c_end));
-                }
-            }
-            return "";
-        }
-
+            //client error logger. It is singleton
+            var ClientLogger = new clientLogger({ url: '@Url.Action("LogClientEntry", "Error")', showErrorAlerts: true });
         </script>
 
     </head>

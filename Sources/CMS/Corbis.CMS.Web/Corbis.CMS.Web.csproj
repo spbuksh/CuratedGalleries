@@ -199,6 +199,7 @@
     <Compile Include="Code\Gallery\GalleryRuntime.cs" />
     <Compile Include="Code\Extensions.cs" />
     <Compile Include="Code\Gallery\Extensions.cs" />
+    <Compile Include="Code\Gallery\TemplateContent\GalleryImageSize.cs" />
     <Compile Include="Code\Gallery\TemplateContent\GalleryTemplate.cs" />
     <Compile Include="Code\Gallery\TemplateContent\IGalleryTemplate.cs" />
     <Compile Include="Code\Gallery\TemplateContent\GalleryTemplateDescriptor.cs" />
@@ -297,11 +298,17 @@
     <Content Include="Errors\error.htm" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
+    <Content Include="Images\align_text.png" />
+    <Content Include="Images\delete_button.png" />
+    <Content Include="Images\dragndrop.png" />
     <Content Include="Images\edit.png" />
     <Content Include="Images\gallery-manage.png" />
     <Content Include="Images\gallery.jpg" />
+    <Content Include="Images\live_preview.png" />
     <Content Include="Images\photo_add.png" />
+    <Content Include="Images\toolbar_button.png" />
     <Content Include="Images\trash.png" />
+    <Content Include="Images\up_down_button.png" />
     <Content Include="Scripts\Corbis\Corbis.Gallery.js" />
     <Content Include="Scripts\Corbis\Corbis.Common.js" />
     <Content Include="Scripts\Corbis\Corbis.Template.js" />
@@ -313,6 +320,7 @@
     <Content Include="Scripts\jquery-ui-1.8.20.min.js" />
     <Content Include="Scripts\jquery.autocomplete.js" />
     <Content Include="Scripts\jquery.json-2.3.min.js" />
+    <Content Include="Scripts\jquery.plugin.ajaxfileupload.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
     <Content Include="Scripts\jquery.validate-vsdoc.js" />

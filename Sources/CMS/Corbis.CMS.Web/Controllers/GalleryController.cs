@@ -430,6 +430,8 @@ namespace Corbis.CMS.Web.Controllers
             //TODO: File/folder filter for package has not been implemented. For example we do not need xml gallery state file.
             byte[] output = null;
 
+            var content = GalleryRuntime.LoadGalleryContent(id);
+
             using (var package = new ZipFile())
             {
                 var root = GalleryRuntime.GetGalleryPath(id);
@@ -438,6 +440,9 @@ namespace Corbis.CMS.Web.Controllers
 
                 foreach (var item in Directory.GetDirectories(root))
                     package.AddDirectory(item, item.Substring(root.Length).TrimStart(Path.DirectorySeparatorChar));
+
+                foreach(var item in content.SystemFilePathes)
+                    package.RemoveEntry(item);
 
                 using(MemoryStream stream = new MemoryStream())
                 {
@@ -505,7 +510,7 @@ namespace Corbis.CMS.Web.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        public ActionResult UploadImage(Nullable<int> id)
+        public ActionResult UploadImage(HttpPostedFileBase ff, Nullable<int> id)
         {
             //TODO: This method does not work // WHY?
 

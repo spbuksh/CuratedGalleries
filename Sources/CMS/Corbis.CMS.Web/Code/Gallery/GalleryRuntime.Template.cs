@@ -190,13 +190,14 @@ namespace Corbis.CMS.Web.Code
                 var extractdir = new DirectoryInfo(item.GetFolderPath());
                 ExtractPackage(item.Package, extractdir.FullName);
 
-                var xfiles = extractdir.GetFiles("*.xml");
+                var xdecr = extractdir.GetFiles("*.xml").FirstOrDefault();
 
-                GalleryTemplateDescriptor descriptor = LoadTemplateDescriptor(xfiles[0]);
+                GalleryTemplateDescriptor descriptor = LoadTemplateDescriptor(xdecr);
 
                 var template = new CuratedGalleryTemplate();
                 ObjectMapper.DoMapping(descriptor, template);
                 ObjectMapper.DoMapping(item, template);
+                template.DescriptorFilepath = xdecr.Name;
 
                 output.Add(template);
             }

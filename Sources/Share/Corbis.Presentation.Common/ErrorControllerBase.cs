@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 using System.Diagnostics;
+using Corbis.Presentation.Common.Models;
 
 namespace Corbis.Presentation.Common
 {
@@ -59,12 +60,23 @@ namespace Corbis.Presentation.Common
        /// <param name="message">error message</param>
        /// <param name="user">user identifier</param>
        /// <returns></returns>
-        public virtual ActionResult LogClientError(string browser, string page, string message, string user)
+        public virtual ActionResult LogClientEntry(ClientLogEntryModel model)
         {
-            //In the session we store last user error and do not delete it
-            this.Logger.WriteError(new Exception(string.Format("user: {0} ;filename: {1}; browser: {2}", user, page, browser)), message);
+            string message = string.Format("Browser: {0};{1}Url: {2};{1}Line: {3};{1}Error: {4}", 
+                this.HttpContext.Request.Browser.Browser, Environment.NewLine, model.Url, model.Line, model.Text);
 
-            return this.Json("Logged");
+            switch(model.EntryType.ToLower())
+            {
+                case "error":
+                    this.Logger.WriteError(message);
+                    break;
+                case "warning":
+                    this.Logger.WriteWarning(message);
+                    break;
+                default: throw new NotImplementedException();
+            }
+
+            return this.Json("OK");
         }
 
 

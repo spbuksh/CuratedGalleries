@@ -19,5 +19,7 @@ namespace Corbis.CMS.Web.Code
         public string Author { get; set; }
 
         public string Company { get; set; }
+
+        public string DescriptorFilepath { get; set; }
     }
 }

@@ -947,6 +947,10 @@ padding: 0 1.5%;
     margin-bottom: 15px;
 }
 /*gallery styles*/
+.galleryContent label{font-size:13px;}
+.galleryContent input[type=submit]{font-size:13px;}
+.coverImage{margin-bottom: 20px;border: 1px solid #666;padding: 10px 30px;position: relative;}
+.contentImage{margin-bottom: 20px;border: 1px solid #666;padding: 10px 30px;position: relative;}
 .galleryItem{ overflow: hidden;margin-bottom: 15px;}
 .galleryItem:last-of-type{margin-bottom: 0px;}
 .galleryItem .imgWrapper{ border: 1px solid #666;width: 100px;height: 100px;float: left;}
@@ -955,11 +959,10 @@ padding: 0 1.5%;
 .galleryItem .galleryTitle div{ display: inline;margin-left: 190px;font-weight: normal;}
 .galleryItem .createDate{ padding-left: 3px;margin-bottom: 16px;}
 .globalToolbar{ background-color: #000;overflow: hidden;margin-top: 10px;}
-.globalToolbar ul{ list-style: none;padding: 0;margin: 0;margin-left: 32%;}
-.globalToolbar ul li{ float: left;}
+.globalToolbar ul{ list-style: none;padding: 0;margin: 0;ma}
+.globalToolbar ul li{display:inline-block;}
 .globalToolbar ul li a{ color: #fff;display: block;height: 34px;padding: 0 10px;line-height: 34px;}
 .globalToolbar ul li a:hover{ background-color: #666;text-decoration: none;}
-.contentImage{margin-bottom: 20px;border: 1px solid #666;padding: 10px 30px 10px 10px;position: relative;}
 .contentImage:hover{-moz-box-shadow: 0 0 10px rgba(0,0,0,0.5); /* Для Firefox */
     -webkit-box-shadow: 0 0 10px rgba(0,0,0,0.5); /* Для Safari и Chrome */
     box-shadow: 0 0 10px rgba(0,0,0,0.5); /* Параметры тени */
@@ -967,8 +970,8 @@ padding: 0 1.5%;
 .imgArea{float: left;}
 .imgArea .imgToolbar{margin-bottom: 10px}
 .imgArea .txtAlign{overflow: hidden;zoom:1;}
-.imgArea .txtAlign ul{list-style: none;margin: 0px;padding: 0px;margin-left: 35px;}
-.imgArea .txtAlign ul li{float: left;margin-right:10px;}
+.imgArea .txtAlign ul{list-style: none;margin: 0px;padding: 0px;text-align:center;}
+.imgArea .txtAlign ul li{display:inline-block;margin-right:10px;}
 .imgArea .txtAlign ul li:last-child{margin-right:0px;}
 .imgArea .txtAlign ul a{padding: 0;border:1px solid #666;width: 50px; height: 50px;display: block;background:url('../Images/align_text.png') no-repeat;}
 .imgArea .txtAlign ul a:hover{border:1px solid #3740fa;}
@@ -1001,8 +1004,17 @@ padding: 0 1.5%;
 .toolbar a.minimal:hover{background-position: 0 -20px;float: left;}
 .toolbar a.close:hover{background-position: -20px -20px;float: left;}
 .contentImage:hover .toolbar{ display: block;}
-
-
+.coverImage .imgArea .txtAlign ul li a{background: url('../Images/live_preview.png') no-repeat;}
+.coverImage .imgArea .txtAlign ul li.tLeft a{background-position: 0 0;}
+.coverImage .imgArea .txtAlign ul li.tRight a{background-position: 0 -50px;}
+.coverImage .imgArea .txtAlign ul li.center a{background-position: 0 -100px}
+.coverImage .imgArea .txtAlign ul li.bLeft a{background-position: 0 -150px}
+.coverImage .imgArea .txtAlign ul li.bRight a{background-position: 0 -200px;}
+.coverImage:hover .toolbar{ display: block;}
+.coverImage:hover .up_down{ display: block;}
+.dragndrop{ display: none;height: 30px;width: 30px;position: absolute;top: 0;left: 0;margin-left: -15px;margin-top: -15px;background: url('../Images/dragndrop.png') repeat-y top left;cursor: crosshair;}
+.coverImage:hover .dragndrop{ display: block;}
+.contentImage:hover .dragndrop{ display: block;}
 /*
 section h4{display:inline;}
 .name{margin-bottom:40px;}

@@ -137,34 +137,38 @@ namespace Corbis.CMS.Web.Code
 
             var gallery = rslt.Output;
 
-            Directory.CreateDirectory(GetGalleryPath(gallery.ID));
-            Directory.CreateDirectory(GetGalleryOutputPath(gallery.ID));
-            Directory.CreateDirectory(GetGalleryContentPath(gallery.ID));
+            string galleryRoot = gallery.GetRootPath();
+            string galeryOutput = gallery.GetOutputPath();
 
+            Directory.CreateDirectory(galleryRoot);
+            Directory.CreateDirectory(galeryOutput);
+            Directory.CreateDirectory(gallery.GetContentPath());
 
-            //find template for the gallery
-            var tdir = new DirectoryInfo(GetTemplatePath(gallery.TemplateID));
-
-            if (!tdir.Exists)
-            {
-                tdir.Create();
-
-                GalleryRepository.GetTemplate(gallery.TemplateID, GalleryTemplateContent.All);
-
-                //unpack files into template directory
-                //...
-            }
+            IGalleryTemplate template = GetTemplate(gallery.TemplateID);
 
             var content = new GalleryContent() 
             { 
                 Name = name, 
-                Font = new GalleryFont() { FamilyName = System.Drawing.FontFamily.Families[0].Name } 
+                Font = new GalleryFont() { FamilyName = template.GallerySettings.DefaultFontFamilyName } 
             };
 
+            content.GalleryImageSizes.AddRange(template.GallerySettings.ImageSizes.Select(x => ObjectMapper.DoMapping<GalleryImageSize>(x)));
+
+            //add content file as system. It must be ignored
+            content.SystemFilePathes.Add(GetGallerySourcePath(gallery.ID).Substring(galleryRoot.Length));
+
+            //relevant output path
+            var reloutputPath = galeryOutput.Substring(galleryRoot.Length).TrimEnd('\\');
+
+            //ignore template cover
+            if (template.Icon != null && template.Icon.Type == ImageSourceTypes.LocalFile)
+                content.SystemFilePathes.Add(string.Format("{0}\\{1}", reloutputPath, template.Icon.Source));
+
+            if (!string.IsNullOrEmpty(template.DescriptorFilepath))
+                content.SystemFilePathes.Add(string.Format("{0}\\{1}", reloutputPath, template.DescriptorFilepath));
+
             gallery.SaveContent(content);
-
-
-
+            
             return gallery;
         }
 

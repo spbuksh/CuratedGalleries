@@ -23,7 +23,7 @@ namespace Corbis.CMS.Web
     {
         public MvcApplication()
         {
-            BeginRequest += MvcApplicationBeginRequest;
+            //BeginRequest += MvcApplicationBeginRequest;
         }
 
         static void MvcApplicationBeginRequest(object sender, EventArgs e)

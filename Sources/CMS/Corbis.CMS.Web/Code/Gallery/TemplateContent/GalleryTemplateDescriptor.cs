@@ -5,6 +5,7 @@ using System.Web;
 using System.Drawing;
 using System.Xml.Serialization;
 using Corbis.CMS.Entity;
+using System.Collections.ObjectModel;
 
 namespace Corbis.CMS.Web.Code
 {
@@ -98,58 +99,54 @@ namespace Corbis.CMS.Web.Code
         /// <summary>
         /// 
         /// </summary>
-        [XmlIgnore]
-        public GalleryImageSizes RequiredImageSizes
+        [XmlElement]
+        public string DefaultFontFamilyName 
+        { 
+            get
+            {
+                if(string.IsNullOrEmpty(this.m_DefaultFontFamilyName))
+                    this.m_DefaultFontFamilyName = this.FontFamilies[0].Name;
+
+                return this.m_DefaultFontFamilyName;
+            }
+            set
+            {
+                this.m_DefaultFontFamilyName = value;
+            }
+        }
+        private string m_DefaultFontFamilyName = null;
+
+        /// <summary>
+        /// Each template can have its own font family set.
+        /// </summary>
+        public FontFamily[] FontFamilies
+        {
+            get
+            {   
+                if(m_FontFamilies == null)
+                    m_FontFamilies = System.Drawing.FontFamily.Families;
+
+                return this.m_FontFamilies;
+            }        
+        }
+        private FontFamily[] m_FontFamilies = null;
+
+
+        /// <summary>
+        /// Contains gallery image sizes
+        /// </summary>
+        ReadOnlyCollection<IGalleryImageSize> ITemplateGallerySettings.ImageSizes
         {
             get 
             {
-                if (!this.m_RequiredImageSizes.HasValue)
-                {
-                    if (this.ImageSizes != null && this.ImageSizes.Count != 0)
-                    {
-                        foreach (var item in this.ImageSizes)
-                            this.m_RequiredImageSizes = this.m_RequiredImageSizes.HasValue ? (this.m_RequiredImageSizes | item.Type) : item.Type;
-                    }
-                }
-                return this.m_RequiredImageSizes.Value;
+                if (this.m_ReadonlyImageSizes == null)
+                    this.m_ReadonlyImageSizes = new ReadOnlyCollection<IGalleryImageSize>(this.ImageSizes.Cast<IGalleryImageSize>().ToList());
+
+                return this.m_ReadonlyImageSizes;
             }
         }
-        private Nullable<GalleryImageSizes> m_RequiredImageSizes = null;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="szType"></param>
-        /// <returns></returns>
-        public Nullable<Size> GetImageSize(GalleryImageSizes szType)
-        {
-            if ((this.RequiredImageSizes & szType) != szType)
-                throw new Exception();
-
-            return this.ImageSizes.Where(x => x.Type == szType).Select(x => new Size(x.Width, x.Height)).Single();
-        }
+        private ReadOnlyCollection<IGalleryImageSize> m_ReadonlyImageSizes = null;
     }
 
-    [Serializable]
-    public class GalleryImageSize
-    {
-        /// <summary>
-        /// Image size type
-        /// </summary>
-        [XmlAttribute("sztype")]
-        public GalleryImageSizes Type { get; set; }
-
-        /// <summary>
-        /// Image width in pixels
-        /// </summary>
-        [XmlAttribute("width")]
-        public int Width { get; set; }
-
-        /// <summary>
-        /// Image height in pixels
-        /// </summary>
-        [XmlAttribute("height")]
-        public int Height { get; set; }
-    }
 
 }

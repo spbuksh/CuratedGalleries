@@ -19,6 +19,8 @@ namespace Corbis.CMS.Web.Code
     [KnownType(typeof(PullQuotedTextContent))]
     public class GalleryContent
     {
+        #region Gallery Content Data
+
         /// <summary>
         /// Gallery name
         /// </summary>
@@ -34,10 +36,6 @@ namespace Corbis.CMS.Web.Code
         /// </summary>
         public bool TransitionsIncluded { get; set; }
 
-        /// <summary>
-        /// Gallery cover image
-        /// </summary>
-        public GalleryCoverImage CoverImage { get; set; }
 
         /// <summary>
         /// Contains gallery relevant file pathes which were created by the system and must be ignored during gallery output creation
@@ -51,6 +49,11 @@ namespace Corbis.CMS.Web.Code
         private readonly List<string> m_IgnoredFilePathes = new List<string>();
 
         /// <summary>
+        /// Gallery cover image
+        /// </summary>
+        public GalleryCoverImage CoverImage { get; set; }
+
+        /// <summary>
         /// Gallery images
         /// </summary>
         [XmlArray("Images")]
@@ -60,6 +63,23 @@ namespace Corbis.CMS.Web.Code
             get { return this.m_Images; }
         }
         private readonly List<GalleryContentImage> m_Images = new List<GalleryContentImage>();
+
+
+        /// <summary>
+        /// Gallery predefined image sizes. This data is gotten from the gallery descriptor and this data is used in css and so on
+        /// </summary>
+        [XmlArray()]
+        [XmlArrayItem("ImageSize")]
+        public List<GalleryImageSize> GalleryImageSizes
+        {
+            get { return this.m_ImageSizes; }
+        }
+        private readonly List<GalleryImageSize> m_ImageSizes = new List<GalleryImageSize>();
+
+
+        #endregion Gallery Content Data
+
+        #region Methods to work with content data
 
         public void Clear(HttpContextBase context = null)
         {
@@ -160,5 +180,7 @@ namespace Corbis.CMS.Web.Code
             if (!string.IsNullOrEmpty(urls.Small))
                 delHandler(Corbis.Common.Utils.VirtualToAbsolute(urls.Small, context));
         }
+
+        #endregion Methods to work with content data
     }
 }

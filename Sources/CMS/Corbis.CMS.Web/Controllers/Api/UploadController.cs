@@ -35,10 +35,20 @@ namespace Corbis.CMS.Web.Controllers.Api
         /// <param name="message"></param>
         /// <returns></returns>
         [HttpPost]
-        public HttpResponseMessage UploadGalleryImage(HttpRequestMessage message, [System.Web.Http.FromUri, System.ComponentModel.DataAnnotations.Required]Nullable<int> id)
+        public HttpResponseMessage UploadGalleryImage(HttpRequestMessage message, 
+            [System.Web.Http.FromUri, System.ComponentModel.DataAnnotations.Required]Nullable<int> id)
         {
+#if DEBUG
+            this.Logger.WriteDebug("Gallery image upload requiest has been received");
+#endif
             if (this.HttpContext.Request.Files.Count != 1)
+            {
+#if DEBUG
+                this.Logger.WriteDebug("Error. Client tries to upload more than 1 file");
+#endif
+
                 return this.Request.CreateResponse(HttpStatusCode.NotAcceptable, "There are no files or more then one for uploading in the request");
+            }
 
             if (!id.HasValue)
                 throw new Exception("Target gallery is not pointed. Query strin parameter 'id' is required");
@@ -54,12 +64,26 @@ namespace Corbis.CMS.Web.Controllers.Api
 
             var file = this.HttpContext.Request.Files[0];
 
+#if DEBUG
+            this.Logger.WriteDebug(string.Format("File name: {0}; File length: {1}", file.FileName, file.ContentLength));
+#endif
+
             //TODO: CHANGE VALIDATE LOGIC
             if (GalleryRuntime.MaxImageSize.HasValue && GalleryRuntime.MaxImageSize.Value < file.ContentLength)
+            {
+#if DEBUG
+                this.Logger.WriteDebug("File validation error");
+#endif
                 return this.Request.CreateResponse<string>(HttpStatusCode.BadRequest, string.Format("Uploading file size is {0}byte. Max file size {1}bytes is exceeded", file.ContentLength, GalleryRuntime.MaxImageSize.Value));
+            }
 
             if (GalleryRuntime.MinImageSize.HasValue && file.ContentLength < GalleryRuntime.MinImageSize.Value)
+            {
+#if DEBUG
+                this.Logger.WriteDebug("File validation error");
+#endif
                 return this.Request.CreateResponse<string>(HttpStatusCode.BadRequest, string.Format("Uploading file size is {0}byte. Min file size is {1}bytes", file.ContentLength, GalleryRuntime.MaxImageSize.Value));
+            }
 
             string filename = file.FileName;
             string filepath = Path.Combine(contentpath, filename);
@@ -74,6 +98,10 @@ namespace Corbis.CMS.Web.Controllers.Api
             try
             {
                 file.SaveAs(filepath);
+
+#if DEBUG
+                this.Logger.WriteDebug("File received successfully");
+#endif
             }
             catch (Exception ex)
             {
@@ -103,16 +131,14 @@ namespace Corbis.CMS.Web.Controllers.Api
 
             System.Drawing.Image originalImage = null;
 
+            //TODO: Implement async image resizing for performance
             try
             {
+                originalImage = System.Drawing.Image.FromFile(filepath);
+
                 //resize images for development
                 {
-                    string fname = string.Format("{0}.lrgedit", filenameonly);
-                    string editpath = Path.Combine(contentpath, string.Format("{0}{1}", fname, extension));
-
-                    if (originalImage == null)
-                        originalImage = System.Drawing.Image.FromFile(filepath);
-
+                    string editpath = Path.Combine(contentpath, string.Format("{0}.lrgedit{1}", filenameonly, extension));
                     ResizeImage(originalImage, editpath, GalleryRuntime.EditedLargeImageSize);
 
                     editUrls.Large = Common.Utils.AbsoluteToVirtual(editpath, this.HttpContext);
@@ -120,12 +146,7 @@ namespace Corbis.CMS.Web.Controllers.Api
                     content.SystemFilePathes.Add(editpath.Substring(rootpath.Length));
                 }
                 {
-                    string fname = string.Format("{0}.smledit", filenameonly);
-                    string editpath = Path.Combine(contentpath, string.Format("{0}{1}", fname, extension));
-
-                    if (originalImage == null)
-                        originalImage = System.Drawing.Image.FromFile(filepath);
-
+                    string editpath = Path.Combine(contentpath, string.Format("{0}.smledit{1}", filenameonly, extension));
                     ResizeImage(originalImage, editpath, GalleryRuntime.EditedSmallImageSize);
 
                     editUrls.Small = Common.Utils.AbsoluteToVirtual(editpath, this.HttpContext);
@@ -133,46 +154,41 @@ namespace Corbis.CMS.Web.Controllers.Api
                     content.SystemFilePathes.Add(editpath.Substring(rootpath.Length));
                 }
 
-
                 //images for galleries
-                if (template.GallerySettings.RequiredImageSizes.HasFlag(GalleryImageSizes.Large))
-                {
-                    string fname = string.Format("{0}.lrg", filenameonly);
-                    string largepath = Path.Combine(contentpath, string.Format("{0}{1}", fname, extension));
+                foreach (var isize in template.GallerySettings.ImageSizes)
+                { 
+                    switch(isize.Type)
+                    {
+                        case GalleryImageSizes.Small:
+                            {
+                                string smallpath = Path.Combine(contentpath, string.Format("{0}.sml{1}", filenameonly, extension));
+                                ResizeImage(originalImage, smallpath, new System.Drawing.Size(isize.Width, isize.Height));
 
-                    if (originalImage == null)
-                        originalImage = System.Drawing.Image.FromFile(filepath);
+                                siteUrls.Small = Common.Utils.AbsoluteToVirtual(smallpath, this.HttpContext);
+                                gllrUrls.Small = gllrUrlHandler(Path.GetFileName(smallpath)); 
+                            }
+                            break;
+                        case GalleryImageSizes.Middle:
+                            { 
+                                string middlepath = Path.Combine(contentpath, string.Format("{0}.mdl{1}", filenameonly, extension));
+                                ResizeImage(originalImage, middlepath, new System.Drawing.Size(isize.Width, isize.Height));
 
-                    ResizeImage(originalImage, largepath, template.GallerySettings.GetImageSize(GalleryImageSizes.Large).Value);
+                                siteUrls.Middle = Common.Utils.AbsoluteToVirtual(middlepath, this.HttpContext);
+                                gllrUrls.Middle = gllrUrlHandler(Path.GetFileName(middlepath));
+                            }
+                            break;
+                        case GalleryImageSizes.Large:
+                            { 
+                                string largepath = Path.Combine(contentpath, string.Format("{0}.lrg{1}", filenameonly, extension));
+                                ResizeImage(originalImage, largepath, new System.Drawing.Size(isize.Width, isize.Height));
 
-                    siteUrls.Large = Common.Utils.AbsoluteToVirtual(largepath, this.HttpContext);
-                    gllrUrls.Large = gllrUrlHandler(Path.GetFileName(largepath));
-                }
-                if (template.GallerySettings.RequiredImageSizes.HasFlag(GalleryImageSizes.Middle))
-                {
-                    string fname = string.Format("{0}.mdl", filenameonly);
-                    string middlepath = Path.Combine(contentpath, string.Format("{0}{1}", fname, extension));
-
-                    if (originalImage == null)
-                        originalImage = System.Drawing.Image.FromFile(filepath);
-
-                    ResizeImage(originalImage, middlepath, template.GallerySettings.GetImageSize(GalleryImageSizes.Middle).Value);
-
-                    siteUrls.Middle = Common.Utils.AbsoluteToVirtual(middlepath, this.HttpContext);
-                    gllrUrls.Middle = gllrUrlHandler(Path.GetFileName(middlepath));
-                }
-                if (template.GallerySettings.RequiredImageSizes.HasFlag(GalleryImageSizes.Small))
-                {
-                    string fname = string.Format("{0}.sml", filenameonly);
-                    string smallpath = Path.Combine(contentpath, string.Format("{0}{1}", fname, extension));
-
-                    if (originalImage == null)
-                        originalImage = System.Drawing.Image.FromFile(filepath);
-
-                    ResizeImage(originalImage, smallpath, template.GallerySettings.GetImageSize(GalleryImageSizes.Small).Value);
-
-                    siteUrls.Small = Common.Utils.AbsoluteToVirtual(smallpath, this.HttpContext);
-                    gllrUrls.Small = gllrUrlHandler(Path.GetFileName(smallpath));
+                                siteUrls.Large = Common.Utils.AbsoluteToVirtual(largepath, this.HttpContext);
+                                gllrUrls.Large = gllrUrlHandler(Path.GetFileName(largepath));
+                            }
+                            break;
+                        default:
+                            throw new NotImplementedException();
+                    }
                 }
             }
             finally

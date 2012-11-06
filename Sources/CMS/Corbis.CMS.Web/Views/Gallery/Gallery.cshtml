@@ -36,6 +36,7 @@
 
 @Scripts.Render("~/Scripts/Corbis/Uploader.js")
 @Scripts.Render("~/Scripts/Corbis/Corbis.Gallery.js")
+@Scripts.Render("~/Scripts/jquery.plugin.ajaxfileupload.js")
 
 <script type="text/javascript">
     GalleryPageMngr.galleryID = @(this.Model.ID.Value);
@@ -43,7 +44,7 @@
     GalleryPageMngr.swapImageOrderURL = '@Url.Action("SwapImageOrder", "Gallery")';
     GalleryPageMngr.fontFamiliesURL = '@Url.Action("GetFontFamilies", "Gallery")';
 
-    uploaderOptions.url = "api/Upload/UploadGalleryImage?id=@this.Model.ID.Value";
+    uploaderOptions.url = "/api/Upload/UploadGalleryImage?id=@this.Model.ID.Value";
     uploaderOptions.uploadCallBack = "uploadImageCallback";
     uploaderOptions.errorCallBack = "uploadImageErrorCallback";
     uploaderOptions.filter = "*.jpg;*.jpeg";

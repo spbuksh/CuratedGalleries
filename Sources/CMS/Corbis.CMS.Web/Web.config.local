@@ -44,6 +44,7 @@
 	<connectionStrings>
 		<add name="MainDB" connectionString="Data Source=$SQLServer$;Initial Catalog=$MainDB$;User Id=CorbisUser; Password=CorbisUserPassword;" providerName="System.Data.SqlClient" />
 		<add name="ASPStateConnection" connectionString="Data Source=$SQLServer$;Initial Catalog=$ASPStateDB$;User Id=CorbisUser; Password=CorbisUserPassword;" providerName="System.Data.SqlClient" />
+        <add name="FGC" connectionString="Data Source=$SQLServer$;Integrated Security=True;User Instance=True;" providerName="System.Data.SqlClient" />
 	</connectionStrings>
 	<appSettings>
         <add key="webpages:Version" value="2.0.0.0" />

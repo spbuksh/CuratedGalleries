@@ -65,4 +65,49 @@ function onCompleteMsAjaxRequest() {
 
 
 
+//Client Logger
+function clientLogger(options) {
+    this._options = options;
+
+    if (this._options.verb == null || this._options.verb == undefined)
+        this._options.verb = 'POST';
+
+    if (this._options.showErrorAlerts == null || this._options.showErrorAlerts == undefined)
+        this._options.showErrorAlerts = false;
+
+    window.onerror = function (msg, url, line) {
+        this._error(msg, url, line);
+    };
+};
+clientLogger.prototype._log = function (logEntry) {
+    $.ajax({
+        url: this._options.url,
+        type: this._options.verb,
+        data: logEntry
+    });
+}
+clientLogger.prototype.error = function (error, url, line) {
+    if (this._options.showErrorAlerts) {
+        var errorMsg = '[Error Text]:' + error;
+
+        if (url != null && url != undefined) {
+            errorMsg += '\r\n\r\n';
+            errorMsg += '[URL]:' + url;
+        }
+        if (line != null && line != undefined) {
+            errorMsg += '\r\n\r\n';
+            errorMsg += '[Line]: ' + line.toString();
+        }
+
+        alert(errorMsg);
+    }
+    this._log({ etype: 'error', msg: error, url: url, line: line });
+};
+clientLogger.prototype.warn = function (warning, url, line) {
+    this._log({ entrytype: 'warning', text: warning, url: url, line: line });
+};
+clientLogger.prototype.info = function (info, url, line) {
+    this._log({ entrytype: 'info', text: info, url: url, line: line });
+};
+
 
