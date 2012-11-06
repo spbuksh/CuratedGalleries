@@ -29,8 +29,8 @@ $(function () {
     });
 });
 
-function registerForUnobtrusiveValidation(selector) {
-    $.validator.unobtrusive.parse('div.contentImage[corbis-item-id="@(this.Model.ID)"]');
+function registerFormsForUnobtrusiveValidation(selector) {
+    $.validator.unobtrusive.parse(selector);
 }
 
 //
