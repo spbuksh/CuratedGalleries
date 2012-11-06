@@ -184,6 +184,7 @@
     <Compile Include="Code\Gallery\Extensions.Template.cs" />
     <Compile Include="Code\Gallery\GalleryContent\GalleryContent.cs" />
     <Compile Include="Code\Gallery\GalleryContent\GalleryFont.cs" />
+    <Compile Include="Code\Gallery\GalleryContent\ImageContentGenerator\ImageContentGenerator.cs" />
     <Compile Include="Code\Gallery\GalleryContent\Image\GalleryContentImage.cs" />
     <Compile Include="Code\Gallery\GalleryContent\Image\GalleryCoverImage.cs" />
     <Compile Include="Code\Gallery\GalleryContent\Image\GalleryImageBase.cs" />

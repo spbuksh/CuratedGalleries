@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.IO;
 using Corbis.Common.Utilities.Image.Enums;
 
 namespace Corbis.Common.Utilities.Image
@@ -84,7 +85,7 @@ namespace Corbis.Common.Utilities.Image
         {
             var generatedImage = new GeneratedImage(text, textFont, filePathToSave, fileName, textColor, dockStyle,
                                                     imageWidth, imageHeight, isBorderRequired, borderColor, imageFormat);
-            return generatedImage.SaveImage();
+            return Path.GetFullPath(generatedImage.SaveImage());
         }
 
     }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Corbis.CMS.Web.Code.Gallery.GalleryContent.ImageContentGenerator;
 using Corbis.Common;
 using Corbis.CMS.Entity;
 using System.IO;
@@ -10,6 +11,7 @@ using System.Web.Routing;
 using System.Xml.Xsl;
 using System.Xml;
 using System.Xml.Serialization;
+using Corbis.Common.Utilities.Image;
 
 namespace Corbis.CMS.Web.Code
 {
@@ -106,9 +108,16 @@ namespace Corbis.CMS.Web.Code
         public static void UpdateGalleryContentImage(int galleryID, string imageID, Action<GalleryContentImage> handler)
         {
             var content = LoadGalleryContent(galleryID);
-            var image = content.Images.Where(x => x.ID == imageID).Single();
+            var image = content.Images.Single(x => x.ID == imageID);
             handler(image);
+            image.ImageContentUrl = Utils.AbsoluteToVirtual(ImageContentGenerator.GererateImage(image, galleryID), null);
+            image.ImageContentName = Path.GetFileName(image.ImageContentUrl);
             SaveGalleryContent(galleryID, content);
+        }
+
+        public static  void UpdateImageContent(GalleryContentImage image)
+        {
+            
         }
 
         /// <summary>
