@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
+using System.Drawing;
 
 namespace Corbis.CMS.Web.Code
 {
@@ -78,6 +79,18 @@ namespace Corbis.CMS.Web.Code
         /// Text position on the gallery image
         /// </summary>
         public TextContentPositions Position { get; set; }
+
+        /// <summary>
+        /// Text content image size
+        /// </summary>
+        [XmlElement(IsNullable = true)]
+        public Nullable<Size> Size { get; set; }
+
+        /// <summary>
+        /// Background color as #FFFFFF format
+        /// </summary>
+        [XmlElement]
+        public string BackgroundColor { get; set; }
     }
 
 }

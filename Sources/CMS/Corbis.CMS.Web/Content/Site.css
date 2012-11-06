@@ -967,6 +967,10 @@ padding: 0 1.5%;
     -webkit-box-shadow: 0 0 10px rgba(0,0,0,0.5); /* Для Safari и Chrome */
     box-shadow: 0 0 10px rgba(0,0,0,0.5); /* Параметры тени */
 }
+.coverImage:hover{-moz-box-shadow: 0 0 10px rgba(0,0,0,0.5); /* Для Firefox */
+    -webkit-box-shadow: 0 0 10px rgba(0,0,0,0.5); /* Для Safari и Chrome */
+    box-shadow: 0 0 10px rgba(0,0,0,0.5); /* Параметры тени */
+}
 .imgArea{float: left;}
 .imgArea .imgToolbar{margin-bottom: 10px}
 .imgArea .txtAlign{overflow: hidden;zoom:1;}
@@ -1012,9 +1016,15 @@ padding: 0 1.5%;
 .coverImage .imgArea .txtAlign ul li.bRight a{background-position: 0 -200px;}
 .coverImage:hover .toolbar{ display: block;}
 .coverImage:hover .up_down{ display: block;}
-.dragndrop{ display: none;height: 30px;width: 30px;position: absolute;top: 0;left: 0;margin-left: -15px;margin-top: -15px;background: url('../Images/dragndrop.png') repeat-y top left;cursor: crosshair;}
+.dragndrop{ display: none;height: 30px;width: 30px;position: absolute;top: 0;left: 0;margin-left: -15px;margin-top: -15px;background: url('../Images/dragndrop.png') repeat-y top left;cursor: move;}
 .coverImage:hover .dragndrop{ display: block;}
 .contentImage:hover .dragndrop{ display: block;}
+.string{ text-align: left;}
+.string label,.string input[type=text]{ display: inline-block;}
+.string input[type=text]{ width: 280px;}
+.string input[type=text].size{width: 20px;margin-left: 10px;}
+.string label:first-of-type{ width: 120px;}
+.string label:last-of-type{ margin-left: 27px;}
 /*
 section h4{display:inline;}
 .name{margin-bottom:40px;}
@@ -1046,8 +1056,8 @@ input[type=button].cancel{background-color: #f84b47;}
 .livePreview .imgArea .alignText ul li.center a{background-position: 0 -100px}
 .livePreview .imgArea .alignText ul li.bLeft a{background-position: 0 -150px}
 .livePreview .imgArea .alignText ul li.bRight a{background-position: 0 -200px;}
-.size{width: 20px;margin-left: 20px;}
-.string{margin-bottom:5px;}
+
+
 .textArea textarea{resize: none; width: 300px;height: 155px;}
 .url{width:298px;margin-bottom: 5px;}
 .livePreview .textArea input[type=button]{float: right;cursor: pointer;}

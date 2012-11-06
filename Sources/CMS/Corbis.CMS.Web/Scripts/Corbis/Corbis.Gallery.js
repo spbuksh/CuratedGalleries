@@ -41,8 +41,8 @@ $(function () {
     $('div.contentImage span.toolbar a.close').live('click', function () {
         DeleteGalleryContentImage($(this).closest('div.contentImage'));
     });
-    $('div.contentImage span.toolbar a.minimal').live('click', function () {
-        var parent = $(this).closest('div.contentImage');
+
+    var _expandCollapseHandler = function (parent) {
         var jcol = parent.find('div.collapsed');
         var jexp = $(jcol).siblings('div.expanded');
         if (jcol.is(':visible')) {
@@ -53,7 +53,14 @@ $(function () {
             jcol.show();
             jexp.hide();
         }
+    };
+    $('div.contentImage span.toolbar a.minimal').live('click', function () {
+        _expandCollapseHandler($(this).closest('div.contentImage'));
     });
+    $('div.coverImage span.toolbar a.minimal').live('click', function () {
+        _expandCollapseHandler($(this).closest('div.coverImage'));
+    });
+
 
     //****** move images up/down
     //Move image up

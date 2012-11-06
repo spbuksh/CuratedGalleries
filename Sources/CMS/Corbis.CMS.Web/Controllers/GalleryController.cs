@@ -152,6 +152,9 @@ namespace Corbis.CMS.Web.Controllers
                     default:
                         throw new NotImplementedException();
                 }
+
+                model.TextContent.Height = item.TextContent.Size.HasValue ? item.TextContent.Size.Value.Height : (int?)null;
+                model.TextContent.Width = item.TextContent.Size.HasValue ? item.TextContent.Size.Value.Width : (int?)null;
             }
             else
             {
@@ -309,7 +312,11 @@ namespace Corbis.CMS.Web.Controllers
             if (!this.ModelState.IsValid)
                 this.PartialView("QnATextContentPartial", model);
 
-            Action<GalleryContentImage> handler = delegate(GalleryContentImage item) { item.TextContent = this.ObjectMapper.DoMapping<QnATextContent>(model); };
+            Action<GalleryContentImage> handler = delegate(GalleryContentImage item) 
+            { 
+                item.TextContent = this.ObjectMapper.DoMapping<QnATextContent>(model);
+                item.TextContent.Size = new Size(model.Width.Value, model.Height.Value);
+            };
             GalleryRuntime.UpdateGalleryContentImage(galleryID, imageID, handler);
 
             return this.Json(new { success = true });
@@ -320,7 +327,11 @@ namespace Corbis.CMS.Web.Controllers
             if(!this.ModelState.IsValid)
                 return this.PartialView("PullQuotedTextContentPartial", model);
 
-            Action<GalleryContentImage> handler = delegate(GalleryContentImage item) { item.TextContent = this.ObjectMapper.DoMapping<PullQuotedTextContent>(model); };
+            Action<GalleryContentImage> handler = delegate(GalleryContentImage item) 
+            { 
+                item.TextContent = this.ObjectMapper.DoMapping<PullQuotedTextContent>(model);
+                item.TextContent.Size = new Size(model.Width.Value, model.Height.Value);
+            };
             GalleryRuntime.UpdateGalleryContentImage(galleryID, imageID, handler);
 
             return this.Json(new { success = true });
@@ -331,7 +342,11 @@ namespace Corbis.CMS.Web.Controllers
             if(!this.ModelState.IsValid)
                 this.PartialView("BodyCopyTextContentPartial", model);
 
-            Action<GalleryContentImage> handler = delegate(GalleryContentImage item) { item.TextContent = this.ObjectMapper.DoMapping<BodyCopyTextContent>(model); };
+            Action<GalleryContentImage> handler = delegate(GalleryContentImage item) 
+            { 
+                item.TextContent = this.ObjectMapper.DoMapping<BodyCopyTextContent>(model);
+                item.TextContent.Size = new Size(model.Width.Value, model.Height.Value);
+            };
             GalleryRuntime.UpdateGalleryContentImage(galleryID, imageID, handler);
 
             return this.Json(new { success = true });

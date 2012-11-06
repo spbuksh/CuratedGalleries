@@ -1,5 +1,6 @@
 ﻿/// ***********  ADD REFERENCES HERE FOR INTELLISENSE SUPPORTING **********
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/Scripts/jquery.validate.unobtrusive.js" />
 /// ***********************************************************************
 
 //------- jQuery Extensions --------------------
@@ -27,6 +28,10 @@ $(function () {
         alert('Error');
     });
 });
+
+function registerForUnobtrusiveValidation(selector) {
+    $.validator.unobtrusive.parse('div.contentImage[corbis-item-id="@(this.Model.ID)"]');
+}
 
 //
 function beginWaitCursor(jload) {

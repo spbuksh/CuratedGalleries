@@ -131,6 +131,11 @@
                 position: (@(position.HasValue ? 1 : 0) == 1 ? '@(position.HasValue ? position.Value.ToString().ToLower() : string.Empty)' : null),
                 txtMode: '@txtMode'
             });
+
+            //add client validation supporting
+            if('@(this.IsPost.ToString().ToLower())' == 'true') {
+                $.validator.unobtrusive.parse('div.contentImage[corbis-item-id="@(this.Model.ID)"]');
+            }
         });
     </script>
 </div>

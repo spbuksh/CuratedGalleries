@@ -21,6 +21,15 @@ namespace Corbis.CMS.Web.Models
         /// </summary>
         [Required(ErrorMessage = "Text position is not set")]
         public Nullable<TextContentPositions> Position { get; set; }
+
+        /// <summary>
+        /// Background color
+        /// </summary>
+        public string BackgrouondColor { get; set; }
+
+        public virtual Nullable<int> Width { get; set; }
+
+        public virtual Nullable<int> Height { get; set; }
     }
 
     public class EmptyTextContentModel : ImageTextContentModelBase
@@ -45,6 +54,20 @@ namespace Corbis.CMS.Web.Models
         /// </summary>
         [Required]
         public string Answer { get; set; }
+
+        [Required]
+        public override Nullable<int> Width
+        {
+            get { return base.Width; }
+            set { base.Width = value; }
+        }
+
+        [Required]
+        public override Nullable<int> Height
+        {
+            get { return base.Height; }
+            set { base.Height = value; }
+        }
     }
     public class PullQuotedTextContentModel : ImageTextContentModelBase
     {
@@ -59,6 +82,20 @@ namespace Corbis.CMS.Web.Models
         /// </summary>
         [Required]
         public string Text { get; set; }
+
+        [Required]
+        public override Nullable<int> Width
+        {
+            get { return base.Height; }
+            set { base.Height = value; }
+        }
+
+        [Required]
+        public override Nullable<int> Height
+        {
+            get { return base.Height; }
+            set { base.Height = value; }
+        }
     }
 
 
@@ -81,6 +118,20 @@ namespace Corbis.CMS.Web.Models
         /// </summary>
         [Required]
         public string BodyCopy { get; set; }
+
+        [Required]
+        public override Nullable<int> Width
+        {
+            get { return base.Height; }
+            set { base.Height = value; }
+        }
+
+        [Required]
+        public override Nullable<int> Height
+        {
+            get { return base.Height; }
+            set { base.Height = value; }
+        }
     }
 
 }

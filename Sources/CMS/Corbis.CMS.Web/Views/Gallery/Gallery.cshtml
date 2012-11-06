@@ -12,18 +12,6 @@
 <h2>Edit Gallery</h2>
 
 <style type="text/css" media="screen">
-    html, body
-    {
-        height: 100%;
-    }
-    body
-    {
-        margin: 0;
-        padding: 0;
-        overflow: auto;
-        text-align: center;
-        background-color: #ffffff;
-    }
     object:focus
     {
         outline: none;
@@ -36,7 +24,6 @@
 
 @Scripts.Render("~/Scripts/Corbis/Uploader.js")
 @Scripts.Render("~/Scripts/Corbis/Corbis.Gallery.js")
-@Scripts.Render("~/Scripts/jquery.plugin.ajaxfileupload.js")
 
 <script type="text/javascript">
     GalleryPageMngr.galleryID = @(this.Model.ID.Value);
@@ -80,7 +67,7 @@
 <div class="globalToolbar">
     <ul>
         <li>
-            @Html.ActionLink("Build and Preview", "BuildGallery", "Gallery", new { id = this.Model.ID }, null)
+            @Html.ActionLink("Build and Preview", "BuildGallery", "Gallery", new { id = this.Model.ID }, new { target = "_blank" })
         </li>
         <li>
             @Html.ActionLink("Download Gallery", "Download", "Gallery", new { id = this.Model.ID }, null)

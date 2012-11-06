@@ -10,7 +10,7 @@ var uploaderOptions = {
     maxFileSize: 62914560,
     bgcolor: "#003300",
     greetingText: "max file size 60Mb min file size 1 mb \nplease press button for upload images",
-    size: { width: 700, height: 500 },
+    size: { width: 700, height: 100 },
     uploadCallBack: null, //!!!REQUIRED!!!
     errorCallBack: null, //!!!REQUIRED!!!
     id: "SimpleUploader",

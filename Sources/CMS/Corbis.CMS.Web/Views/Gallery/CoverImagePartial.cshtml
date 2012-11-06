@@ -45,12 +45,12 @@
                     {
                         @Html.ValidationSummary()
                         @Html.HiddenFor(x => x.TextPosition);
-                        <div>
-                            <label>Headline copy</label>@Html.TextBoxFor(x => x.HeadlineCopyText)
+                        <div class="string">
+                            <label class="filed_lb">Headline copy</label>@Html.TextBoxFor(x => x.HeadlineCopyText)
                             <label>Size</label>@Html.TextBoxFor(x => x.HeadlineCopyFontSize, new { @class = "size" })
                         </div>
-                        <div>
-                            <label>Standfirst</label>@Html.TextBoxFor(x => x.StandfirstText)
+                        <div class="string">
+                            <label class="filed_lb">Standfirst</label>@Html.TextBoxFor(x => x.StandfirstText)
                             <label>Size</label>@Html.TextBoxFor(x => x.StandfirstFontSize, new { @class = "size" })
                         </div>
                         <div>
@@ -69,22 +69,11 @@
     <script type="text/javascript">
         $(function () {
             _setCoverTextPosition('@(this.Model.TextPosition.ToString().ToLower())');
+
+            //add client validation supporting
+            if ('@(this.IsPost.ToString().ToLower())' == 'true') {
+                $.validator.unobtrusive.parse('div.coverImage');
+            }
         });
-        function ajaxCoverImageUpload() {
-            $.ajaxFileUpload({
-                url: '/Gallery/UploadImage',
-                params: { id: GalleryPageMngr.galleryID },
-                secureuri: false,
-                fileElementId: 'coverImageUploader',
-                dataType: 'json',
-                success: function (data, status) {
-                    alert(status);
-                },
-                error: function (data, status, e) {
-                    alert(e);
-                }
-            });
-            return false;
-        }
     </script>
 </div>

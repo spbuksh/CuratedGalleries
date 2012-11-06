@@ -119,6 +119,7 @@ namespace Corbis.CMS.Web.Code
         /// <summary>
         /// Each template can have its own font family set.
         /// </summary>
+        [XmlIgnore]
         public FontFamily[] FontFamilies
         {
             get
