@@ -519,6 +519,12 @@ namespace Corbis.CMS.Web.Controllers
         }
 
 
+        [HttpGet]
+        public ActionResult EditImagePopup_GET(EditImagePopupModel model)
+        {
+            return this.PartialView("EditImagePopupPartial", model);
+        }
+
         /// <summary>
         /// Uploads images into the gallery
         /// </summary>

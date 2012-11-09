@@ -1,0 +1,19 @@
+﻿@using Corbis.CMS.Web.Models
+@model EditImagePopupModel
+
+<div>
+    <label>Upload image</label>@Html.Partial("_FlashUploaderPartial", new FlashUploaderModel() { ElementID = "singleImageUploader" })
+</div>
+<script type="text/javascript">
+    $(function () {
+        createImageUploader({ url: '@(Url.HttpRouteUrl("DefaultApi", new { controller="Upload", action="UploadGalleryImage", id = this.Model.GalleryID, imageID = this.Model.ImageID }))',
+            id: 'singleImageUploader',
+            contentDivID: 'singleImageUploader',
+            filter: '*.jpg;*.jpeg',
+            uploadCallBack: 'reUploadGalleryImageCallback',
+            errorCallBack: 'uploadImageErrorCallback',
+            viewMode: 'single',
+            size: { width: 300, height: 50 }
+        });
+    });
+</script>

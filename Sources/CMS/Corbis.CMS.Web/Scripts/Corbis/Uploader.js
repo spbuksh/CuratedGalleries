@@ -3,52 +3,46 @@
 /// <reference path="~/Scripts/swfobject.js" />
 /// ***********************************************************************
 
-var uploaderOptions = {
-    url: null, //it is upload url. !!!REQUIRED!!!
-    filter: "*.*", //as extended example: "*.jpg;*.jpeg;*.tif;*.tiff;*.png"
-    minFileSize: 0,
-    maxFileSize: 62914560,
-    bgcolor: "#003300",
-    greetingText: "max file size 60Mb min file size 1 mb \nplease press button for upload images",
-    size: { width: 700, height: 100 },
-    uploadCallBack: null, //!!!REQUIRED!!!
-    errorCallBack: null, //!!!REQUIRED!!!
-    id: "SimpleUploader",
-    name: "SimpleUploader",
-    uploadAttemps: 1,
-    viewMode: "multiple" // "multiple" "single"
-};
+function createImageUploader(options) {
+    if (!options.url || options.url == '') throw 'Upload url is required';
+    if (!options.contentDivID || options.contentDivID == '') throw 'Uploader content div id is required';
+    if(!options.id || options.id == '') throw 'Uploader id is required';
 
-$(function () {
-    var swfVersionStr = "11.1.0";
+    if(options.filter == null || options.filter == undefined) options.filter = "*.*";
+    if(options.minFileSize == null || options.minFileSize == undefined) options.minFileSize = 0;
+    if(options.maxFileSize == null || options.maxFileSize == undefined) options.maxFileSize = 62914560;
+    if(options.bgcolor == null || options.bgcolor == undefined) options.bgcolor = "#003300";
+    if(options.greetingText == null || options.greetingText == undefined) options.greetingText = "Press button to upload images";
+    if(options.uploadAttemps == null || options.uploadAttemps == undefined) options.uploadAttemps = 1;
+    if(options.viewMode == null || options.viewMode == undefined) options.viewMode = "multiple";
+    if(options.name == null || options.name == undefined) options.name = "ImageUploader";
 
-    var xiSwfUrlStr = "playerProductInstall.swf";
-
-    var params = {};
+    if(options.filter == null || options.filter == undefined) options.filter = "*.*";
 
     var flashvars = {};
-    flashvars.filterExtension = uploaderOptions.filter;
-    flashvars.sizeLimitMax = uploaderOptions.maxFileSize ? uploaderOptions.maxFileSize.toString() : null;
-    flashvars.sizeLimitMin = uploaderOptions.minFileSize ? uploaderOptions.minFileSize.toString() : "0",
-    flashvars.uploadURL = uploaderOptions.url;
-    flashvars.greetingText = uploaderOptions.greetingText;
-    flashvars.uploadCallBack = uploaderOptions.uploadCallBack;
-    flashvars.errorCallBack = uploaderOptions.errorCallBack;
-    flashvars.uploadAttemps = uploaderOptions.uploadAttemps;
-    flashvars.viewMode = uploaderOptions.viewMode;
+    flashvars.filterExtension = options.filter;
+    flashvars.sizeLimitMax = options.maxFileSize ? options.maxFileSize.toString() : null;
+    flashvars.sizeLimitMin = options.minFileSize ? options.minFileSize.toString() : "0",
+    flashvars.uploadURL = options.url;
+    flashvars.greetingText = options.greetingText;
+    flashvars.uploadCallBack = options.uploadCallBack;
+    flashvars.errorCallBack = options.errorCallBack;
+    flashvars.uploadAttemps = options.uploadAttemps;
+    flashvars.viewMode = options.viewMode;
 
+    var params = {};
     params.quality = "high";
-    params.bgcolor = uploaderOptions.bgcolor;
-    params.allowscriptaccess = "sameDomain";
+    params.bgcolor = options.bgcolor;
+    params.allowscriptaccess = "always";
     params.allowfullscreen = "true";
     var attributes = {};
-    attributes.id = uploaderOptions.id;
-    attributes.name = uploaderOptions.name;
+    attributes.id = options.id;
+    attributes.name = options.name;
     attributes.align = "middle";
     swfobject.embedSWF(
-                        "../../SimpleUploader.swf", "flashContent",
-                        uploaderOptions.size.width.toString(), uploaderOptions.size.width.toString(),
-                        swfVersionStr, xiSwfUrlStr,
+                        "../../SimpleUploader.swf", options.contentDivID,
+                        options.size.width.toString(), options.size.height.toString(),
+                        "11.1.0", "playerProductInstall.swf",
                         flashvars, params, attributes);
-    swfobject.createCSS("#flashContent", "display:block;text-align:left;");
-});
+}
+

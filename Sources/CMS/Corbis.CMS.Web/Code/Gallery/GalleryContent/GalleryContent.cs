@@ -143,7 +143,7 @@ namespace Corbis.CMS.Web.Code
             }
         }
 
-        protected void DeleteImages(ImageUrlSet urls, HttpContextBase context)
+        public void DeleteImages(ImageUrlSet urls, HttpContextBase context)
         {
             Action<string> delHandler = delegate(string filepath)
             {

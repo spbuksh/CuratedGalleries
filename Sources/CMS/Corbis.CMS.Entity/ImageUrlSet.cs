@@ -2,18 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Runtime.Serialization;
 
 namespace Corbis.CMS.Entity
 {
     /// <summary>
     /// Set of URLs to the image based on its size category
     /// </summary>
-    [Serializable]
+    [Serializable, DataContract]
     public class ImageUrlSet
     {
         /// <summary>
         /// Url to the original photo
         /// </summary>
+        [DataMember]
         public virtual string Original
         {
             get
@@ -36,6 +38,7 @@ namespace Corbis.CMS.Entity
         /// <summary>
         /// Url to the image with large size
         /// </summary>
+        [DataMember]
         public virtual string Large 
         {
             get
@@ -57,6 +60,7 @@ namespace Corbis.CMS.Entity
         /// <summary>
         /// Url to the image with middle size
         /// </summary>
+        [DataMember]
         public virtual string Middle 
         {
             get
@@ -78,6 +82,7 @@ namespace Corbis.CMS.Entity
         /// <summary>
         /// Url to the image with small size
         /// </summary>
+        [DataMember]
         public virtual string Small
         {
             get

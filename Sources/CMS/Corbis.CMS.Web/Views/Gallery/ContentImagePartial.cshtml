@@ -38,7 +38,7 @@
     <div class="expanded">
         <div class="imgArea">
             <div class="imgToolbar">
-                <a href="javascript:void(0)">Upload</a>
+                <a href="javascript:void(0)" onclick="editImage('@this.Model.ID'); return false;">Change Image</a>
             </div>
             <div class="imgPresenter">
                 <img src="@this.Model.Urls.Large" alt="@this.Model.Text" />
@@ -125,7 +125,6 @@
         function onEmptySuccess@(imageUIID)(data) {
             _onTextContentSaveSuccess(data, '#@emContentID');
         }
-
         $(function () {
             InitContentImage({ imageID: '@this.Model.ID', 
                 position: (@(position.HasValue ? 1 : 0) == 1 ? '@(position.HasValue ? position.Value.ToString().ToLower() : string.Empty)' : null),

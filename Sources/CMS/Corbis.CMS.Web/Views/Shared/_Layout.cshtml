@@ -8,6 +8,7 @@
         <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
         <meta name="viewport" content="width=device-width" />
         @Styles.Render("~/Content/css")
+        @Styles.Render("~/Content/themes/base/css")
         @Styles.Render("~/Content/bootstrap.min.css")
         @Scripts.Render("~/bundles/modernizr")
         @Scripts.Render("~/Scripts/jquery-1.7.1-vsdoc.js")
@@ -28,35 +29,37 @@
 
     </head>
     <body>
-        <header>
-            <div class="content-wrapper">
-                <div class="float-left">
-                    <p id="p_title" class="site-title"></p>
+        <div class="wrapper">
+            <header>
+                <div class="content-wrapper">
+                    <div class="float-left">
+                        <p id="p_title" class="site-title"></p>
+                    </div>
+                    @if (this.Request.IsAuthenticated) {
+                        var user = this.GetCurrentUser();
+                    <div class="float-right">
+                        <section id="login">
+                            @Html.Partial("_LoginPartial")
+                        </section>
+                        <nav>
+                            <ul id="menu">
+                                <li>@Html.ActionLink("Galleries", "Index", "Gallery")</li>
+                                <li>@Html.ActionLink("Templates", "Index", "Template")</li>
+                                @if (user.Roles.HasValue && user.Roles.Value.HasFlag(AdminUserRoles.SuperAdmin)) {
+                                <li>@Html.ActionLink("Users", "Index", "User")</li> }
+                            </ul>
+                        </nav>
+                    </div>
+                    }
                 </div>
-                @if (this.Request.IsAuthenticated) {
-                    var user = this.GetCurrentUser();
-                <div class="float-right">
-                    <section id="login">
-                        @Html.Partial("_LoginPartial")
-                    </section>
-                    <nav>
-                        <ul id="menu">
-                            <li>@Html.ActionLink("Galleries", "Index", "Gallery")</li>
-                            <li>@Html.ActionLink("Templates", "Index", "Template")</li>
-                            @if (user.Roles.HasValue && user.Roles.Value.HasFlag(AdminUserRoles.SuperAdmin)) {
-                            <li>@Html.ActionLink("Users", "Index", "User")</li> }
-                        </ul>
-                    </nav>
-                </div>
-                }
+            </header>
+            <div id="body">
+                <div id="loading" style="display:none"></div>
+                @RenderSection("featured", required: false)
+                <section class="content-wrapper main-content clear-fix">
+                    @RenderBody()
+                </section>
             </div>
-        </header>
-        <div id="body">
-            <div id="loading" style="display:none"></div>
-            @RenderSection("featured", required: false)
-            <section class="content-wrapper main-content clear-fix">
-                @RenderBody()
-            </section>
         </div>
         <footer>
             <div class="content-wrapper">

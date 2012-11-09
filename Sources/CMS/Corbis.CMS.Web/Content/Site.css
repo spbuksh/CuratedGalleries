@@ -1,4 +1,7 @@
-﻿html {
+﻿html, body {
+    height: 100%;
+}
+html {
     background-color: #e2e2e2;
     margin: 0;
     padding: 0;
@@ -12,6 +15,8 @@ body {
     font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif;
     margin: 0;
     padding: 0;
+    overflow: auto;
+    text-align: center;
 }
 
 a {
@@ -1025,22 +1030,16 @@ padding: 0 1.5%;
 .string input[type=text].size{width: 20px;margin-left: 10px;}
 .string label:first-of-type{ width: 120px;}
 .string label:last-of-type{ margin-left: 27px;}
+.galleryGeneralAction{overflow:hidden;width:535px;margin-bottom:50px;margin-top:20px;}
+.galleryGeneralAction input[type=submit]{float:right;margin-top:77px;}
+.galleryGeneralAction table select{width:312px;}
+.galleryGeneralAction table tr td:first-of-type{text-align:left;padding-left:20px;}
+.galleryGeneralAction table tr:last-of-type td:last-of-type{text-align:left;}
+.galleryGeneralAction table tr:last-of-type td:last-of-type label{display:inline;margin-right:5px;cursor:pointer;}
+.galleryGeneralAction table tr:last-of-type td:last-of-type input[type=radio]{width:auto;margin-right:20px;cursor:pointer;}
+
+
 /*
-section h4{display:inline;}
-.name{margin-bottom:40px;}
-.name input[type=text]{width:230px;margin-left:8px;margin-right:23px;}
-input[type=button]{
-    width: 74px;
-    border:1px solid #000;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-}
-input[type=button].save{background-color: #a8d874;}
-input[type=button].cancel{background-color: #f84b47;}
-.orLabel{margin:0 4px;}
-.ddSelect{margin-bottom: 15px;}
-.ddSelect select{margin-left:40px;}
 .templPreview{overflow: hidden;zoom:1;}
 .templPreview ul{list-style: none;}
 .templPreview ul li{float:left;margin-left:12px;border:1px solid #fff;}
@@ -1049,15 +1048,6 @@ input[type=button].cancel{background-color: #f84b47;}
 .templPreview ul li.current{border:1px solid #f00;}
 .templPreview ul a span{display:block;text-align: right;font-size: 10px;padding:0 3px;}
 .buttonWP{text-align: right;margin-top:30px;}
-.livePreview .imgArea .imgPresenter{height: 191px;}
-.livePreview .imgArea .alignText ul li a{background: url('../images/live_preview.png') no-repeat;}
-.livePreview .imgArea .alignText ul li.tLeft a{background-position: 0 0;}
-.livePreview .imgArea .alignText ul li.tRight a{background-position: 0 -50px;}
-.livePreview .imgArea .alignText ul li.center a{background-position: 0 -100px}
-.livePreview .imgArea .alignText ul li.bLeft a{background-position: 0 -150px}
-.livePreview .imgArea .alignText ul li.bRight a{background-position: 0 -200px;}
-
-
 .textArea textarea{resize: none; width: 300px;height: 155px;}
 .url{width:298px;margin-bottom: 5px;}
 .livePreview .textArea input[type=button]{float: right;cursor: pointer;}

@@ -30,39 +30,6 @@
     GalleryPageMngr.deleteContentImageURL = '@Url.Action("DeleteContentImage", "Gallery")';
     GalleryPageMngr.swapImageOrderURL = '@Url.Action("SwapImageOrder", "Gallery")';
     GalleryPageMngr.fontFamiliesURL = '@Url.Action("GetFontFamilies", "Gallery")';
-
-    uploaderOptions.url = "/api/Upload/UploadGalleryImage?id=@this.Model.ID.Value";
-    uploaderOptions.uploadCallBack = "uploadImageCallback";
-    uploaderOptions.errorCallBack = "uploadImageErrorCallback";
-    uploaderOptions.filter = "*.jpg;*.jpeg";
-
-//    uploaderOptions.viewMode = "single";
-//    uploaderOptions.size = { width: 330, height: 40 }
-
-    function uploadImageCallback(result) {
-        var onsuccess = function (data) {
-            if (data.success === false) {
-                alert(data.error);
-                return;
-            }
-            $('div.galleryContent').append(data);
-        }
-
-        var data = jQuery.parseJSON(result);
-
-        $.ajax({
-            url: data.IsCover ? '@this.Url.Action("GetCoverImage", "Gallery")' : '@this.Url.Action("GetContentImage", "Gallery")',
-            type: 'POST',
-            data: data,
-            success: onsuccess
-        });
-
-        return "OK";
-    }
-    function uploadImageErrorCallback(type, errorMessage) {
-        alert("[errorCallBack] : " + type + " ::: " + errorMessage);
-        return "OK";
-    }
 </script>
 <div class="globalToolbar">
     <ul>
@@ -81,13 +48,13 @@
         <li>
             <a href="javascript:void(0)" onclick="CollapseImagesAll(); return false;">Collapse all</a>
         </li>
-
     </ul>
 </div>
 
 @using (Ajax.BeginForm("SaveGalleryAttributes", "Gallery", new { id = this.Model.ID }, new AjaxOptions() { OnBegin = "onBeginMsAjaxRequest", OnComplete = "onCompleteMsAjaxRequest", OnSuccess = "onSaveGalleryAttributes" }, new { id = "galleryAttributesForm" })) {
     @Html.ValidationSummary();
-<div>     
+<div class="galleryGeneralAction">
+    <input type="submit" value="Save" />
     <table>
         <tbody>
             <tr>
@@ -121,7 +88,6 @@
             </tr>
         </tbody>
     </table>                        
-    <input type="submit" value="Save" />
 </div>
 }
 <div class="galleryContent">
@@ -134,44 +100,46 @@
         }
     }
 </div>
-<div id="flashContent">
-    <p>
-        To view this page ensure that Adobe Flash Player version 11.1.0 or greater is installed.
-    </p>
-    <script type="text/javascript">
-        var pageHost = ((document.location.protocol == "https:") ? "https://" : "http://");
-        document.write("<a href='http://www.adobe.com/go/getflashplayer'><img src='"
-								+ pageHost + "www.adobe.com/images/shared/download_buttons/get_flash_player.gif' alt='Get Adobe Flash player' /></a>"); 
-    </script>
-</div>
-<noscript>
-    <object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="100%" height="100%"
-        id="SimpleUploader">
-        <param name="movie" value="SimpleUploader.swf" />
-        <param name="quality" value="high" />
-        <param name="bgcolor" value="#ffffff" />
-        <param name="allowScriptAccess" value="sameDomain" />
-        <param name="allowFullScreen" value="true" />
-        <!--[if !IE]>-->
-        <object type="application/x-shockwave-flash" data="~SimpleUploader.swf"
-            width="100%" height="100%">
-            <param name="quality" value="high" />
-            <param name="bgcolor" value="#ffffff" />
-            <param name="allowScriptAccess" value="sameDomain" />
-            <param name="allowFullScreen" value="true" />
-            <!--<![endif]-->
-            <!--[if gte IE 6]>-->
-            <p>
-                Either scripts and active content are not permitted to run or Adobe Flash Player
-                version 11.1.0 or greater is not installed.
-            </p>
-            <!--<![endif]-->
-            <a href="http://www.adobe.com/go/getflashplayer">
-                <img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif"
-                    alt="Get Adobe Flash Player" />
-            </a>
-            <!--[if !IE]>-->
-        </object>
-        <!--<![endif]-->
-    </object>
-</noscript>
+@Html.Partial("_FlashUploaderPartial", new FlashUploaderModel() { ElementID = "multipleImageUploaderContent" })
+<script type="text/javascript">
+    $(function() {
+        createImageUploader({ url: '@(Url.HttpRouteUrl("DefaultApi", new { controller="Upload", action="UploadGalleryImage", id = this.Model.ID.Value }))',
+            id: 'multipleImageUploader',
+            contentDivID: 'multipleImageUploaderContent',
+            filter: '*.jpg;*.jpeg',
+            uploadCallBack: 'uploadMultipleImageCallback',
+            errorCallBack: 'uploadImageErrorCallback',
+            viewMode: 'multiple',
+            size: { width: 700, height: 200 }
+        });
+    });
+    function uploadMultipleImageCallback(result) {
+        var onsuccess = function (data) {
+            if (data.success === false) {
+                alert(data.error);
+                return;
+            }
+            $('div.galleryContent').append(data);
+        }
+
+        var data = jQuery.parseJSON(result);
+
+        $.ajax({
+            url: data.IsCover ? '@this.Url.Action("GetCoverImage", "Gallery")' : '@this.Url.Action("GetContentImage", "Gallery")',
+            type: 'POST',
+            data: data,
+            success: onsuccess
+        });
+
+        return "OK";
+    }
+    function editImage(imageID, isCover) {
+        showPopupWindow({
+            popupID: 'editGalleryImage',
+            title: 'Edit Image',
+            url: '@Url.Action("EditImagePopup_GET", "Gallery")',
+            params: { imageID: imageID, galleryID: '@this.Model.ID', isCover: isCover },
+            onClosed: function () { swfobject.removeSWF('singleImageUploader'); } //TODO: it is hack. In the future it must be deleted and refactored
+        });
+    }
+</script>

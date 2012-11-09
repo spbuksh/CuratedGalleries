@@ -18,9 +18,7 @@
     <div class="expanded">
         <div class="imgArea">
             <div class="imgToolbar">
-                <form name="imageUploadForm" action="/api/Upload/UploadGalleryImage" method="POST" enctype="multipart/form-data">
-                    <input type="file" id="coverImageUploader" /><input type="submit" value="Upload" onclick="return ajaxCoverImageUpload();" />
-                </form>
+                <a href="javascript:void(0)" onclick="editImage('@this.Model.ID'); return false;">Change Image</a>
             </div>
             <div class="imgPresenter">
                 <img src="@this.Model.Urls.Large" alt="@this.Model.Text" />
@@ -36,11 +34,15 @@
             </div>
         </div>
         <div class="txtArea">
+            <div class="radioGroup"> 
+                <label for="empty_CoverImageContent">None</label><input name="radioGroup_CoverImageContent" id="empty_CoverImageContent" corbis-txt-type="coverEmpty" checked="checked" type="radio" />       
+                <label for="txt_CoverImageContent">Text</label><input name="radioGroup_CoverImageContent" id="txt_CoverImageContent" corbis-txt-type="coverText" type="radio" />
+            </div>
             <div class="txtInputs">
-                <div>
-                    @using (Ajax.BeginForm("SetCoverContent", "Gallery", 
-                        new { id = this.Model.GalleryID }, 
-                        new AjaxOptions() { HttpMethod = "POST", OnBegin = "onBeginMsAjaxRequest", OnComplete = "onCompleteMsAjaxRequest", OnSuccess = "onCoverContentSaveSuccess" }, 
+                <div class="coverText">
+                    @using (Ajax.BeginForm("SetCoverContent", "Gallery",
+                        new { id = this.Model.GalleryID },
+                        new AjaxOptions() { HttpMethod = "POST", OnBegin = "onBeginMsAjaxRequest", OnComplete = "onCompleteMsAjaxRequest", OnSuccess = "onCoverContentSaveSuccess" },
                         new { id = "coverTextContentForm" }))
                     {
                         @Html.ValidationSummary()
@@ -60,7 +62,15 @@
                         <input value="Apply" type="submit" />
                     }
                 </div>
-                <div>
+                <div class="coverEmpty">
+                    @using (Ajax.BeginForm("SetEmptyCoverContent", "Gallery",
+                        new { id = this.Model.GalleryID },
+                        new AjaxOptions() { HttpMethod = "POST", OnBegin = "onBeginMsAjaxRequest", OnComplete = "onCompleteMsAjaxRequest", OnSuccess = "onCoverContentSaveSuccess" },
+                        new { id = "coverEmptyTextContentForm" }))
+                    {
+                        @Html.HiddenFor(x => x.TextPosition);
+                        <input value="Apply" type="submit" />
+                    }
                 </div>
             </div>
         </div>

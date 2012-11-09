@@ -257,11 +257,18 @@ function DeleteGalleryContentImage(data) {
     });
 }
 
+function uploadImageErrorCallback(type, errorMessage) {
+    alert("[errorCallBack] : " + type + " ::: " + errorMessage);
+    return "OK";
+}
 
-
-
-
-
+function reUploadGalleryImageCallback(result) {
+    var data = jQuery.parseJSON(result);
+    var jimg = $('div[corbis-item-id="' + data.ID + '"] div.imgPresenter img');
+    jimg.attr('src', data.EditUrls.Large);
+    jimg.attr('alt', data.FileName);
+    return "OK";
+}
 
 
 

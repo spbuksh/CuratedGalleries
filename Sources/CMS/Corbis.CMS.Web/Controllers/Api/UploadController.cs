@@ -11,20 +11,25 @@ using Corbis.CMS.Web.Code;
 using System.Text;
 using Corbis;
 using Corbis.CMS.Entity;
+using System.Runtime.Serialization;
 
 namespace Corbis.CMS.Web.Controllers.Api
 {
+    [Serializable, DataContract]
     internal class UploadedImageResponse
     {
+        [DataMember]
         public int GalleryID { get; set; }
-
+        [DataMember]
         public string ID { get; set; }
-
+        [DataMember]
         public ImageUrlSet Urls { get; set; }
-
+        [DataMember]
         public ImageUrlSet EditUrls { get; set; }
-
+        [DataMember]
         public bool IsCover { get; set; }
+        [DataMember]
+        public string FileName { get; set; }
     }
 
     public class UploadController : ApiControllerBase
@@ -35,20 +40,23 @@ namespace Corbis.CMS.Web.Controllers.Api
         /// <param name="message"></param>
         /// <returns></returns>
         [HttpPost]
-        public HttpResponseMessage UploadGalleryImage(HttpRequestMessage message, 
+        public HttpResponseMessage UploadGalleryImage(HttpRequestMessage message,
             [System.Web.Http.FromUri, System.ComponentModel.DataAnnotations.Required]Nullable<int> id)
         {
-#if DEBUG
-            this.Logger.WriteDebug("Gallery image upload requiest has been received");
-#endif
-            if (this.HttpContext.Request.Files.Count != 1)
-            {
-#if DEBUG
-                this.Logger.WriteDebug("Error. Client tries to upload more than 1 file");
-#endif
+            return this.UploadGalleryImage(message, id, null);
+        }
 
+        /// <summary>
+        /// Method to Upload File to the system.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public HttpResponseMessage UploadGalleryImage(HttpRequestMessage message,
+            [System.Web.Http.FromUri, System.ComponentModel.DataAnnotations.Required]Nullable<int> id, [System.Web.Http.FromUri]string imageID)
+        {
+            if (this.HttpContext.Request.Files.Count != 1)
                 return this.Request.CreateResponse(HttpStatusCode.NotAcceptable, "There are no files or more then one for uploading in the request");
-            }
 
             if (!id.HasValue)
                 throw new Exception("Target gallery is not pointed. Query strin parameter 'id' is required");
@@ -64,26 +72,12 @@ namespace Corbis.CMS.Web.Controllers.Api
 
             var file = this.HttpContext.Request.Files[0];
 
-#if DEBUG
-            this.Logger.WriteDebug(string.Format("File name: {0}; File length: {1}", file.FileName, file.ContentLength));
-#endif
-
             //TODO: CHANGE VALIDATE LOGIC
             if (GalleryRuntime.MaxImageSize.HasValue && GalleryRuntime.MaxImageSize.Value < file.ContentLength)
-            {
-#if DEBUG
-                this.Logger.WriteDebug("File validation error");
-#endif
                 return this.Request.CreateResponse<string>(HttpStatusCode.BadRequest, string.Format("Uploading file size is {0}byte. Max file size {1}bytes is exceeded", file.ContentLength, GalleryRuntime.MaxImageSize.Value));
-            }
 
             if (GalleryRuntime.MinImageSize.HasValue && file.ContentLength < GalleryRuntime.MinImageSize.Value)
-            {
-#if DEBUG
-                this.Logger.WriteDebug("File validation error");
-#endif
                 return this.Request.CreateResponse<string>(HttpStatusCode.BadRequest, string.Format("Uploading file size is {0}byte. Min file size is {1}bytes", file.ContentLength, GalleryRuntime.MaxImageSize.Value));
-            }
 
             string filename = file.FileName;
             string filepath = Path.Combine(contentpath, filename);
@@ -98,10 +92,6 @@ namespace Corbis.CMS.Web.Controllers.Api
             try
             {
                 file.SaveAs(filepath);
-
-#if DEBUG
-                this.Logger.WriteDebug("File received successfully");
-#endif
             }
             catch (Exception ex)
             {
@@ -200,45 +190,79 @@ namespace Corbis.CMS.Web.Controllers.Api
             GalleryImageBase img = null;
 
             try
-            {                
-                if ((content.Images != null && content.Images.Count != 0) || content.CoverImage != null)
+            {
+                if (!string.IsNullOrEmpty(imageID))
                 {
-                    var cimg = new GalleryContentImage()
+                    if (content.CoverImage.ID == imageID)
                     {
-                        ID = string.Format("gallery-image_{0}", Guid.NewGuid().ToString("N")),
-                        Name = filename,
-                        Order = content.Images.Count + 1,
-                        ImageSource = new GalleryImageSource() { Type = ImageSourceTypes.LocalFile, Source = filepath.Substring(GalleryRuntime.GetGalleryPath(id.Value).Length) },
-                        GalleryUrls = gllrUrls,
-                        SiteUrls = siteUrls,
-                        EditUrls = editUrls
-                    };
-                    cimg.TextContent = new EmptyTextContent();
+                        content.CoverImage.Name = filename;
+                        content.CoverImage.ImageSource = new GalleryImageSource() { Type = ImageSourceTypes.LocalFile, Source = filepath.Substring(GalleryRuntime.GetGalleryPath(id.Value).Length) };
+                        content.DeleteImages(content.CoverImage.GalleryUrls, this.HttpContext);
+                        content.CoverImage.GalleryUrls = gllrUrls;
+                        content.DeleteImages(content.CoverImage.SiteUrls, this.HttpContext);
+                        content.CoverImage.SiteUrls = siteUrls;
+                        content.DeleteImages(content.CoverImage.EditUrls, this.HttpContext);
+                        content.CoverImage.EditUrls = editUrls;
 
-                    content.Images.Add(cimg);
+                        img = content.CoverImage;
+                    }
+                    else
+                    {
+                        var item = content.Images.Where(x => x.ID == imageID).SingleOrDefault();
 
-                    img = cimg;
+                        item.Name = filename;
+                        item.ImageSource = new GalleryImageSource() { Type = ImageSourceTypes.LocalFile, Source = filepath.Substring(GalleryRuntime.GetGalleryPath(id.Value).Length) };
+                        content.DeleteImages(item.GalleryUrls, this.HttpContext);
+                        item.GalleryUrls = gllrUrls;
+                        content.DeleteImages(item.SiteUrls, this.HttpContext);
+                        item.SiteUrls = siteUrls;
+                        content.DeleteImages(item.EditUrls, this.HttpContext);
+                        item.EditUrls = editUrls;
+
+                        img = item;
+                    }
                 }
                 else
                 {
-                    var cimg = new GalleryCoverImage()
+                    if ((content.Images != null && content.Images.Count != 0) || content.CoverImage != null)
                     {
-                        ID = string.Format("gallery-image_{0}", Guid.NewGuid().ToString("N")),
-                        Name = filename,
-                        Order = 0,
-                        ImageSource = new GalleryImageSource() { Type = ImageSourceTypes.LocalFile, Source = filepath.Substring(GalleryRuntime.GetGalleryPath(id.Value).Length) },
-                        GalleryUrls = gllrUrls,
-                        SiteUrls = siteUrls,
-                        EditUrls = editUrls
-                    };
+                        var cimg = new GalleryContentImage()
+                        {
+                            ID = string.Format("gallery-image_{0}", Guid.NewGuid().ToString("N")),
+                            Name = filename,
+                            Order = content.Images.Count + 1,
+                            ImageSource = new GalleryImageSource() { Type = ImageSourceTypes.LocalFile, Source = filepath.Substring(GalleryRuntime.GetGalleryPath(id.Value).Length) },
+                            GalleryUrls = gllrUrls,
+                            SiteUrls = siteUrls,
+                            EditUrls = editUrls
+                        };
+                        cimg.TextContent = new EmptyTextContent();
 
-                    //TODO: we can get default values from gallery template
-                    cimg.Headline = new CoverTextItem() { FontSize = 40 };
-                    cimg.Standfirst = new CoverTextItem() { FontSize = 12 };
+                        content.Images.Add(cimg);
 
-                    content.CoverImage = cimg;
+                        img = cimg;
+                    }
+                    else
+                    {
+                        var cimg = new GalleryCoverImage()
+                        {
+                            ID = string.Format("gallery-image_{0}", Guid.NewGuid().ToString("N")),
+                            Name = filename,
+                            Order = 0,
+                            ImageSource = new GalleryImageSource() { Type = ImageSourceTypes.LocalFile, Source = filepath.Substring(GalleryRuntime.GetGalleryPath(id.Value).Length) },
+                            GalleryUrls = gllrUrls,
+                            SiteUrls = siteUrls,
+                            EditUrls = editUrls
+                        };
 
-                    img = cimg;
+                        //TODO: we can get default values from gallery template
+                        cimg.Headline = new CoverTextItem() { FontSize = 40 };
+                        cimg.Standfirst = new CoverTextItem() { FontSize = 12 };
+
+                        content.CoverImage = cimg;
+
+                        img = cimg;
+                    }
                 }
 
                 //TODO: We must synchronize file updating
@@ -251,7 +275,7 @@ namespace Corbis.CMS.Web.Controllers.Api
                 return message.CreateResponse(HttpStatusCode.InternalServerError);
             }
 
-            var output = new UploadedImageResponse() { GalleryID = id.Value, ID = img.ID, Urls = img.SiteUrls, EditUrls = img.EditUrls, IsCover = img is GalleryCoverImage };
+            var output = new UploadedImageResponse() { GalleryID = id.Value, ID = img.ID, Urls = img.SiteUrls, EditUrls = img.EditUrls, IsCover = img is GalleryCoverImage, FileName = img.Name };
             return message.CreateResponse <UploadedImageResponse>(HttpStatusCode.OK, output);
         }
 
