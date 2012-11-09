@@ -34,10 +34,10 @@
             </div>
         </div>
         <div class="txtArea">
-            <div class="radioGroup"> 
+@*            <div class="radioGroup"> 
                 <label for="empty_CoverImageContent">None</label><input name="radioGroup_CoverImageContent" id="empty_CoverImageContent" corbis-txt-type="coverEmpty" checked="checked" type="radio" />       
                 <label for="txt_CoverImageContent">Text</label><input name="radioGroup_CoverImageContent" id="txt_CoverImageContent" corbis-txt-type="coverText" type="radio" />
-            </div>
+            </div>*@
             <div class="txtInputs">
                 <div class="coverText">
                     @using (Ajax.BeginForm("SetCoverContent", "Gallery",
@@ -62,7 +62,7 @@
                         <input value="Apply" type="submit" />
                     }
                 </div>
-                <div class="coverEmpty">
+@*                <div class="coverEmpty">
                     @using (Ajax.BeginForm("SetEmptyCoverContent", "Gallery",
                         new { id = this.Model.GalleryID },
                         new AjaxOptions() { HttpMethod = "POST", OnBegin = "onBeginMsAjaxRequest", OnComplete = "onCompleteMsAjaxRequest", OnSuccess = "onCoverContentSaveSuccess" },
@@ -71,7 +71,7 @@
                         @Html.HiddenFor(x => x.TextPosition);
                         <input value="Apply" type="submit" />
                     }
-                </div>
+                </div>*@
             </div>
         </div>
     </div>

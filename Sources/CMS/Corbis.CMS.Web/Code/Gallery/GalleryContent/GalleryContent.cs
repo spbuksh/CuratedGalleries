@@ -168,17 +168,15 @@ namespace Corbis.CMS.Web.Code
                 }
             };
 
-            if (!string.IsNullOrEmpty(urls.Original))
-                delHandler(Corbis.Common.Utils.VirtualToAbsolute(urls.Original, context));
+            foreach (var vpath in new string[] { urls.Original, urls.Large, urls.Middle, urls.Small })
+            {
+                if (string.IsNullOrEmpty(vpath))
+                    continue;
 
-            if (!string.IsNullOrEmpty(urls.Large))
-                delHandler(Corbis.Common.Utils.VirtualToAbsolute(urls.Large, context));
-
-            if (!string.IsNullOrEmpty(urls.Middle))
-                delHandler(Corbis.Common.Utils.VirtualToAbsolute(urls.Middle, context));
-
-            if (!string.IsNullOrEmpty(urls.Small))
-                delHandler(Corbis.Common.Utils.VirtualToAbsolute(urls.Small, context));
+                string path = Corbis.Common.Utils.VirtualToAbsolute(vpath, context);
+                delHandler(path);
+                this.SystemFilePathes.Remove(this.SystemFilePathes.Where(x => path.EndsWith(x)).FirstOrDefault());
+            }
         }
 
         #endregion Methods to work with content data
