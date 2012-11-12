@@ -1,0 +1,30 @@
+﻿@using Corbis.CMS.Web.Models
+@model GalleryItemModel
+
+<div class="galleryItem" corbis-item-id="@this.Model.ID">
+    <div class="imgWrapper">
+        <img src="@Url.Action("GetGalleryCover", "Gallery", new { id = this.Model.ID, height = 100, width = 100 })" alt="" />
+    </div>
+    <div class="infoWrapper">
+        <div class="galleryTitle">
+    <a href="@Url.Action("BuildGallery", "Gallery", new { id = this.Model.ID })" target="_blank">@Html.Raw(this.Model.Name)</a>
+            <div>
+    @Html.ActionLink("Edit", "EditGallery", "Gallery", new { id = this.Model.ID }, null)
+    <a href="javascript:void(0)" onclick="DeleteGallery(@this.Model.ID,'@(Url.Action("DeleteGallery", "Gallery"))'); return false;" >Delete</a>
+            </div>
+        </div>
+        <div class="createDate">
+        <table>
+            <tr>
+                <td>Date created</td>
+                <td>@this.Model.DateCreated.ToString()</td>
+            </tr>
+            <tr>
+                <td>Template</td>
+                <td>@this.Model.TemplateName</td>
+            </tr>
+        </table>
+        </div>
+           
+    </div>
+</div> 

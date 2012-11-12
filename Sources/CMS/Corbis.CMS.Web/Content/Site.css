@@ -1,24 +1,21 @@
-﻿html, body {
-    height: 100%;
-}
-html {
+﻿html {
     background-color: #e2e2e2;
     margin: 0;
     padding: 0;
 }
 
 body {
-    background-color: #fff;
-    border-top: solid 10px #000;
+    background-color: #EFEEEF;
     color: #333;
     font-size: .85em;
     font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif;
     margin: 0;
     padding: 0;
     overflow: auto;
-    text-align: center;
 }
-
+html, body {
+    height: 100%;
+}
 a {
     color: #333;
     outline: none;
@@ -40,7 +37,7 @@ header, footer, hgroup,
 nav, section {
     display: block;
 }
-
+header{ overflow: hidden;border-top: solid 10px #000;background-color: #fff;}
 mark {
     background-color: #a6dbed;
     padding-left: 5px;
@@ -977,6 +974,7 @@ padding: 0 1.5%;
     box-shadow: 0 0 10px rgba(0,0,0,0.5); /* Параметры тени */
 }
 .imgArea{float: left;}
+.imgPresenter{ position: relative;margin-bottom: 10px;}
 .imgArea .imgToolbar{margin-bottom: 10px}
 .imgArea .txtAlign{overflow: hidden;zoom:1;}
 .imgArea .txtAlign ul{list-style: none;margin: 0px;padding: 0px;text-align:center;}
@@ -1025,6 +1023,7 @@ padding: 0 1.5%;
 .coverImage:hover .dragndrop{ display: block;}
 .contentImage:hover .dragndrop{ display: block;}
 .string{ text-align: left;}
+.mt10{ margin-top: 10px; }
 .string label,.string input[type=text]{ display: inline-block;}
 .string input[type=text]{ width: 280px;}
 .string input[type=text].size{width: 20px;margin-left: 10px;}
@@ -1032,12 +1031,17 @@ padding: 0 1.5%;
 .string label:last-of-type{ margin-left: 27px;}
 .galleryGeneralAction{overflow:hidden;width:535px;margin-bottom:50px;margin-top:20px;}
 .galleryGeneralAction input[type=submit]{float:right;margin-top:77px;}
-.galleryGeneralAction table select{width:312px;}
+.galleryGeneralAction table select{width:312px;border: 1px solid #E2E2E2;padding: 5px;}
 .galleryGeneralAction table tr td:first-of-type{text-align:left;padding-left:20px;}
 .galleryGeneralAction table tr:last-of-type td:last-of-type{text-align:left;}
 .galleryGeneralAction table tr:last-of-type td:last-of-type label{display:inline;margin-right:5px;cursor:pointer;}
 .galleryGeneralAction table tr:last-of-type td:last-of-type input[type=radio]{width:auto;margin-right:20px;cursor:pointer;}
-
+#loading{ position: fixed;top: 50%;left: 50%;margin-left: -25px;margin-top: -25px;background: url('../Images/loading.gif') no-repeat top left;display: none;z-index: 9999;width: 50px;height: 50px;}
+.overlay{ background-color: #000;opacity: .3;height: 100%;width: 100%;display: none;z-index: 9999;position: fixed;top: 0;}
+.blockWP{ overflow: hidden;zoom: 1;}
+.blockWP input[type=text]{ width: 240px;}
+.left_side{ float: left;}
+.right_side{ float:right;}
 
 /*
 .templPreview{overflow: hidden;zoom:1;}

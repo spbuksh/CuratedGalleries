@@ -20,16 +20,19 @@
     {
         display: none;
     }
+    body{ text-align: center;}
 </style>
 
 @Scripts.Render("~/Scripts/Corbis/Uploader.js")
 @Scripts.Render("~/Scripts/Corbis/Corbis.Gallery.js")
+@Scripts.Render("~/Scripts/Corbis/jquery.textaligment.js")
 
 <script type="text/javascript">
     GalleryPageMngr.galleryID = @(this.Model.ID.Value);
     GalleryPageMngr.deleteContentImageURL = '@Url.Action("DeleteContentImage", "Gallery")';
     GalleryPageMngr.swapImageOrderURL = '@Url.Action("SwapImageOrder", "Gallery")';
     GalleryPageMngr.fontFamiliesURL = '@Url.Action("GetFontFamilies", "Gallery")';
+    $(function() { $('.contentImage').textaligment(); });
 </script>
 <div class="globalToolbar">
     <ul>
@@ -64,19 +67,7 @@
             <tr>
                 <td>Font Family</td>
                 <td>
-                    <select name="fontFamily">
-                    @{        
-                        var ff = !string.IsNullOrEmpty(this.Model.FontFamily) ? FontFamily.Families.Where(x => x.Name == this.Model.FontFamily).SingleOrDefault() : null;
-                    }
-                    @if (ff != null)
-                    {
-                        <option value="@this.Model.FontFamily">@ff.GetName(culture.LCID)</option>
-                    }
-                    else
-                    { 
-                        <option>Select</option>
-                    }
-                    </select>                
+                    @Html.DropDownListFor(x => x.FontFamily, this.Model.FontFamilies.Select(x => new SelectListItem() { Text = x.Name, Value = x.GetName(culture.LCID), Selected = string.Equals(x.Name, this.Model.FontFamily, StringComparison.OrdinalIgnoreCase) }))
                 </td>
             </tr>
             <tr>

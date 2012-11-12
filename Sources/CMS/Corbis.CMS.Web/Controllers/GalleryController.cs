@@ -59,7 +59,11 @@ namespace Corbis.CMS.Web.Controllers
             var galleries = new List<GalleryItemModel>();
 
             foreach (var item in rslt.Output)
-                galleries.Add(this.ObjectMapper.DoMapping<GalleryItemModel>(item));
+            {
+                var model = this.ObjectMapper.DoMapping<GalleryItemModel>(item);
+                model.TemplateName = GalleryRuntime.GetTemplate(item.TemplateID).Name;
+                galleries.Add(model);
+            }
 
             return View("Index", galleries);
         }
@@ -243,12 +247,14 @@ namespace Corbis.CMS.Web.Controllers
             {
                 gallery = GalleryRuntime.CreateGallery("New gallery", GalleryRuntime.GetTemplates().First().ID);
             }
+            var template = GalleryRuntime.GetTemplate(gallery.TemplateID);
 
             var model = this.ObjectMapper.DoMapping<GalleryModel>(gallery);
 
             var content = gallery.LoadContent();
 
             model.FontFamily = content.Font.FamilyName;
+            model.FontFamilies.AddRange(template.GallerySettings.FontFamilies);
             model.TransitionsIncluded = content.TransitionsIncluded;
 
             if (content.CoverImage != null)

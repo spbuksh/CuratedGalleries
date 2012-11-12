@@ -71,7 +71,6 @@ namespace Corbis.CMS.Web
             //WebApi Configuration
             GlobalConfiguration.Configuration.DependencyResolver = new Unity.WebApi.UnityDependencyResolver(MvcApplication.Container);
 
-
             //initialize curated gallery environment
             GalleryRuntime.Initialize();
             //*************************************************************

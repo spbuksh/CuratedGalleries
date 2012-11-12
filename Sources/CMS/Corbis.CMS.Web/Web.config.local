@@ -55,6 +55,8 @@
 
         <!-- it is used for convertation absolute path to virtual-->
         <add key="virtualDirPath" value="" />
+        <!-- it is absolute or relevant path to a folder with fonts for application -->
+        <add key="fontDirPath" value="ApplicationFonts" />
         <add key="defaultGalleryCoverPath" value="\Images\gallery.jpg" />
         
         <!-- This key is used for password validation and password generation -->

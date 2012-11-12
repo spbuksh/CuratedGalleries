@@ -11,31 +11,8 @@
     @Html.ActionLink("Create New Gallery", "CreateGallery", "Gallery")
 </p>
 <div>
-@foreach (var item in this.Model)
-{
-    <div class="galleryItem" corbis-item-id="@item.ID">
-        <div class="imgWrapper">
-            <img src="@Url.Action("GetGalleryCover", "Gallery", new { id = item.ID, height = 100, width = 100 })" alt="" />
-        </div>
-        <div class="infoWrapper">
-            <div class="galleryTitle">
-        <a href="@Url.Action("BuildGallery", "Gallery", new { id = @item.ID })" target="_blank">@Html.Raw(item.Name)</a>
-                <div>
-        @Html.ActionLink("Edit", "EditGallery", "Gallery", new { id = item.ID }, null)
-        <a href="javascript:void(0)" onclick="DeleteGallery(@item.ID,'@(Url.Action("DeleteGallery", "Gallery"))'); return false;" >Delete</a>
-                </div>
-            </div>
-            <div class="createDate">
-            <table>
-                <tr>
-                    <td>Date created:</td>
-                    <td>@item.DateCreated.ToString()</td>
-                </tr>
-            </table>
-            </div>
-           
-        </div>
-    </div> 
+@foreach (var item in this.Model) {
+    @Html.Partial("GalleryListItemPartial", item)
 }
 </div>
 

@@ -97,40 +97,11 @@ namespace Corbis.CMS.Web.Code
         private readonly List<GalleryImageSize> m_ImageSizes = new List<GalleryImageSize>();
 
         /// <summary>
-        /// 
-        /// </summary>
-        [XmlElement]
-        public string DefaultFontFamilyName 
-        { 
-            get
-            {
-                if(string.IsNullOrEmpty(this.m_DefaultFontFamilyName))
-                    this.m_DefaultFontFamilyName = this.FontFamilies[0].Name;
-
-                return this.m_DefaultFontFamilyName;
-            }
-            set
-            {
-                this.m_DefaultFontFamilyName = value;
-            }
-        }
-        private string m_DefaultFontFamilyName = null;
-
-        /// <summary>
         /// Each template can have its own font family set.
         /// </summary>
-        [XmlIgnore]
-        public FontFamily[] FontFamilies
-        {
-            get
-            {   
-                if(m_FontFamilies == null)
-                    m_FontFamilies = System.Drawing.FontFamily.Families;
-
-                return this.m_FontFamilies;
-            }        
-        }
-        private FontFamily[] m_FontFamilies = null;
+        [XmlArray()]
+        [XmlArrayItem("FontFamily")]
+        public List<FontFamilyItem> FontFamilies { get; set; }
 
 
         /// <summary>
@@ -147,7 +118,95 @@ namespace Corbis.CMS.Web.Code
             }
         }
         private ReadOnlyCollection<IGalleryImageSize> m_ReadonlyImageSizes = null;
+
+        /// <summary>
+        /// Font families
+        /// </summary>
+        FontFamily[] ITemplateGallerySettings.FontFamilies
+        {
+            get 
+            {
+                if(this.m_FontFamilies == null)
+                {
+                    var allfonts = System.Drawing.FontFamily.Families.ToList();
+                    allfonts.AddRange(GalleryRuntime.ApplicationFonts.Where(x => allfonts.Where(f => f.Name == x.Name).Count() == 0));
+
+                    if (this.FontFamilies == null || this.FontFamilies.Count == 0)
+                    {
+                        this.m_FontFamilies = allfonts.ToArray();
+                    }
+                    else
+                    {
+                        var items = this.FontFamilies.Select(x => x.Name.ToLower()).ToList();
+                        this.m_FontFamilies = allfonts.Where(x => items.Contains(x.Name.ToLower())).ToArray();
+                    }
+                }
+                return this.m_FontFamilies;
+            }
+        }
+        private FontFamily[] m_FontFamilies = null;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [XmlIgnore]
+        FontFamily ITemplateGallerySettings.DefaultFontFamily
+        {
+            get
+            {
+                if (m_DefaultFontFamily == null)
+                {
+                    if (this.FontFamilies == null || this.FontFamilies.Count == 0)
+                        return null;
+
+                    FontFamilyItem font = this.FontFamilies == null ? null : this.FontFamilies.Where(x => x.IsDefault).SingleOrDefault();
+                    this.m_DefaultFontFamily = font == null ? this.FontFamilies[0].FontFamily : font.FontFamily;
+                }
+                return this.m_DefaultFontFamily;
+            }
+        }
+        private FontFamily m_DefaultFontFamily = null;
     }
 
+    /// <summary>
+    /// Font family
+    /// </summary>
+    [Serializable]
+    public class FontFamilyItem
+    {
+        [XmlAttribute("name")]
+        public string Name 
+        {
+            get { return this.m_Name; }
+            set
+            {
+                if (this.m_Name == value) return;
+                this.m_Name = value;
+                this.m_FontFamily = null;
+            }
+        }
+        private string m_Name = null;
 
+        [XmlAttribute("isDefault")]
+        public bool IsDefault { get; set; }
+
+        [XmlIgnore]
+        public FontFamily FontFamily
+        {
+            get 
+            {
+                if (this.m_FontFamily == null)
+                {
+                    var font = System.Drawing.FontFamily.Families.Where(x => string.Equals(x.Name, this.Name, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
+
+                    if (font == null)
+                        throw new Exception(string.Format("Font family '{0}' is not registered in the system", this.Name));
+
+                    this.m_FontFamily = font;
+                }
+                return this.m_FontFamily;
+            }
+        }
+        private FontFamily m_FontFamily = null;
+    }
 }

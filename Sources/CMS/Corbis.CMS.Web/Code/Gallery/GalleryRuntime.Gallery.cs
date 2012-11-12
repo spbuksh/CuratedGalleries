@@ -245,7 +245,7 @@ namespace Corbis.CMS.Web.Code
                 var content = new GalleryContent()
                 {
                     Name = name,
-                    Font = new GalleryFont() { FamilyName = template.GallerySettings.DefaultFontFamilyName }
+                    Font = template.GallerySettings.DefaultFontFamily == null ? null : new GalleryFont() { FamilyName = template.GallerySettings.DefaultFontFamily.Name }
                 };
 
                 content.GalleryImageSizes.AddRange(template.GallerySettings.ImageSizes.Select(x => ObjectMapper.DoMapping<GalleryImageSize>(x)));

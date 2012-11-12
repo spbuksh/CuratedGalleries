@@ -54,7 +54,6 @@
                 </div>
             </header>
             <div id="body">
-                <div id="loading" style="display:none"></div>
                 @RenderSection("featured", required: false)
                 <section class="content-wrapper main-content clear-fix">
                     @RenderBody()
@@ -68,7 +67,8 @@
                 </div>
             </div>
         </footer>
-
+        <div id="loading"></div>
+        <div class="overlay"></div>
         @RenderSection("scripts", required: false)
     </body>
 </html>
