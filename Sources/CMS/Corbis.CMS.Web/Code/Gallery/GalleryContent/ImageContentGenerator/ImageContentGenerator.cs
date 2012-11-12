@@ -15,6 +15,7 @@ namespace Corbis.CMS.Web.Code.Gallery.GalleryContent.ImageContentGenerator
     {
         public static string GererateImage(GalleryContentImage image,int galleryId)
         {
+             Font objFont = new Font("Arial", 10, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             var text = string.Empty;
             var textColor = Color.Black;
             switch (image.TextContent.ContentType)
@@ -22,13 +23,11 @@ namespace Corbis.CMS.Web.Code.Gallery.GalleryContent.ImageContentGenerator
                     case TextContents.QnA:
                     {
                         var result = image.TextContent as QnATextContent;
-                        var builder = new StringBuilder();
-                        builder.Append(result.Question);
-                        for (var i = 0; i < 10; i++)
-                            builder.AppendLine();
-                        builder.Append(result.Answer);
-                        text = builder.ToString();
-                        break;
+
+                        return ImageHelper.SaveQaImage(result.Question, result.Answer, result.Size.Value.Width,
+                                                       result.Size.Value.Height, objFont,
+                                                       GalleryRuntime.GetGalleryContentPath(galleryId),
+                                                       Path.GetFileNameWithoutExtension(image.Name), ImageFormat.Png);
                     }
                 case TextContents.Pullquote:
                     {
@@ -54,7 +53,7 @@ namespace Corbis.CMS.Web.Code.Gallery.GalleryContent.ImageContentGenerator
                     }
             }
 
-            Font objFont = new Font("Arial", 10, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+           
 
             var dock = DockStyle.Center;
             switch (image.TextContent.Position)

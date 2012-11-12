@@ -46,6 +46,45 @@ namespace Corbis.Common.Utilities.Image
         }
 
         /// <summary>
+        /// Generates an Image for Questions and Answers template.
+        /// </summary>
+        /// <param name="quiestion">Question Text</param>
+        /// <param name="answer"> Answer Text</param>
+        /// <param name="width"> Width in px</param>
+        /// <param name="height"> Height in px</param>
+        /// <param name="font">Text Font</param>
+        /// <param name="filePathToSave">File Path to save</param>
+        /// <param name="fileName">FileName</param>
+        /// <param name="imageFormat">Image Format</param>
+        /// <returns>Saved full Path</returns>
+        public static string SaveQaImage(string quiestion, string answer, int width, int height, Font font, string filePathToSave, string fileName , ImageFormat imageFormat)
+        {
+            var imageWrapper = new Bitmap(width + 1, height + 1);
+            var objGraphics = Graphics.FromImage(imageWrapper);
+            objGraphics.SmoothingMode = SmoothingMode.HighQuality;
+            objGraphics.CompositingQuality = CompositingQuality.HighQuality;
+            objGraphics.InterpolationMode = InterpolationMode.High;
+            var wrapperRectangle = new Rectangle(new Point(0, 0), new Size(width, height));
+            var questionHeight = (int)objGraphics.MeasureString(quiestion, font).Height;
+            var questionWidth = (int)objGraphics.MeasureString(quiestion, font).Width;
+            var answerHeight = (int)objGraphics.MeasureString(answer, font).Height;
+            var answerWidth = (int)objGraphics.MeasureString(answer, font).Width;
+            var questionRectangle = new Rectangle(new Point(0, 0), new Size(questionWidth + 1, questionHeight + 1));
+            var isHorisontal = height < width;
+            objGraphics.FillRectangle(Brushes.White, wrapperRectangle);
+            var answerRectangle = isHorisontal ? new Rectangle(new Point(width - answerWidth, 0), new Size(answerWidth + 1, answerHeight + 1)) : new Rectangle(new Point(0, height - answerHeight), new Size(answerWidth + 1, answerHeight + 1));
+            objGraphics.DrawString(quiestion, font, new SolidBrush(Color.Black), questionRectangle);
+            objGraphics.DrawString(answer, font, new SolidBrush(Color.Black), answerRectangle);
+            objGraphics.DrawRectangle(Pens.Black, wrapperRectangle);
+            objGraphics.DrawRectangle(Pens.Transparent, questionRectangle);
+            objGraphics.DrawRectangle(Pens.Transparent, answerRectangle);
+            objGraphics.Flush();
+            imageWrapper.Save(Path.Combine(filePathToSave, fileName + "." + imageFormat), imageFormat);
+
+            return Path.GetFullPath(Path.Combine(filePathToSave, fileName + "." + imageFormat));
+        }
+
+        /// <summary>
         /// Generates an Image from text.
         /// </summary>
         /// <param name="text">Text to write on image.</param>
