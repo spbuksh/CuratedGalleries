@@ -63,13 +63,17 @@ namespace Corbis.CMS.Web.Code
             return Corbis.Common.Utils.AbsoluteToVirtual(htmlpath, context, vdirProcess);
         }
 
-        public static GalleryContent LoadContent(this CuratedGallery gallery)
+        public static GalleryContent LoadContent(this CuratedGallery gallery, bool bSync = true)
         {
-            return GalleryRuntime.LoadGalleryContent(gallery.ID);
+            return GalleryRuntime.LoadGalleryContent(gallery.ID, bSync);
         }
-        public static void SaveContent(this CuratedGallery gallery, GalleryContent content)
+        public static void SaveContent(this CuratedGallery gallery, GalleryContent content, bool bSync = true)
         {
-            GalleryRuntime.SaveGalleryContent(gallery.ID, content);
+            GalleryRuntime.SaveGalleryContent(gallery.ID, content, bSync);
+        }
+        public static object GetSyncRoot(this CuratedGallery gallery)
+        {
+            return GalleryRuntime.GetGallerySyncRoot(gallery.ID);
         }
 
     }

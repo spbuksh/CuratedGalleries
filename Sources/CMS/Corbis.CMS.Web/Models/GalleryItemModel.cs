@@ -34,5 +34,10 @@ namespace Corbis.CMS.Web.Models
         /// Gallery created date
         /// </summary>
         public DateTime DateModified { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Nullable<int> Editor { get; set; }
     }
 }

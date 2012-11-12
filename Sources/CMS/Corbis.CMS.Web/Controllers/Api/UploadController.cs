@@ -110,173 +110,176 @@ namespace Corbis.CMS.Web.Controllers.Api
                     return string.Format("{0}/{1}", Common.Utils.GetRelativePath(GalleryRuntime.GetGalleryOutputPath(id.Value), contentpath).TrimEnd('\\').Replace('\\', '/'), fname);
                 };
 
-            var content = gallery.LoadContent();
-
-            var siteUrls = new ImageUrlSet() { Original = Common.Utils.AbsoluteToVirtual(filepath, this.HttpContext) };
-            var editUrls = new ImageUrlSet() { Original = Common.Utils.AbsoluteToVirtual(filepath, this.HttpContext) };
-            var gllrUrls = new ImageUrlSet() { Original = gllrUrlHandler(filename) };
-
-            string extension = Path.GetExtension(filename);
-            string filenameonly = extension.Length > 0 ? filename.Remove(filename.Length - extension.Length) : filename;
-
-            System.Drawing.Image originalImage = null;
-
-            //TODO: Implement async image resizing for performance
-            try
+            lock (gallery.GetSyncRoot())
             {
-                originalImage = System.Drawing.Image.FromFile(filepath);
+                var content = gallery.LoadContent(false);
 
-                //resize images for development
+                var siteUrls = new ImageUrlSet() { Original = Common.Utils.AbsoluteToVirtual(filepath, this.HttpContext) };
+                var editUrls = new ImageUrlSet() { Original = Common.Utils.AbsoluteToVirtual(filepath, this.HttpContext) };
+                var gllrUrls = new ImageUrlSet() { Original = gllrUrlHandler(filename) };
+
+                string extension = Path.GetExtension(filename);
+                string filenameonly = extension.Length > 0 ? filename.Remove(filename.Length - extension.Length) : filename;
+
+                System.Drawing.Image originalImage = null;
+
+                //TODO: Implement async image resizing for performance
+                try
                 {
-                    string editpath = Path.Combine(contentpath, string.Format("{0}.lrgedit{1}", filenameonly, extension));
-                    ResizeImage(originalImage, editpath, GalleryRuntime.EditedLargeImageSize);
+                    originalImage = System.Drawing.Image.FromFile(filepath);
 
-                    editUrls.Large = Common.Utils.AbsoluteToVirtual(editpath, this.HttpContext);
-
-                    content.SystemFilePathes.Add(editpath.Substring(rootpath.Length));
-                }
-                {
-                    string editpath = Path.Combine(contentpath, string.Format("{0}.smledit{1}", filenameonly, extension));
-                    ResizeImage(originalImage, editpath, GalleryRuntime.EditedSmallImageSize);
-
-                    editUrls.Small = Common.Utils.AbsoluteToVirtual(editpath, this.HttpContext);
-
-                    content.SystemFilePathes.Add(editpath.Substring(rootpath.Length));
-                }
-
-                //images for galleries
-                foreach (var isize in template.GallerySettings.ImageSizes)
-                { 
-                    switch(isize.Type)
+                    //resize images for development
                     {
-                        case GalleryImageSizes.Small:
+                        string editpath = Path.Combine(contentpath, string.Format("{0}.lrgedit{1}", filenameonly, extension));
+                        ResizeImage(originalImage, editpath, GalleryRuntime.EditedLargeImageSize);
+
+                        editUrls.Large = Common.Utils.AbsoluteToVirtual(editpath, this.HttpContext);
+
+                        content.SystemFilePathes.Add(editpath.Substring(rootpath.Length));
+                    }
+                    {
+                        string editpath = Path.Combine(contentpath, string.Format("{0}.smledit{1}", filenameonly, extension));
+                        ResizeImage(originalImage, editpath, GalleryRuntime.EditedSmallImageSize);
+
+                        editUrls.Small = Common.Utils.AbsoluteToVirtual(editpath, this.HttpContext);
+
+                        content.SystemFilePathes.Add(editpath.Substring(rootpath.Length));
+                    }
+
+                    //images for galleries
+                    foreach (var isize in template.GallerySettings.ImageSizes)
+                    {
+                        switch (isize.Type)
+                        {
+                            case GalleryImageSizes.Small:
+                                {
+                                    string smallpath = Path.Combine(contentpath, string.Format("{0}.sml{1}", filenameonly, extension));
+                                    ResizeImage(originalImage, smallpath, new System.Drawing.Size(isize.Width, isize.Height));
+
+                                    siteUrls.Small = Common.Utils.AbsoluteToVirtual(smallpath, this.HttpContext);
+                                    gllrUrls.Small = gllrUrlHandler(Path.GetFileName(smallpath));
+                                }
+                                break;
+                            case GalleryImageSizes.Middle:
+                                {
+                                    string middlepath = Path.Combine(contentpath, string.Format("{0}.mdl{1}", filenameonly, extension));
+                                    ResizeImage(originalImage, middlepath, new System.Drawing.Size(isize.Width, isize.Height));
+
+                                    siteUrls.Middle = Common.Utils.AbsoluteToVirtual(middlepath, this.HttpContext);
+                                    gllrUrls.Middle = gllrUrlHandler(Path.GetFileName(middlepath));
+                                }
+                                break;
+                            case GalleryImageSizes.Large:
+                                {
+                                    string largepath = Path.Combine(contentpath, string.Format("{0}.lrg{1}", filenameonly, extension));
+                                    ResizeImage(originalImage, largepath, new System.Drawing.Size(isize.Width, isize.Height));
+
+                                    siteUrls.Large = Common.Utils.AbsoluteToVirtual(largepath, this.HttpContext);
+                                    gllrUrls.Large = gllrUrlHandler(Path.GetFileName(largepath));
+                                }
+                                break;
+                            default:
+                                throw new NotImplementedException();
+                        }
+                    }
+                }
+                finally
+                {
+                    if (originalImage != null)
+                        originalImage.Dispose();
+                }
+
+                GalleryImageBase img = null;
+
+                try
+                {
+                    if (!string.IsNullOrEmpty(imageID))
+                    {
+                        if (content.CoverImage.ID == imageID)
+                        {
+                            content.CoverImage.Name = filename;
+                            content.CoverImage.ImageSource = new GalleryImageSource() { Type = ImageSourceTypes.LocalFile, Source = filepath.Substring(GalleryRuntime.GetGalleryPath(id.Value).Length) };
+                            content.DeleteImages(content.CoverImage.GalleryUrls, this.HttpContext);
+                            content.CoverImage.GalleryUrls = gllrUrls;
+                            content.DeleteImages(content.CoverImage.SiteUrls, this.HttpContext);
+                            content.CoverImage.SiteUrls = siteUrls;
+                            content.DeleteImages(content.CoverImage.EditUrls, this.HttpContext);
+                            content.CoverImage.EditUrls = editUrls;
+
+                            img = content.CoverImage;
+                        }
+                        else
+                        {
+                            var item = content.Images.Where(x => x.ID == imageID).SingleOrDefault();
+
+                            item.Name = filename;
+                            item.ImageSource = new GalleryImageSource() { Type = ImageSourceTypes.LocalFile, Source = filepath.Substring(GalleryRuntime.GetGalleryPath(id.Value).Length) };
+                            content.DeleteImages(item.GalleryUrls, this.HttpContext);
+                            item.GalleryUrls = gllrUrls;
+                            content.DeleteImages(item.SiteUrls, this.HttpContext);
+                            item.SiteUrls = siteUrls;
+                            content.DeleteImages(item.EditUrls, this.HttpContext);
+                            item.EditUrls = editUrls;
+
+                            img = item;
+                        }
+                    }
+                    else
+                    {
+                        if ((content.Images != null && content.Images.Count != 0) || content.CoverImage != null)
+                        {
+                            var cimg = new GalleryContentImage()
                             {
-                                string smallpath = Path.Combine(contentpath, string.Format("{0}.sml{1}", filenameonly, extension));
-                                ResizeImage(originalImage, smallpath, new System.Drawing.Size(isize.Width, isize.Height));
+                                ID = string.Format("gallery-image_{0}", Guid.NewGuid().ToString("N")),
+                                Name = filename,
+                                Order = content.Images.Count + 1,
+                                ImageSource = new GalleryImageSource() { Type = ImageSourceTypes.LocalFile, Source = filepath.Substring(GalleryRuntime.GetGalleryPath(id.Value).Length) },
+                                GalleryUrls = gllrUrls,
+                                SiteUrls = siteUrls,
+                                EditUrls = editUrls
+                            };
+                            cimg.TextContent = new EmptyTextContent();
 
-                                siteUrls.Small = Common.Utils.AbsoluteToVirtual(smallpath, this.HttpContext);
-                                gllrUrls.Small = gllrUrlHandler(Path.GetFileName(smallpath)); 
-                            }
-                            break;
-                        case GalleryImageSizes.Middle:
-                            { 
-                                string middlepath = Path.Combine(contentpath, string.Format("{0}.mdl{1}", filenameonly, extension));
-                                ResizeImage(originalImage, middlepath, new System.Drawing.Size(isize.Width, isize.Height));
+                            content.Images.Add(cimg);
 
-                                siteUrls.Middle = Common.Utils.AbsoluteToVirtual(middlepath, this.HttpContext);
-                                gllrUrls.Middle = gllrUrlHandler(Path.GetFileName(middlepath));
-                            }
-                            break;
-                        case GalleryImageSizes.Large:
-                            { 
-                                string largepath = Path.Combine(contentpath, string.Format("{0}.lrg{1}", filenameonly, extension));
-                                ResizeImage(originalImage, largepath, new System.Drawing.Size(isize.Width, isize.Height));
-
-                                siteUrls.Large = Common.Utils.AbsoluteToVirtual(largepath, this.HttpContext);
-                                gllrUrls.Large = gllrUrlHandler(Path.GetFileName(largepath));
-                            }
-                            break;
-                        default:
-                            throw new NotImplementedException();
-                    }
-                }
-            }
-            finally
-            {
-                if (originalImage != null)
-                    originalImage.Dispose();
-            }
-
-            GalleryImageBase img = null;
-
-            try
-            {
-                if (!string.IsNullOrEmpty(imageID))
-                {
-                    if (content.CoverImage.ID == imageID)
-                    {
-                        content.CoverImage.Name = filename;
-                        content.CoverImage.ImageSource = new GalleryImageSource() { Type = ImageSourceTypes.LocalFile, Source = filepath.Substring(GalleryRuntime.GetGalleryPath(id.Value).Length) };
-                        content.DeleteImages(content.CoverImage.GalleryUrls, this.HttpContext);
-                        content.CoverImage.GalleryUrls = gllrUrls;
-                        content.DeleteImages(content.CoverImage.SiteUrls, this.HttpContext);
-                        content.CoverImage.SiteUrls = siteUrls;
-                        content.DeleteImages(content.CoverImage.EditUrls, this.HttpContext);
-                        content.CoverImage.EditUrls = editUrls;
-
-                        img = content.CoverImage;
-                    }
-                    else
-                    {
-                        var item = content.Images.Where(x => x.ID == imageID).SingleOrDefault();
-
-                        item.Name = filename;
-                        item.ImageSource = new GalleryImageSource() { Type = ImageSourceTypes.LocalFile, Source = filepath.Substring(GalleryRuntime.GetGalleryPath(id.Value).Length) };
-                        content.DeleteImages(item.GalleryUrls, this.HttpContext);
-                        item.GalleryUrls = gllrUrls;
-                        content.DeleteImages(item.SiteUrls, this.HttpContext);
-                        item.SiteUrls = siteUrls;
-                        content.DeleteImages(item.EditUrls, this.HttpContext);
-                        item.EditUrls = editUrls;
-
-                        img = item;
-                    }
-                }
-                else
-                {
-                    if ((content.Images != null && content.Images.Count != 0) || content.CoverImage != null)
-                    {
-                        var cimg = new GalleryContentImage()
+                            img = cimg;
+                        }
+                        else
                         {
-                            ID = string.Format("gallery-image_{0}", Guid.NewGuid().ToString("N")),
-                            Name = filename,
-                            Order = content.Images.Count + 1,
-                            ImageSource = new GalleryImageSource() { Type = ImageSourceTypes.LocalFile, Source = filepath.Substring(GalleryRuntime.GetGalleryPath(id.Value).Length) },
-                            GalleryUrls = gllrUrls,
-                            SiteUrls = siteUrls,
-                            EditUrls = editUrls
-                        };
-                        cimg.TextContent = new EmptyTextContent();
+                            var cimg = new GalleryCoverImage()
+                            {
+                                ID = string.Format("gallery-image_{0}", Guid.NewGuid().ToString("N")),
+                                Name = filename,
+                                Order = 0,
+                                ImageSource = new GalleryImageSource() { Type = ImageSourceTypes.LocalFile, Source = filepath.Substring(GalleryRuntime.GetGalleryPath(id.Value).Length) },
+                                GalleryUrls = gllrUrls,
+                                SiteUrls = siteUrls,
+                                EditUrls = editUrls
+                            };
 
-                        content.Images.Add(cimg);
+                            //TODO: we can get default values from gallery template
+                            cimg.Headline = new CoverTextItem() { FontSize = 40 };
+                            cimg.Standfirst = new CoverTextItem() { FontSize = 12 };
 
-                        img = cimg;
+                            content.CoverImage = cimg;
+
+                            img = cimg;
+                        }
                     }
-                    else
-                    {
-                        var cimg = new GalleryCoverImage()
-                        {
-                            ID = string.Format("gallery-image_{0}", Guid.NewGuid().ToString("N")),
-                            Name = filename,
-                            Order = 0,
-                            ImageSource = new GalleryImageSource() { Type = ImageSourceTypes.LocalFile, Source = filepath.Substring(GalleryRuntime.GetGalleryPath(id.Value).Length) },
-                            GalleryUrls = gllrUrls,
-                            SiteUrls = siteUrls,
-                            EditUrls = editUrls
-                        };
 
-                        //TODO: we can get default values from gallery template
-                        cimg.Headline = new CoverTextItem() { FontSize = 40 };
-                        cimg.Standfirst = new CoverTextItem() { FontSize = 12 };
-
-                        content.CoverImage = cimg;
-
-                        img = cimg;
-                    }
+                    //TODO: We must synchronize file updating
+                    gallery.SaveContent(content, false);
+                }
+                catch (Exception ex)
+                {
+                    this.Logger.WriteError(ex);
+                    File.Delete(filepath);
+                    return message.CreateResponse(HttpStatusCode.InternalServerError);
                 }
 
-                //TODO: We must synchronize file updating
-                gallery.SaveContent(content);
+                var output = new UploadedImageResponse() { GalleryID = id.Value, ID = img.ID, Urls = img.SiteUrls, EditUrls = img.EditUrls, IsCover = img is GalleryCoverImage, FileName = img.Name };
+                return message.CreateResponse <UploadedImageResponse>(HttpStatusCode.OK, output);
             }
-            catch (Exception ex)
-            {
-                this.Logger.WriteError(ex);
-                File.Delete(filepath);
-                return message.CreateResponse(HttpStatusCode.InternalServerError);
-            }
-
-            var output = new UploadedImageResponse() { GalleryID = id.Value, ID = img.ID, Urls = img.SiteUrls, EditUrls = img.EditUrls, IsCover = img is GalleryCoverImage, FileName = img.Name };
-            return message.CreateResponse <UploadedImageResponse>(HttpStatusCode.OK, output);
         }
 
         /// <summary>

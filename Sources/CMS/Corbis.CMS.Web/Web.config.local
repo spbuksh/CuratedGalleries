@@ -55,6 +55,7 @@
 
         <!-- it is used for convertation absolute path to virtual-->
         <add key="virtualDirPath" value="" />
+        <add key="defaultGalleryCoverPath" value="\Images\gallery.jpg" />
         
         <!-- This key is used for password validation and password generation -->
         <add key="PasswordHashKey" value="899DDABC8C3524F67C1A9FE6E0836624DD3E6FCF63358BCBF619A8FA3EBDFD736D8C6BA83779E73A80953D9CF0CBFF377ECDDFEB685805EF5DC7B58142C12E97"/>

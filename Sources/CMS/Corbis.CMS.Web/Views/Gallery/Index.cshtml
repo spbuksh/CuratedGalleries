@@ -14,7 +14,9 @@
 @foreach (var item in this.Model)
 {
     <div class="galleryItem" corbis-item-id="@item.ID">
-        <div class="imgWrapper"></div>
+        <div class="imgWrapper">
+            <img src="@Url.Action("GetGalleryCover", "Gallery", new { id = item.ID, height = 100, width = 100 })" alt="" />
+        </div>
         <div class="infoWrapper">
             <div class="galleryTitle">
         <a href="@Url.Action("BuildGallery", "Gallery", new { id = @item.ID })" target="_blank">@Html.Raw(item.Name)</a>

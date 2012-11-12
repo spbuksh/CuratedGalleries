@@ -17,6 +17,7 @@ using Corbis.Common;
 using Corbis.CMS.Repository.Interface.Communication;
 using System.Drawing;
 using System.Threading;
+using System.Drawing.Imaging;
 
 namespace Corbis.CMS.Web.Controllers
 {
@@ -61,6 +62,42 @@ namespace Corbis.CMS.Web.Controllers
                 galleries.Add(this.ObjectMapper.DoMapping<GalleryItemModel>(item));
 
             return View("Index", galleries);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id">Gallery identifier</param>
+        /// <returns></returns>
+        public ActionResult GetGalleryCover(int id, int? height, int? width)
+        {
+            Image src = null;
+
+            //it is necessary to ensure that cover is not being deleting or changing at the same time
+            lock(GalleryRuntime.GetGallerySyncRoot(id))
+            {
+                var content = GalleryRuntime.LoadGalleryContent(id, false);
+
+                if(content.CoverImage != null)
+                    src = Image.FromFile(Utils.VirtualToAbsolute(content.CoverImage.SiteUrls.Original, this.HttpContext));
+            }
+            
+            if(src == null)
+                src = Image.FromFile(GalleryRuntime.GetDefaultGalleryCoverPath(this.HttpContext));
+
+            byte[] buffer = null;
+
+            using (var output = Common.Utilities.Image.ImageHelper.ResizeImage(src, new Size(width.Value, height.Value)))
+            {
+                using (var memory = new MemoryStream())
+                {
+                    output.Save(memory, ImageFormat.Jpeg);
+                    memory.Position = 0;
+                    buffer = memory.ToArray();
+                }
+            }
+
+            return this.File(buffer, "image/png");
         }
 
         #region Create Gallery

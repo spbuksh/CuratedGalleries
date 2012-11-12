@@ -12,6 +12,7 @@ using System.Xml.Xsl;
 using System.Xml;
 using System.Xml.Serialization;
 using Corbis.Common.Utilities.Image;
+using System.Configuration;
 
 namespace Corbis.CMS.Web.Code
 {
@@ -76,48 +77,132 @@ namespace Corbis.CMS.Web.Code
 
         #endregion Gallery file system structure
 
+        public static string GetDefaultGalleryCoverPath(HttpContextBase context = null)
+        {
+            if (context == null)
+                context = new HttpContextWrapper(HttpContext.Current);
+
+            string rpath = ConfigurationManager.AppSettings["defaultGalleryCoverPath"];
+
+            return Path.Combine(Utils.VirtualToAbsolute("~/", context), rpath.TrimStart(Path.DirectorySeparatorChar));
+        }
+
+        /// <summary>
+        /// Gets object for gallery syncronization
+        /// </summary>
+        /// <param name="galleryID">gallery identifier</param>
+        /// <returns></returns>
+        public static object GetGallerySyncRoot(int galleryID)
+        {
+            lock (m_GallerySyncRoots)
+            {
+                object sync = null;
+
+                if (!m_GallerySyncRoots.ContainsKey(galleryID))
+                {
+                    sync = new object();
+                    m_GallerySyncRoots[galleryID] = sync;
+                }
+                else
+                {
+                    sync = m_GallerySyncRoots[galleryID];
+                }
+
+                return sync;
+            }
+        }
+        private static Dictionary<int, object> m_GallerySyncRoots = new Dictionary<int, object>();
+
+        protected static void RemoveGallerySyncRoot(int galleryID)
+        {
+            lock (m_GallerySyncRoots)
+            {
+                m_GallerySyncRoots.Remove(galleryID);
+            }
+        }
+
         /// <summary>
         /// Loads gallery content data by gallery identifier
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="bSync">True - automatic synchronization is required</param>
         /// <returns></returns>
-        public static GalleryContent LoadGalleryContent(int id)
+        public static GalleryContent LoadGalleryContent(int id, bool bSync = true)
         {
-            XmlSerializer serializer = new XmlSerializer(typeof(GalleryContent));
+            ActionHandler<string, GalleryContent> action = delegate(string path)
+            { 
+                XmlSerializer serializer = new XmlSerializer(typeof(GalleryContent));
 
-            using (FileStream fstream = new FileStream(GetGallerySourcePath(id), FileMode.Open, FileAccess.Read))
+                using (FileStream fstream = new FileStream(path, FileMode.Open, FileAccess.Read))
+                {
+                    return serializer.Deserialize(fstream) as GalleryContent;
+                }
+            };
+
+            if (bSync)
             {
-                return serializer.Deserialize(fstream) as GalleryContent;
+                lock (GetGallerySyncRoot(id))
+                {
+                    return action(GetGallerySourcePath(id));
+                }
             }
+
+            return action(GetGallerySourcePath(id));
         }
         /// <summary>
         /// Loads gallery content data by gallery identifier
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="bSync">True - automatic synchronization is required</param>
         /// <returns></returns>
-        public static void SaveGalleryContent(int id, GalleryContent content)
+        public static void SaveGalleryContent(int id, GalleryContent content, bool bSync = true)
         {
-            XmlSerializer serializer = new XmlSerializer(typeof(GalleryContent));
-
-            using (FileStream fstream = new FileStream(GetGallerySourcePath(id), FileMode.Create, FileAccess.Write))
+            Action action = delegate()
             {
-                serializer.Serialize(fstream, content);
+                XmlSerializer serializer = new XmlSerializer(typeof(GalleryContent));
+
+                using (FileStream fstream = new FileStream(GetGallerySourcePath(id), FileMode.Create, FileAccess.Write))
+                {
+                    serializer.Serialize(fstream, content);
+                }
+            };
+
+            if (bSync)
+            {
+                lock (GetGallerySyncRoot(id))
+                {
+                    action();
+                }
+            }
+            else
+            {
+                action();
             }
         }
 
-        public static void UpdateGalleryContentImage(int galleryID, string imageID, Action<GalleryContentImage> handler)
+        public static void UpdateGalleryContentImage(int galleryID, string imageID, Action<GalleryContentImage> handler, bool bSync = true)
         {
-            var content = LoadGalleryContent(galleryID);
-            var image = content.Images.Single(x => x.ID == imageID);
-            handler(image);
-            image.ImageContentUrl = Utils.AbsoluteToVirtual(ImageContentGenerator.GererateImage(image, galleryID), null);
-            image.ImageContentName = Path.GetFileName(image.ImageContentUrl);
-            SaveGalleryContent(galleryID, content);
-        }
+            Action action = delegate()
+            {
+                var content = LoadGalleryContent(galleryID);
+                var image = content.Images.Single(x => x.ID == imageID);
+                handler(image);
+                image.ImageContentUrl = Utils.AbsoluteToVirtual(ImageContentGenerator.GererateImage(image, galleryID), null);
+                image.ImageContentName = Path.GetFileName(image.ImageContentUrl);
+                SaveGalleryContent(galleryID, content);
+            };
 
-        public static  void UpdateImageContent(GalleryContentImage image)
-        {
-            
+            if (bSync)
+            {
+                lock (GetGallerySyncRoot(galleryID))
+                {
+                    action();
+                }
+            }
+            else
+            {
+                action();
+            }
         }
 
         /// <summary>
@@ -146,38 +231,41 @@ namespace Corbis.CMS.Web.Code
 
             var gallery = rslt.Output;
 
-            string galleryRoot = gallery.GetRootPath();
-            string galeryOutput = gallery.GetOutputPath();
+            lock (gallery.GetSyncRoot())
+            {
+                string galleryRoot = gallery.GetRootPath();
+                string galeryOutput = gallery.GetOutputPath();
 
-            Directory.CreateDirectory(galleryRoot);
-            Directory.CreateDirectory(galeryOutput);
-            Directory.CreateDirectory(gallery.GetContentPath());
+                Directory.CreateDirectory(galleryRoot);
+                Directory.CreateDirectory(galeryOutput);
+                Directory.CreateDirectory(gallery.GetContentPath());
 
-            IGalleryTemplate template = GetTemplate(gallery.TemplateID);
+                IGalleryTemplate template = GetTemplate(gallery.TemplateID);
 
-            var content = new GalleryContent() 
-            { 
-                Name = name, 
-                Font = new GalleryFont() { FamilyName = template.GallerySettings.DefaultFontFamilyName } 
-            };
+                var content = new GalleryContent()
+                {
+                    Name = name,
+                    Font = new GalleryFont() { FamilyName = template.GallerySettings.DefaultFontFamilyName }
+                };
 
-            content.GalleryImageSizes.AddRange(template.GallerySettings.ImageSizes.Select(x => ObjectMapper.DoMapping<GalleryImageSize>(x)));
+                content.GalleryImageSizes.AddRange(template.GallerySettings.ImageSizes.Select(x => ObjectMapper.DoMapping<GalleryImageSize>(x)));
 
-            //add content file as system. It must be ignored
-            content.SystemFilePathes.Add(GetGallerySourcePath(gallery.ID).Substring(galleryRoot.Length));
+                //add content file as system. It must be ignored
+                content.SystemFilePathes.Add(GetGallerySourcePath(gallery.ID).Substring(galleryRoot.Length));
 
-            //relevant output path
-            var reloutputPath = galeryOutput.Substring(galleryRoot.Length).TrimEnd('\\');
+                //relevant output path
+                var reloutputPath = galeryOutput.Substring(galleryRoot.Length).TrimEnd('\\');
 
-            //ignore template cover
-            if (template.Icon != null && template.Icon.Type == ImageSourceTypes.LocalFile)
-                content.SystemFilePathes.Add(string.Format("{0}\\{1}", reloutputPath, template.Icon.Source));
+                //ignore template cover
+                if (template.Icon != null && template.Icon.Type == ImageSourceTypes.LocalFile)
+                    content.SystemFilePathes.Add(string.Format("{0}\\{1}", reloutputPath, template.Icon.Source));
 
-            if (!string.IsNullOrEmpty(template.DescriptorFilepath))
-                content.SystemFilePathes.Add(string.Format("{0}\\{1}", reloutputPath, template.DescriptorFilepath));
+                if (!string.IsNullOrEmpty(template.DescriptorFilepath))
+                    content.SystemFilePathes.Add(string.Format("{0}\\{1}", reloutputPath, template.DescriptorFilepath));
 
-            gallery.SaveContent(content);
-            
+                gallery.SaveContent(content, false);
+            }
+
             return gallery;
         }
 
@@ -187,43 +275,48 @@ namespace Corbis.CMS.Web.Code
         /// <param name="id">Gallery identifier</param>
         public static bool DeleteGallery(int id)
         {
-            OperationResult<OperationResults, Nullable<bool>> rslt = null;
-
-            try
+            lock (GetGallerySyncRoot(id))
             {
-                rslt = GalleryRepository.DeleteGallery(id);
-            }
-            catch (Exception ex)
-            {
-                Logger.WriteError(ex);
-                throw;
-            }
+                OperationResult<OperationResults, Nullable<bool>> rslt = null;
 
-            switch (rslt.Result)
-            {
-                case OperationResults.Success:
-                case OperationResults.NotFound:
-                    {
-                        var dir = new DirectoryInfo(GetGalleryPath(id));
+                try
+                {
+                    rslt = GalleryRepository.DeleteGallery(id);
+                }
+                catch (Exception ex)
+                {
+                    Logger.WriteError(ex);
+                    throw;
+                }
 
-                        if (dir.Exists)
+                switch (rslt.Result)
+                {
+                    case OperationResults.Success:
+                    case OperationResults.NotFound:
                         {
-                            try
-                            {
-                                dir.Remove();
-                            }
-                            catch (Exception ex)
-                            {
-                                Logger.WriteError(ex);
-                            }
-                        }
+                            var dir = new DirectoryInfo(GetGalleryPath(id));
 
-                        return true;
-                    }
-                case OperationResults.Failure:
-                    return false;
-                default:
-                    throw new NotImplementedException();
+                            if (dir.Exists)
+                            {
+                                try
+                                {
+                                    dir.Remove();
+                                }
+                                catch (Exception ex)
+                                {
+                                    Logger.WriteError(ex);
+                                }
+                            }
+
+                            RemoveGallerySyncRoot(id);
+
+                            return true;
+                        }
+                    case OperationResults.Failure:
+                        return false;
+                    default:
+                        throw new NotImplementedException();
+                }
             }
         }
 
@@ -315,25 +408,28 @@ namespace Corbis.CMS.Web.Code
 
         public static CuratedGallery BuildGalleryOutput(int id)
         {
-            CuratedGallery gallery = GetGallery(id);
-
-            if (gallery == null)
-                throw new Exception(string.Format("Gallery with id='{0}' was not found", id));
-
-            var outputDir = new DirectoryInfo(GalleryRuntime.GetGalleryOutputPath(id));
-
-            if (outputDir.Exists)
+            lock (GetGallerySyncRoot(id))
             {
-                outputDir.Clear();
-            }
-            else
-            {
-                outputDir.Create();
-            }
+                CuratedGallery gallery = GetGallery(id);
 
-            BuildOutput(new DirectoryInfo(GalleryRuntime.GetTemplatePath(gallery.TemplateID)), outputDir, GetGallerySourcePath(id));
+                if (gallery == null)
+                    throw new Exception(string.Format("Gallery with id='{0}' was not found", id));
 
-            return gallery;
+                var outputDir = new DirectoryInfo(GalleryRuntime.GetGalleryOutputPath(id));
+
+                if (outputDir.Exists)
+                {
+                    outputDir.Clear();
+                }
+                else
+                {
+                    outputDir.Create();
+                }
+
+                BuildOutput(new DirectoryInfo(GalleryRuntime.GetTemplatePath(gallery.TemplateID)), outputDir, GetGallerySourcePath(id));
+
+                return gallery;
+            }
         }
 
         /// <summary>
