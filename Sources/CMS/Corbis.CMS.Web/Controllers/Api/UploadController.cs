@@ -193,7 +193,47 @@ namespace Corbis.CMS.Web.Controllers.Api
 
                 try
                 {
-                    if (!string.IsNullOrEmpty(imageID))
+                    if (string.IsNullOrEmpty(imageID))
+                    {
+                        if (content.Images.Count == 0)
+                        {
+                            var cimg = new GalleryCoverImage()
+                            {
+                                ID = string.Format("gallery-image_{0}", Guid.NewGuid().ToString("N")),
+                                Name = filename,
+                                Order = 1,
+                                ImageSource = new GalleryImageSource() { Type = ImageSourceTypes.LocalFile, Source = filepath.Substring(GalleryRuntime.GetGalleryPath(id.Value).Length) },
+                                GalleryUrls = gllrUrls,
+                                SiteUrls = siteUrls,
+                                EditUrls = editUrls
+                            };
+
+                            //TODO: we can get default values from gallery template
+                            cimg.Headline = new CoverTextItem() { FontSize = 40 };
+                            cimg.Standfirst = new CoverTextItem() { FontSize = 12 };
+
+                            content.Images.Add(cimg);
+                            img = cimg;
+                        }
+                        else
+                        {
+                            var cimg = new GalleryContentImage()
+                            {
+                                ID = string.Format("gallery-image_{0}", Guid.NewGuid().ToString("N")),
+                                Name = filename,
+                                Order = content.Images.Count + 1,
+                                ImageSource = new GalleryImageSource() { Type = ImageSourceTypes.LocalFile, Source = filepath.Substring(GalleryRuntime.GetGalleryPath(id.Value).Length) },
+                                GalleryUrls = gllrUrls,
+                                SiteUrls = siteUrls,
+                                EditUrls = editUrls
+                            };
+                            cimg.TextContent = new EmptyTextContent();
+
+                            content.Images.Add(cimg);
+                            img = cimg;
+                        }
+                    }
+                    else if(content.Images.Count != 0)
                     {
                         if (content.CoverImage.ID == imageID)
                         {
@@ -226,45 +266,7 @@ namespace Corbis.CMS.Web.Controllers.Api
                     }
                     else
                     {
-                        if ((content.Images != null && content.Images.Count != 0) || content.CoverImage != null)
-                        {
-                            var cimg = new GalleryContentImage()
-                            {
-                                ID = string.Format("gallery-image_{0}", Guid.NewGuid().ToString("N")),
-                                Name = filename,
-                                Order = content.Images.Count + 1,
-                                ImageSource = new GalleryImageSource() { Type = ImageSourceTypes.LocalFile, Source = filepath.Substring(GalleryRuntime.GetGalleryPath(id.Value).Length) },
-                                GalleryUrls = gllrUrls,
-                                SiteUrls = siteUrls,
-                                EditUrls = editUrls
-                            };
-                            cimg.TextContent = new EmptyTextContent();
-
-                            content.Images.Add(cimg);
-
-                            img = cimg;
-                        }
-                        else
-                        {
-                            var cimg = new GalleryCoverImage()
-                            {
-                                ID = string.Format("gallery-image_{0}", Guid.NewGuid().ToString("N")),
-                                Name = filename,
-                                Order = 0,
-                                ImageSource = new GalleryImageSource() { Type = ImageSourceTypes.LocalFile, Source = filepath.Substring(GalleryRuntime.GetGalleryPath(id.Value).Length) },
-                                GalleryUrls = gllrUrls,
-                                SiteUrls = siteUrls,
-                                EditUrls = editUrls
-                            };
-
-                            //TODO: we can get default values from gallery template
-                            cimg.Headline = new CoverTextItem() { FontSize = 40 };
-                            cimg.Standfirst = new CoverTextItem() { FontSize = 12 };
-
-                            content.CoverImage = cimg;
-
-                            img = cimg;
-                        }
+                        throw new NotImplementedException();
                     }
 
                     //TODO: We must synchronize file updating

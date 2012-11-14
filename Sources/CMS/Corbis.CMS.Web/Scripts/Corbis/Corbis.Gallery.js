@@ -205,21 +205,6 @@ function InitContentImage(options) {
     }
 }
 
-function DeleteGallery(id, url) {
-    if (!confirm("Do you really want to detele gallery?"))
-        return false;
-
-    var onsuccess = function (result) {
-        if (result.success)
-            $('div.galleryItem[corbis-item-id="' + id + '"]').remove();
-    };
-    $.ajax({
-        url: url,
-        type: 'POST',
-        data: { id: id },
-        success: onsuccess
-    });
-}
 function ClearGalleryContent(id, url) {
     if (!confirm("Do you really want to detele all gallery images?"))
         return;

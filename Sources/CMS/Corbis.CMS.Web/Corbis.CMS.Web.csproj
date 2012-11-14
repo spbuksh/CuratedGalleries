@@ -316,6 +316,7 @@
     <Content Include="Images\up_down_button.png" />
     <Content Include="Scripts\Corbis\Corbis.Gallery.js" />
     <Content Include="Scripts\Corbis\Corbis.Common.js" />
+    <Content Include="Scripts\Corbis\Corbis.GalleryIndex.js" />
     <Content Include="Scripts\Corbis\Corbis.Template.js" />
     <Content Include="Scripts\Corbis\jquery.textaligment.js" />
     <Content Include="Scripts\Corbis\Uploader.js" />

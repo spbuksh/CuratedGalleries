@@ -180,14 +180,14 @@ namespace Corbis.CMS.Web.Code
             }
         }
 
-        public static void UpdateGalleryContentImage(int galleryID, string imageID, Action<GalleryContentImage> handler, bool bSync = true)
+        public static void UpdateGalleryContentImage(int galleryID, string imageID, Action<GalleryImageBase> handler, bool bSync = true)
         {
             Action action = delegate()
             {
                 var content = LoadGalleryContent(galleryID);
                 var image = content.Images.Single(x => x.ID == imageID);
                 handler(image);
-                image.ImageContentUrl = Utils.AbsoluteToVirtual(ImageContentGenerator.GererateImage(image, galleryID), null);
+                image.ImageContentUrl = Utils.AbsoluteToVirtual(ImageContentGenerator.GererateImage(image as GalleryContentImage, galleryID), null);
                 image.ImageContentName = Path.GetFileName(image.ImageContentUrl);
                 SaveGalleryContent(galleryID, content);
             };
