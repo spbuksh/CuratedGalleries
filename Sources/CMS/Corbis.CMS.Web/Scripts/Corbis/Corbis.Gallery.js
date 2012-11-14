@@ -104,29 +104,26 @@ $(function () {
         });
     };
 
-    //load font family combobox content
-    $('select[name=fontFamily]').click(function () {
-        var jthis = $(this);
+//    //load font family combobox content
+//    $('select[name=fontFamily]').click(function () {
+//        var jthis = $(this);
 
-        if (jthis.attr('corbis-data-loaded'))
-            return;
+//        if (jthis.attr('corbis-data-loaded'))
+//            return;
 
-        $.getJSON(GalleryPageMngr.fontFamiliesURL, function (data) {
+//        $.getJSON(GalleryPageMngr.fontFamiliesURL, function (data) {
+//            var selvalue = jthis.children('option:selected').val();
+//            jthis.html('');
 
-            var selvalue = jthis.children('option:selected').val();
-            jthis.html('');
-
-            $.each(data, function (index, item) {
-                jthis.append("<option value='" + item.value + "'>" + item.text + "</option>");
-            });
-
-            if (selvalue && selvalue != '') {
-                jthis.children('option[value="' + selvalue + '"]').attr('selected', 'selected');
-            }
-
-            jthis.attr('corbis-data-loaded', '1');
-        });
-    });
+//            $.each(data, function (index, item) {
+//                jthis.append("<option value='" + item.value + "'>" + item.text + "</option>");
+//            });
+//            if (selvalue && selvalue != '') {
+//                jthis.children('option[value="' + selvalue + '"]').attr('selected', 'selected');
+//            }
+//            jthis.attr('corbis-data-loaded', '1');
+//        });
+//    });
 });
 
 
@@ -208,21 +205,6 @@ function InitContentImage(options) {
     }
 }
 
-function DeleteGallery(id, url) {
-    if (!confirm("Do you really want to detele gallery?"))
-        return false;
-
-    var onsuccess = function (result) {
-        if (result.success)
-            $('div.galleryItem[corbis-item-id="' + id + '"]').remove();
-    };
-    $.ajax({
-        url: url,
-        type: 'POST',
-        data: { id: id },
-        success: onsuccess
-    });
-}
 function ClearGalleryContent(id, url) {
     if (!confirm("Do you really want to detele all gallery images?"))
         return;

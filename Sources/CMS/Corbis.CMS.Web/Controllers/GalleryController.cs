@@ -59,7 +59,11 @@ namespace Corbis.CMS.Web.Controllers
             var galleries = new List<GalleryItemModel>();
 
             foreach (var item in rslt.Output)
-                galleries.Add(this.ObjectMapper.DoMapping<GalleryItemModel>(item));
+            {
+                var model = this.ObjectMapper.DoMapping<GalleryItemModel>(item);
+                model.TemplateName = GalleryRuntime.GetTemplate(item.TemplateID).Name;
+                galleries.Add(model);
+            }
 
             return View("Index", galleries);
         }
@@ -226,6 +230,35 @@ namespace Corbis.CMS.Web.Controllers
         /// Create/Edit gallery
         /// </summary>
         /// <returns></returns>
+        [HttpPost]
+        public ActionResult LockGallery(int id)
+        {
+            var rslt = this.GalleryRepository.LockGallery(id, this.CurrentUser.ID);
+ 
+            switch(rslt.Result)
+            {
+                case OperationResults.Success:
+                    return this.Json(new { success = true });
+                case OperationResults.NotFound:
+                case OperationResults.Failure:
+                    return this.Json(new { success = false });
+                default:
+                    throw new Exception();
+            }
+        }
+        /// <summary>
+        /// Create/Edit gallery
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult UnLockGallery(int id)
+        {
+            this.GalleryRepository.UnLockGallery(id);
+            return this.RedirectToAction("Index", "Gallery");
+        }
+        /// <summary>
+        /// Create/Edit gallery
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [ActionName("EditGallery")]
         public ActionResult EditGallery_GET(Nullable<int> id)
@@ -243,23 +276,25 @@ namespace Corbis.CMS.Web.Controllers
             {
                 gallery = GalleryRuntime.CreateGallery("New gallery", GalleryRuntime.GetTemplates().First().ID);
             }
+            var template = GalleryRuntime.GetTemplate(gallery.TemplateID);
 
             var model = this.ObjectMapper.DoMapping<GalleryModel>(gallery);
 
             var content = gallery.LoadContent();
 
             model.FontFamily = content.Font.FamilyName;
+            model.FontFamilies.AddRange(template.GallerySettings.FontFamilies);
             model.TransitionsIncluded = content.TransitionsIncluded;
 
             if (content.CoverImage != null)
                 model.CoverImage = this.Convert(content.CoverImage, gallery.ID);
 
-            if (content.Images != null && content.Images.Count != 0)
+            if (content.Images != null && content.Images.Count > 0)
             {
                 model.ContentImages = new List<GalleryContentImageModel>();
 
-                foreach (var item in content.Images)
-                    model.ContentImages.Add(this.Convert(item, gallery.ID));
+                for (int i = 1; i < content.Images.Count; i++)
+                    model.ContentImages.Add(this.Convert(content.Images[i] as GalleryContentImage, gallery.ID));
 
                 model.ContentImages.Sort(delegate(GalleryContentImageModel x, GalleryContentImageModel y) { return x.Order - y.Order; });
             }
@@ -338,7 +373,7 @@ namespace Corbis.CMS.Web.Controllers
         [HttpPost]
         public ActionResult SetEmptyContent(int galleryID, string imageID, EmptyTextContentModel model)
         {
-            Action<GalleryContentImage> handler = delegate(GalleryContentImage item) { item.TextContent = this.ObjectMapper.DoMapping<EmptyTextContent>(model); };
+            Action<GalleryImageBase> handler = delegate(GalleryImageBase item) { (item as GalleryContentImage).TextContent = this.ObjectMapper.DoMapping<EmptyTextContent>(model); };
             GalleryRuntime.UpdateGalleryContentImage(galleryID, imageID, handler);
 
             return this.Json(new { success = true });
@@ -349,10 +384,10 @@ namespace Corbis.CMS.Web.Controllers
             if (!this.ModelState.IsValid)
                 this.PartialView("QnATextContentPartial", model);
 
-            Action<GalleryContentImage> handler = delegate(GalleryContentImage item) 
-            { 
-                item.TextContent = this.ObjectMapper.DoMapping<QnATextContent>(model);
-                item.TextContent.Size = new Size(model.Width.Value, model.Height.Value);
+            Action<GalleryImageBase> handler = delegate(GalleryImageBase item) 
+            {
+                (item as GalleryContentImage).TextContent = this.ObjectMapper.DoMapping<QnATextContent>(model);
+                (item as GalleryContentImage).TextContent.Size = new Size(model.Width.Value, model.Height.Value);
             };
             GalleryRuntime.UpdateGalleryContentImage(galleryID, imageID, handler);
 
@@ -364,10 +399,10 @@ namespace Corbis.CMS.Web.Controllers
             if(!this.ModelState.IsValid)
                 return this.PartialView("PullQuotedTextContentPartial", model);
 
-            Action<GalleryContentImage> handler = delegate(GalleryContentImage item) 
-            { 
-                item.TextContent = this.ObjectMapper.DoMapping<PullQuotedTextContent>(model);
-                item.TextContent.Size = new Size(model.Width.Value, model.Height.Value);
+            Action<GalleryImageBase> handler = delegate(GalleryImageBase item) 
+            {
+                (item as GalleryContentImage).TextContent = this.ObjectMapper.DoMapping<PullQuotedTextContent>(model);
+                (item as GalleryContentImage).TextContent.Size = new Size(model.Width.Value, model.Height.Value);
             };
             GalleryRuntime.UpdateGalleryContentImage(galleryID, imageID, handler);
 
@@ -379,10 +414,10 @@ namespace Corbis.CMS.Web.Controllers
             if(!this.ModelState.IsValid)
                 this.PartialView("BodyCopyTextContentPartial", model);
 
-            Action<GalleryContentImage> handler = delegate(GalleryContentImage item) 
+            Action<GalleryImageBase> handler = delegate(GalleryImageBase item) 
             { 
-                item.TextContent = this.ObjectMapper.DoMapping<BodyCopyTextContent>(model);
-                item.TextContent.Size = new Size(model.Width.Value, model.Height.Value);
+                (item as GalleryContentImage).TextContent = this.ObjectMapper.DoMapping<BodyCopyTextContent>(model);
+                (item as GalleryContentImage).TextContent.Size = new Size(model.Width.Value, model.Height.Value);
             };
             GalleryRuntime.UpdateGalleryContentImage(galleryID, imageID, handler);
 
@@ -402,7 +437,7 @@ namespace Corbis.CMS.Web.Controllers
             images[0].Order = images[1].Order;
             images[1].Order = order;
 
-            content.Images.Sort(delegate(GalleryContentImage x, GalleryContentImage y) { return x.Order - y.Order; });
+            content.Images.Sort(delegate(GalleryImageBase x, GalleryImageBase y) { return x.Order - y.Order; });
 
             GalleryRuntime.SaveGalleryContent(galleryID, content);
 
@@ -535,7 +570,7 @@ namespace Corbis.CMS.Web.Controllers
             if (image == null)
                 return this.Json(new { success = false, error = string.Format("Image with id='{0}' was not found. Gallery id='{1}'", id, galleryID.Value) });
 
-            return this.PartialView("ContentImagePartial", this.Convert(image, galleryID.Value));
+            return this.PartialView("ContentImagePartial", this.Convert(image as GalleryContentImage, galleryID.Value));
         }
         [HttpPost]
         public ActionResult GetCoverImage([Required]Nullable<int> galleryID, [Required]string id)
@@ -561,7 +596,7 @@ namespace Corbis.CMS.Web.Controllers
         public ActionResult DeleteContentImage([Required]Nullable<int> galleryID, [Required]string id)
         {
             var content = GalleryRuntime.LoadGalleryContent(galleryID.Value);
-            content.DeleteContentImages(new string[] { id }, this.HttpContext);
+            content.DeleteImages(new string[] { id }, this.HttpContext);
             GalleryRuntime.SaveGalleryContent(galleryID.Value, content);
             return this.Json(new { success = true });
         }

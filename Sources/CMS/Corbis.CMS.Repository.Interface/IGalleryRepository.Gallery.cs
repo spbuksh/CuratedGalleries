@@ -19,6 +19,16 @@ namespace Corbis.CMS.Repository.Interface
         OperationResult<OperationResults, CuratedGallery> CreateGallery(string name, Nullable<int> templateID = null);
 
         /// <summary>
+        /// Set exclusive gallery lock. Ensure that only one user can edit this gallery at the same time 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="userID">user</param>
+        /// <returns></returns>
+        OperationResult<OperationResults, object> LockGallery(int id, int userID);
+
+        OperationResult<OperationResults, object> UnLockGallery(int id);
+
+        /// <summary>
         /// Creates curated gallery
         /// </summary>
         /// <param name="id">Curated gallery unique identifier</param>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.ComponentModel.DataAnnotations;
+using System.Drawing;
 
 namespace Corbis.CMS.Web.Models
 {
@@ -41,5 +42,14 @@ namespace Corbis.CMS.Web.Models
         [Display(Name = "Font Family")]
         [Required(ErrorMessage = "Font family can not be empty")]
         public string FontFamily { get; set; }
+
+        /// <summary>
+        /// List of font families
+        /// </summary>
+        public List<FontFamily> FontFamilies
+        {
+            get { return this.m_FontFamilies; }
+        }
+        private List<FontFamily> m_FontFamilies = new List<FontFamily>();
     }
 }

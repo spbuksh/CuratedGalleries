@@ -100,6 +100,23 @@ namespace Corbis.CMS.Web.Code
         /// </summary>
         public static Size EditedSmallImageSize { get; private set; }
 
+        /// <summary>
+        /// Client application fonts
+        /// </summary>
+        public static FontFamily[] ApplicationFonts
+        {
+            get 
+            {
+                if(m_ApplicationFonts == null)
+                {
+                    var fonts = FontLoader.LoadFonts();
+                    m_ApplicationFonts = fonts == null ? new FontFamily[] { } : fonts.Families;
+                }
+                return m_ApplicationFonts;
+            }
+        }
+        private static FontFamily[] m_ApplicationFonts = null;
+
         #endregion Environment settings
 
         /// <summary>

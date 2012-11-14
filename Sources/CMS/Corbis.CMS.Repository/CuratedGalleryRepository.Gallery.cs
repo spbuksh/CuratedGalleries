@@ -43,6 +43,35 @@ namespace Corbis.CMS.Repository
             return rslt;
         }
 
+        public OperationResult<OperationResults, object> LockGallery(int id, int userID)
+        {
+            return this.SetEditor(id, userID);
+        }
+        public OperationResult<OperationResults, object> UnLockGallery(int id)
+        {
+            return this.SetEditor(id, null);
+        }
+        protected OperationResult<OperationResults, object> SetEditor(int id, int? userID)
+        { 
+            using (var context = this.CreateMainContext())
+            {
+                var record = context.CuratedGalleryRecords.Where(x => x.ID == id).SingleOrDefault();
+
+                if (record == null)
+                    return new OperationResult<OperationResults, object>() { Result = OperationResults.NotFound };
+
+                if (userID.HasValue)
+                {
+                    if (record.Editor.HasValue && record.Editor != userID)
+                        return new OperationResult<OperationResults, object>() { Result = OperationResults.Failure };
+                }
+
+                record.Editor = userID;
+                context.SubmitChanges();
+            }
+            return new OperationResult<OperationResults, object>() { Result = OperationResults.Success };
+        }
+
         public OperationResult<OperationResults, Nullable<bool>> DeleteGallery(int id)
         {
             using (var context = this.CreateMainContext())

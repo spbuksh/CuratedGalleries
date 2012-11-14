@@ -21,6 +21,11 @@ namespace Corbis.CMS.Web.Models
         public string Name { get; set; }
 
         /// <summary>
+        /// Template name
+        /// </summary>
+        public string TemplateName { get; set; }
+
+        /// <summary>
         /// Is gallery enabled
         /// </summary>
         public bool Enabled { get; set; }

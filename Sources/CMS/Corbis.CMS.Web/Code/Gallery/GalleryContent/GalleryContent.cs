@@ -15,8 +15,6 @@ namespace Corbis.CMS.Web.Code
     /// Gallery content. It defines gallery view state.
     /// </summary>
     [Serializable]
-    [KnownType(typeof(QnATextContent))]
-    [KnownType(typeof(PullQuotedTextContent))]
     public class GalleryContent
     {
         #region Gallery Content Data
@@ -49,20 +47,15 @@ namespace Corbis.CMS.Web.Code
         private readonly List<string> m_IgnoredFilePathes = new List<string>();
 
         /// <summary>
-        /// Gallery cover image
-        /// </summary>
-        public GalleryCoverImage CoverImage { get; set; }
-
-        /// <summary>
         /// Gallery images
         /// </summary>
         [XmlArray("Images")]
-        [XmlArrayItem("Image", typeof(GalleryContentImage))]
-        public List<GalleryContentImage> Images
+        [XmlArrayItem("Image", typeof(GalleryImageBase))]
+        public List<GalleryImageBase> Images
         {
             get { return this.m_Images; }
         }
-        private readonly List<GalleryContentImage> m_Images = new List<GalleryContentImage>();
+        private readonly List<GalleryImageBase> m_Images = new List<GalleryImageBase>();
 
 
         /// <summary>
@@ -81,13 +74,18 @@ namespace Corbis.CMS.Web.Code
 
         #region Methods to work with content data
 
+        [XmlIgnore]
+        public GalleryCoverImage CoverImage
+        {
+            get { return this.Images == null || this.Images.Count == 0 ? null : this.Images[0] as GalleryCoverImage; }
+        }
+
         public void Clear(HttpContextBase context = null)
         {
             if (context == null)
                 context = new HttpContextWrapper(HttpContext.Current);
 
-            this.DeleteCoverImage(context);
-            this.DeleteContentImages(null, context);
+            this.DeleteImages((IEnumerable<string>)null, context);
         }
 
         /// <summary>
@@ -95,28 +93,7 @@ namespace Corbis.CMS.Web.Code
         /// </summary>
         /// <param name="ids"></param>
         /// <param name="context"></param>
-        public void DeleteCoverImage(HttpContextBase context = null)
-        {
-            if (this.CoverImage == null)
-                return;
-
-            if (context == null)
-                context = new HttpContextWrapper(HttpContext.Current);
-
-            if (this.CoverImage.SiteUrls != null)
-                this.DeleteImages(this.CoverImage.SiteUrls, context);
-
-            if (this.CoverImage.EditUrls != null)
-                this.DeleteImages(this.CoverImage.EditUrls, context);
-
-            this.CoverImage = null;
-        }
-        /// <summary>
-        /// Use this method to delete images.
-        /// </summary>
-        /// <param name="ids"></param>
-        /// <param name="context"></param>
-        public void DeleteContentImages(IEnumerable<string> ids, HttpContextBase context = null)
+        public void DeleteImages(IEnumerable<string> ids, HttpContextBase context = null)
         {
             if (context == null)
                 context = new HttpContextWrapper(HttpContext.Current);
@@ -136,7 +113,7 @@ namespace Corbis.CMS.Web.Code
 
             if (this.Images.Count != 0)
             {
-                this.Images.Sort(delegate(GalleryContentImage x, GalleryContentImage y) { return x.Order - y.Order; });
+                this.Images.Sort(delegate(GalleryImageBase x, GalleryImageBase y) { return x.Order - y.Order; });
 
                 for (int i = 0; i < this.Images.Count; i++)
                     this.Images[i].Order = i + 1;

@@ -98,7 +98,7 @@ namespace Corbis.CMS.Web.Code
         /// <summary>
         /// Default font family name
         /// </summary>
-        string DefaultFontFamilyName { get; }
+        FontFamily DefaultFontFamily { get; }
 
         /// <summary>
         /// Available font families for gallery

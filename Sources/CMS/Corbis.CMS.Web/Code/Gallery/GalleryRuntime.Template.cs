@@ -217,6 +217,18 @@ namespace Corbis.CMS.Web.Code
             switch (rslt.Result)
             {
                 case OperationResults.Success:
+                    {
+                        lock (m_TemplatesSyncRoot)
+                        {
+                            if (m_Templates != null)
+                            {                               
+                                var item = m_Templates.Where(x => x.ID == id).SingleOrDefault();
+
+                                if (item != null)
+                                    m_Templates.Remove(item);
+                            }
+                        }                        
+                    }
                     return true;
                 case OperationResults.Failure:
                     return false;
