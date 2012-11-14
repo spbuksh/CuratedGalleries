@@ -310,6 +310,7 @@
     <Content Include="Images\gallery.jpg" />
     <Content Include="Images\live_preview.png" />
     <Content Include="Images\loading.gif" />
+    <Content Include="Images\lock.png" />
     <Content Include="Images\photo_add.png" />
     <Content Include="Images\toolbar_button.png" />
     <Content Include="Images\trash.png" />

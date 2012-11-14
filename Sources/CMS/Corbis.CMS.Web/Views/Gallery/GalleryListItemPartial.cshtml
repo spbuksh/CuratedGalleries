@@ -21,7 +21,7 @@
             }
         }
         else {
-            @Html.ActionLink("Lock & Edit", "EditGallery", "Gallery", new { id = this.Model.ID }, new { onclick = string.Format("return onLockGalleryClick('{0}',{1}, this);", this.Url.Action("LockGallery", "Gallery"), this.Model.ID) })
+            @Html.ActionLink("Lock and Edit", "EditGallery", "Gallery", new { id = this.Model.ID }, new { onclick = string.Format("return onLockGalleryClick('{0}',{1}, this);", this.Url.Action("LockGallery", "Gallery"), this.Model.ID) })
             <a href="javascript:void(0)" onclick="DeleteGallery(@this.Model.ID,'@(Url.Action("DeleteGallery", "Gallery"))'); return false;" >Delete</a>
         }
             </div>
