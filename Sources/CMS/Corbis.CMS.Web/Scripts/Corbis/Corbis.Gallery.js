@@ -1,12 +1,14 @@
 ﻿/// ***********  ADD REFERENCES HERE FOR INTELLISENSE SUPPORTING **********
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-ui-1.8.20.js" />
 /// <reference path="~/Scripts/Corbis/Corbis.Common.js" />
 /// ***********************************************************************
 
 
 var GalleryPageMngr =
 {
-    galleryID: null
+    galleryID: null,
+    changeImageOrderUrl: null
 }
 
 //LOAD DOCUMENT
@@ -72,7 +74,7 @@ $(function () {
         if (jimg.length == 0)
             return;
 
-        _swapImages(jcurImg, jimg);
+        _swapImages(jcurImg, jimg, 'up');
     });
 
     //Move image down
@@ -84,13 +86,18 @@ $(function () {
         if (jimg.length == 0)
             return;
 
-        _swapImages(jcurImg, jimg);
+        _swapImages(jcurImg, jimg, 'down');
     });
 
-    var _swapImages = function (jimag1, jimag2) {
+    var _swapImages = function (jimag1, jimag2, direction) {
         var onsuccess = function (result) {
             if (result.success) {
-                jimag1.swapWith(jimag2);
+                if (direction == 'up') {
+                    $(jimag1).insertBefore(jimag2);
+                }
+                else {
+                    $(jimag1).insertAfter(jimag2);
+                }
             }
             else {
                 alert(result.error ? result.error : 'Error. Please update the page');
@@ -104,27 +111,77 @@ $(function () {
         });
     };
 
-//    //load font family combobox content
-//    $('select[name=fontFamily]').click(function () {
-//        var jthis = $(this);
-
-//        if (jthis.attr('corbis-data-loaded'))
-//            return;
-
-//        $.getJSON(GalleryPageMngr.fontFamiliesURL, function (data) {
-//            var selvalue = jthis.children('option:selected').val();
-//            jthis.html('');
-
-//            $.each(data, function (index, item) {
-//                jthis.append("<option value='" + item.value + "'>" + item.text + "</option>");
-//            });
-//            if (selvalue && selvalue != '') {
-//                jthis.children('option[value="' + selvalue + '"]').attr('selected', 'selected');
-//            }
-//            jthis.attr('corbis-data-loaded', '1');
-//        });
-//    });
+    CollapseImagesAll();
 });
+
+function initGalleryImageDragDrop(id) {
+    //!!! See http://threedubmedia.com/code/event/drag !!!
+    var jimg = $('div.contentImage[corbis-item-id="' + id + '"]');
+
+    jimg.find('span.dragndrop').draggable({
+        helper: function () {
+            var jelem = $(this).closest('div.contentImage');
+            var out = ($(jelem).find('div.collapsed').is(':visible') ? $(jelem).find('div.collapsed img') : jelem.find('div.imgPresenter img')).clone();
+            out.attr('corbis-item-id', jelem.attr('corbis-item-id'));
+            return out;
+        },
+        opacity: 0.8,
+        start: function (event, ui) {
+            $('div.contentImage[corbis-item-id="' + ui.helper.attr('corbis-item-id') + '"]').addClass('corbis-drop-ignore');
+        },
+        stop: function (event, ui) {
+            $('div.contentImage').removeClass('corbis-drop-ignore');
+            endWaitCursor();
+        },
+        scrollSpeed: 10,
+        revert: false,
+        zIndex: 100
+    });
+    jimg.droppable({
+        tolerance: 'touch',
+        over: function (event, ui) {
+        },
+        drop: function (event, ui) {
+            var dragID = ui.helper.attr('corbis-item-id');
+            var dropID = $(event.target).attr('corbis-item-id');
+            if (dragID == dropID) return;
+
+            beginWaitCursor();
+
+            var first = null, second = null;
+
+            var drag = $('div.contentImage[corbis-item-id="' + dragID + '"]');
+            var drop = $(drag).next('div.contentImage[corbis-item-id="' + dropID + '"]');
+
+            if (drop.length != 0) {
+                first = drop;
+                second = drag;
+            }
+            else {
+                first = drag;
+                second = $('div.contentImage[corbis-item-id="' + dropID + '"]');
+            }
+
+            if (first.length == 0 || second.length == 0) {
+                endWaitCursor();
+                return;
+            }
+
+            $.ajax({
+                url: GalleryPageMngr.changeImageOrderUrl,
+                type: 'POST',
+                data: { galleryID: GalleryPageMngr.galleryID, firstImageID: first.attr('corbis-item-id'), secondImageID: second.attr('corbis-item-id') },
+                success: function (result) {
+                    if (!result.success) return;
+                    first.insertBefore(second);
+                },
+                complete: function () {
+                    endWaitCursor();
+                }
+            });
+        }
+    });
+}
 
 
 function onCoverContentSaveSuccess(data) {
@@ -203,6 +260,8 @@ function InitContentImage(options) {
     if (options.txtMode) {
         $(jroot).find('div.radioGroup input[corbis-txt-type="' + options.txtMode + '"]').trigger('click');
     }
+
+    initGalleryImageDragDrop(options.imageID);
 }
 
 function ClearGalleryContent(id, url) {

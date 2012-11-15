@@ -1,0 +1,18 @@
+﻿@using Corbis.CMS.Web.Models
+
+<div>
+    @Html.Partial("_FlashUploaderPartial", new FlashUploaderModel() { ElementID = this.ViewBag.SwfElementID })
+</div>
+<script type="text/javascript">
+    $(function () {
+        createImageUploader({ url: '@(Url.HttpRouteUrl("DefaultApi", new { controller="Upload", action="UploadGalleryImage", id = this.ViewBag.GalleryID }))',
+            id: 'singleImageUploader',
+            contentDivID: '@this.ViewBag.SwfElementID',
+            filter: '*.jpg;*.jpeg',
+            uploadCallBack: 'uploadMultipleImageCallback',
+            errorCallBack: 'uploadImageErrorCallback',
+            viewMode: 'multiple',
+            size: { width: 700, height: 300 }
+        });
+    });
+</script>

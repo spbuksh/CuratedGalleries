@@ -305,6 +305,18 @@ namespace Corbis.CMS.Web.Controllers
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="id">Gallery identifier</param>
+        /// <returns></returns>
+        public ActionResult ChangeImageOrder(int galleryID, string firstImageID, string secondImageID)
+        {
+            GalleryRuntime.ChangeContentImageOrder(galleryID, firstImageID, secondImageID);
+
+            return this.Json(new { success = true });
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="id">Gallery id</param>
         /// <param name="name">New gallery name</param>
         /// <returns></returns>
@@ -608,48 +620,12 @@ namespace Corbis.CMS.Web.Controllers
             return this.PartialView("EditImagePopupPartial", model);
         }
 
-        /// <summary>
-        /// Uploads images into the gallery
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [AllowAnonymous]
-        public ActionResult UploadImage(HttpPostedFileBase ff, Nullable<int> id)
+        [HttpGet]
+        public ActionResult UploadMultipleImages(int galleryID, string swfElementID)
         {
-            //TODO: This method does not work // WHY?
-
-            if (!this.ModelState.IsValid)
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Request parameters are not valid");
-
-            if (this.Request.Files.Count != 1)
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Upload image request must have 1 image for uploading");
-
-            string uploadRoot = Path.Combine(GalleryRuntime.GetGalleryPath(id.Value), "Images");
-
-            if (!Directory.Exists(uploadRoot))
-                Directory.CreateDirectory(uploadRoot);
-
-            var file = this.Request.Files[0];
-
-            if (GalleryRuntime.MaxImageSize.HasValue && GalleryRuntime.MaxImageSize.Value < file.ContentLength)
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, string.Format("Uploading file size is {0}byte. Max file size {1}bytes is exceeded", file.ContentLength, GalleryRuntime.MaxImageSize.Value));
-
-            if (GalleryRuntime.MinImageSize.HasValue && file.ContentLength < GalleryRuntime.MinImageSize.Value)
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, string.Format("Uploading file size is {0}byte. Min file size is {1}bytes", file.ContentLength, GalleryRuntime.MaxImageSize.Value));
-
-            string filepath = Path.Combine(uploadRoot, file.FileName);
-
-            try
-            {
-                file.SaveAs(filepath);
-            }
-            catch (Exception ex)
-            {
-                this.Logger.WriteError(ex, string.Format("Uploaded file cannot be saved to '{0}'", filepath));
-                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);
-            }
-
-            return new HttpStatusCodeResult(HttpStatusCode.OK, new Uri(filepath).AbsoluteUri);
+            this.ViewBag.GalleryID = galleryID;
+            this.ViewBag.SwfElementID = swfElementID;
+            return this.PartialView("UploadMultipleImagesPopup");
         }
     }
 }

@@ -14,6 +14,7 @@ jQuery.fn.swapWith = function (to) {
 };
 //----------------------------------------------
 
+
 //---- ONLOAD
 $(function () {
     var jload = $('#loading');
@@ -217,7 +218,7 @@ function showPopupWindow(options) {
                     beforeClose: options.onClosing,
                     close: options.onClosed,
                     create: options.onCreated,
-                    open: options.onopened
+                    open: options.onOpened
                 });
                 jdiv.parent().draggable({ handle: "#draggable" });
 

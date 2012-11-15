@@ -86,6 +86,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GalleryTemplates", "Gallery
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Fonts", "Fonts", "{75A22B73-A023-4D9E-8927-C4921F6AF3B8}"
+	ProjectSection(SolutionItems) = preProject
+		Storage\Deployment\Fonts\RegFonts.bat.local = Storage\Deployment\Fonts\RegFonts.bat.local
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution

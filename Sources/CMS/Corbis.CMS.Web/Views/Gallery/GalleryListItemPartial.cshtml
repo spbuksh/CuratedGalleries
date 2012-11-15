@@ -5,46 +5,54 @@
 @{
     var user = this.GetCurrentUser();
 }
-<div class="galleryItem" corbis-item-id="@this.Model.ID">
-    <div class="imgWrapper">
-        <img src="@Url.Action("GetGalleryCover", "Gallery", new { id = this.Model.ID, height = 100, width = 100 })" alt="" />
+<div class="action_button">
+    <div class="button_list">
+        <ul>
+            <li><a>Edit</a></li>
+            <li><a>Unlock</a></li>
+            <li><a>Preview</a></li>
+            <li><a>Delete</a></li>
+        </ul>
     </div>
-    <div class="infoWrapper">
-        <div class="galleryTitle">
-            <a href="@Url.Action("BuildGallery", "Gallery", new { id = this.Model.ID })" target="_blank">@Html.Raw(this.Model.Name)</a>
-        <div>
-        @if (this.Model.Editor.HasValue) {
-            if (this.Model.Editor.Value == user.ID) {
-                @Html.ActionLink("Edit", "EditGallery", "Gallery", new { id = this.Model.ID }, null)
-                <a href="javascript:void(0)">Unlock</a>
-                <a href="javascript:void(0)" onclick="DeleteGallery(@this.Model.ID,'@(Url.Action("DeleteGallery", "Gallery"))'); return false;" >Delete</a>                
+    <div class="galleryItem" corbis-item-id="@this.Model.ID">
+        <div class="imgWrapper">
+            <img src="@Url.Action("GetGalleryCover", "Gallery", new { id = this.Model.ID, height = 100, width = 100 })" alt="" />
+        </div>
+        <div class="infoWrapper">
+            <div class="galleryTitle">
+                <a href="@Url.Action("BuildGallery", "Gallery", new { id = this.Model.ID })" target="_blank">@Html.Raw(this.Model.Name)</a>
+            <div>
+            @if (this.Model.Editor.HasValue) {
+                if (this.Model.Editor.Value == user.ID) {
+                    @Html.ActionLink("Edit", "EditGallery", "Gallery", new { id = this.Model.ID }, null)
+                    <a href="javascript:void(0)">Unlock</a>
+                    <a href="javascript:void(0)" onclick="DeleteGallery(@this.Model.ID,'@(Url.Action("DeleteGallery", "Gallery"))'); return false;" >Delete</a>                
+                }
             }
-        }
-        else {
-            @Html.ActionLink("Lock and Edit", "EditGallery", "Gallery", new { id = this.Model.ID }, new { onclick = string.Format("return onLockGalleryClick('{0}',{1}, this);", this.Url.Action("LockGallery", "Gallery"), this.Model.ID) })
-            <a href="javascript:void(0)" onclick="DeleteGallery(@this.Model.ID,'@(Url.Action("DeleteGallery", "Gallery"))'); return false;" >Delete</a>
-        }
+            else {
+                @Html.ActionLink("Lock and Edit", "EditGallery", "Gallery", new { id = this.Model.ID }, new { onclick = string.Format("return onLockGalleryClick('{0}',{1}, this);", this.Url.Action("LockGallery", "Gallery"), this.Model.ID) })
+                <a href="javascript:void(0)" onclick="DeleteGallery(@this.Model.ID,'@(Url.Action("DeleteGallery", "Gallery"))'); return false;" >Delete</a>
+            }
+                </div>
             </div>
-        </div>
-        <div class="createDate">
-        <table>
-            <tr>
-                <td>Date created</td>
-                <td>@this.Model.DateCreated.ToString()</td>
-            </tr>
-            <tr>
-                <td>Template</td>
-                <td>@this.Model.TemplateName</td>
-            </tr>
-            <tr>
-                <td>Status</td>
-                <td>Draft</td>
-            </tr>
-        </table>
-        </div>
+            <div class="createDate">
+            <table>
+                <tr>
+                    <td>Date created</td>
+                    <td>@this.Model.DateCreated.ToString()</td>
+                </tr>
+                <tr>
+                    <td>Template</td>
+                    <td>@this.Model.TemplateName</td>
+                </tr>
+                <tr>
+                    <td>Status</td>
+                    <td>Draft</td>
+                </tr>
+            </table>
+            </div>
            
-    </div>
-</div> 
-
-<script type="text/javascript">
-</script>
+        </div>
+    </div> 
+    <div class="clear-fix"></div> 
+</div>

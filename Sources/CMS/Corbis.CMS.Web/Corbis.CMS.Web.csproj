@@ -524,6 +524,7 @@
     <None Include="ApplicationFonts\Sanchez\Sanchez Extralight.otf" />
     <None Include="ApplicationFonts\WisdomScript\Wisdom Script.otf" />
     <Content Include="Views\Gallery\GalleryListItemPartial.cshtml" />
+    <Content Include="Views\Gallery\UploadMultipleImagesPopup.cshtml" />
     <None Include="Web.config.local">
       <SubType>Designer</SubType>
     </None>

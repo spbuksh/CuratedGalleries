@@ -32,6 +32,7 @@
     GalleryPageMngr.deleteContentImageURL = '@Url.Action("DeleteContentImage", "Gallery")';
     GalleryPageMngr.swapImageOrderURL = '@Url.Action("SwapImageOrder", "Gallery")';
     GalleryPageMngr.fontFamiliesURL = '@Url.Action("GetFontFamilies", "Gallery")';
+    GalleryPageMngr.changeImageOrderUrl = '@Url.Action("ChangeImageOrder", "Gallery")';
 </script>
 <div class="globalToolbar">
     <ul>
@@ -83,6 +84,9 @@
     </table>                        
 </div>
 }
+<div>
+    <a href="javascript:void(0)" onclick="uploadGalleryImages(); return false;">Upload Images</a>
+</div>
 <div class="galleryContent">
     @if (this.Model.CoverImage != null) { 
         @Html.Partial("CoverImagePartial", this.Model.CoverImage)
@@ -93,21 +97,7 @@
         }
     }
 </div>
-@Html.Partial("_FlashUploaderPartial", new FlashUploaderModel() { ElementID = "multipleImageUploaderContent" })
 <script type="text/javascript">
-    $(function() {
-        createImageUploader({ url: '@(Url.HttpRouteUrl("DefaultApi", new { controller="Upload", action="UploadGalleryImage", id = this.Model.ID.Value }))',
-            id: 'multipleImageUploader',
-            contentDivID: 'multipleImageUploaderContent',
-            filter: '*.jpg;*.jpeg',
-            uploadCallBack: 'uploadMultipleImageCallback',
-            errorCallBack: 'uploadImageErrorCallback',
-            viewMode: 'multiple',
-            size: { width: 700, height: 200 }
-        });
-
-        $('.contentImage').textaligment();
-    });
     function uploadMultipleImageCallback(result) {
         var onsuccess = function (data) {
             if (data.success === false) {
@@ -137,4 +127,16 @@
             onClosed: function () { swfobject.removeSWF('singleImageUploader'); } //TODO: it is hack. In the future it must be deleted and refactored
         });
     }
+    function uploadGalleryImages() {
+        var swfElementID = 'multipleImageUploader' + '@Guid.NewGuid().ToString("N")';
+        showPopupWindow({
+            jdialogOptions: { modal: true, height: 350, width: 750 },
+            popupID: 'editGalleryImage',
+            title: 'Upload Images',
+            url: '@Url.Action("UploadMultipleImages", "Gallery")',
+            params: { galleryID: '@this.Model.ID', swfElementID: swfElementID },
+            onClosed: function () { swfobject.removeSWF(swfElementID); } //TODO: it is hack. In the future it must be deleted and refactored
+        });
+    }
+
 </script>

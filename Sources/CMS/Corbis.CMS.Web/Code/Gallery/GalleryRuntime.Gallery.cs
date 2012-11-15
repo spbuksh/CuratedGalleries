@@ -478,5 +478,30 @@ namespace Corbis.CMS.Web.Code
             transform.Transform(xmlfilepath, outfilepath);
         }
 
+
+        public static void ChangeContentImageOrder(int galleryID, string firstImageID, string secondImageID)
+        {
+            lock (GetGallerySyncRoot(galleryID))
+            {
+                var content = LoadGalleryContent(galleryID, false);
+
+                var first = content.Images.First(x => x.ID == firstImageID);
+                content.Images.Remove(first);
+
+                for (int i = 1; i < content.Images.Count; i++)
+                {
+                    if (content.Images[i].ID != secondImageID)
+                        continue;
+
+                    content.Images.Insert(i, first);
+                    break;
+                }
+
+                for (int i = 1; i < content.Images.Count; i++)
+                    content.Images[i].Order = i + 1;
+
+                SaveGalleryContent(galleryID, content, false);
+            }
+        }
     }
 }
