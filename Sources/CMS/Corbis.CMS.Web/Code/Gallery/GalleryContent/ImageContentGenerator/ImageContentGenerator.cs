@@ -13,9 +13,9 @@ namespace Corbis.CMS.Web.Code.Gallery.GalleryContent.ImageContentGenerator
 {
     public  static class ImageContentGenerator
     {
-        public static string GererateImage(GalleryContentImage image,int galleryId)
+        public static string GererateImage(GalleryContentImage image,int galleryId, Font galleryFont)
         {
-             Font objFont = new Font("Arial", 10, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            galleryFont = new Font(galleryFont.FontFamily, galleryFont.Size + 10);
             var text = string.Empty;
             var textColor = Color.Black;
             switch (image.TextContent.ContentType)
@@ -25,7 +25,7 @@ namespace Corbis.CMS.Web.Code.Gallery.GalleryContent.ImageContentGenerator
                         var result = image.TextContent as QnATextContent;
 
                         return ImageHelper.SaveQaImage(result.Question, result.Answer, result.Size.Value.Width,
-                                                       result.Size.Value.Height, objFont,
+                                                       result.Size.Value.Height, galleryFont,
                                                        GalleryRuntime.GetGalleryContentPath(galleryId),
                                                        Path.GetFileNameWithoutExtension(image.Name), ImageFormat.Png);
                     }
@@ -87,7 +87,7 @@ namespace Corbis.CMS.Web.Code.Gallery.GalleryContent.ImageContentGenerator
             }
 
 
-            return ImageHelper.SaveImage(text, objFont, GalleryRuntime.GetGalleryContentPath(galleryId), Path.GetFileNameWithoutExtension(image.Name), textColor, dock, 400, 500,
+            return ImageHelper.SaveImage(text, galleryFont, GalleryRuntime.GetGalleryContentPath(galleryId), Path.GetFileNameWithoutExtension(image.Name), textColor, dock, 400, 500,
                                   false, null, ImageFormat.Png);
         }
     }

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Web;
 using Corbis.CMS.Web.Code.Gallery.GalleryContent.ImageContentGenerator;
@@ -187,7 +189,8 @@ namespace Corbis.CMS.Web.Code
                 var content = LoadGalleryContent(galleryID);
                 var image = content.Images.Single(x => x.ID == imageID);
                 handler(image);
-                image.ImageContentUrl = Utils.AbsoluteToVirtual(ImageContentGenerator.GererateImage(image as GalleryContentImage, galleryID), null);
+                TypeConverter typeConverter = TypeDescriptor.GetConverter(typeof(Font));
+                image.ImageContentUrl = Utils.AbsoluteToVirtual(ImageContentGenerator.GererateImage(image as GalleryContentImage, galleryID, (Font)typeConverter.ConvertFromString(content.Font.FamilyName)), null);
                 image.ImageContentName = Path.GetFileName(image.ImageContentUrl);
                 SaveGalleryContent(galleryID, content);
             };

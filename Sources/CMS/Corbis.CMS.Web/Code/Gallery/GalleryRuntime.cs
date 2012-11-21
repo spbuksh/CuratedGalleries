@@ -23,7 +23,7 @@ namespace Corbis.CMS.Web.Code
         /// <summary>
         /// Gallery template repository
         /// </summary>
-        protected static ICuratedGalleryRepository GalleryRepository 
+        protected static ICuratedGalleryRepository GalleryRepository
         {
             get
             {
@@ -105,12 +105,12 @@ namespace Corbis.CMS.Web.Code
         /// </summary>
         public static FontFamily[] ApplicationFonts
         {
-            get 
+            get
             {
-                if(m_ApplicationFonts == null)
+                if (m_ApplicationFonts == null)
                 {
                     var fonts = FontLoader.LoadFonts();
-                    m_ApplicationFonts = fonts == null ? new FontFamily[] { } : fonts.Families;
+                    m_ApplicationFonts = fonts != null ? FontFamily.Families.Union(fonts.Families).Distinct((x, y) => x.Name == y.Name).ToArray() : FontFamily.Families;
                 }
                 return m_ApplicationFonts;
             }

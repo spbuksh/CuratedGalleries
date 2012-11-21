@@ -154,13 +154,22 @@ namespace Corbis.CMS.Web.Code
         {
             get
             {
-                if (m_DefaultFontFamily == null)
+                if (this.m_DefaultFontFamily == null)
                 {
-                    if (this.FontFamilies == null || this.FontFamilies.Count == 0)
-                        return null;
+                    var allfonts = (this as ITemplateGallerySettings).FontFamilies;
 
-                    FontFamilyItem font = this.FontFamilies == null ? null : this.FontFamilies.Where(x => x.IsDefault).SingleOrDefault();
-                    this.m_DefaultFontFamily = font == null ? this.FontFamilies[0].FontFamily : font.FontFamily;
+                    if (this.FontFamilies == null || this.FontFamilies.Count == 0)
+                    {
+                        this.m_DefaultFontFamily = allfonts[0];
+                    }
+                    else
+                    {
+                        FontFamilyItem font = this.FontFamilies == null ? null : this.FontFamilies.Where(x => x.IsDefault).SingleOrDefault();
+                        this.m_DefaultFontFamily = allfonts.Where(x => string.Equals(x.Name, font.Name, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
+
+                        if (this.m_DefaultFontFamily == null)
+                            this.m_DefaultFontFamily = allfonts[0];
+                    }
                 }
                 return this.m_DefaultFontFamily;
             }
