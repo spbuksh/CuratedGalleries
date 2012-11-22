@@ -1,0 +1,35 @@
+﻿<?xml version="1.0"?>
+<configuration>
+    <configSections>
+        <!-- ****************** Custom Sections ********************** -->
+        <section name="ApplicationDescriptor" type="Corbis.Common.Configuration.ApplicationDescriptorConfigSection, Corbis.Common, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"/>
+        <section name="LoggingSection" type="Corbis.Logging.Core.Configuration.LoggingConfigurationSection, Corbis.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"/>
+        <section name="RepositoryProvider" type="Corbis.Presentation.Common.RepositoryProvider.RepositoryProviderConfigurationSection, Corbis.Presentation.Common, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"/>
+        <section name="JobSection" type="Corbis.Job.Core.JobConfigurationSection, Corbis.Job, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+        <!-- ********************************************************* -->
+    </configSections>
+    <!-- ****************** Begin Custom Sections ********************** -->
+    <ApplicationDescriptor>
+        <Details name="Corbis.CMS.JobService" version="1.0.0.0"/>
+    </ApplicationDescriptor>
+    <LoggingSection async="false" appSectionName="ApplicationDescriptor">
+        <Loggers>
+            <add name="default" enabled="true" type="Corbis.Logging.Loggers.DefaultLogger, Corbis.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"/>
+        </Loggers>
+    </LoggingSection>
+    <RepositoryProvider>
+        <Settings path="bin\Corbis.CMS.Repository.dll" creationMode="Singleton"/>
+    </RepositoryProvider>
+    <JobSection jobConfigFilePath="JobConfig.xml" schedulePeriod="5000">
+        <storage mode="XmlFile" filepath="JobStorage.xml" />
+        <jobs>
+            <add name="Corbis.CMS.JobRuner" enabled="true" type="Corbis.CMS.Jobs.OutsideJobRuner, Corbis.CMS.Jobs, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" period="20000" />
+        </jobs>
+    </JobSection>
+    <appSettings>
+        <add key="jobExecuteUrl" value="http://localhost:56057/api/job/execute"/>
+    </appSettings>
+    <startup>
+        <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.0"/>
+    </startup>
+</configuration>

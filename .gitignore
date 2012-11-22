@@ -50,3 +50,4 @@ Sources/Share/Corbis.Logging/NLog.config
 # ************************************************************************
 Sources/CMS/Corbis.CMS.Web/App_Data/Corbis_Garbage.mdf
 Sources/CMS/Corbis.CMS.Web/App_Data/Corbis_Garbage_log.LDF
+Sources/CMS/Corbis.CMS.ScheduledJob/App.config

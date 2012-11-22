@@ -951,11 +951,11 @@ padding: 0 1.5%;
 /*gallery styles*/
 .galleryContent label{font-size:13px;}
 .galleryContent input[type=submit]{font-size:13px;}
-.coverImage{margin-bottom: 20px;border: 1px solid #D4D4D4;padding: 10px 30px;position: relative;}
-.contentImage{margin-bottom: 20px;border: 1px solid #D4D4D4;padding: 10px 30px;position: relative;}
-.galleryItem{ overflow: hidden;background-color: #EFEEEF;display: table-cell;padding-left: 5px;}
+.coverImage{margin-bottom: 20px;border: 1px solid #CACACA;padding: 10px 30px;position: relative;}
+.contentImage{margin-bottom: 20px;border: 1px solid #CACACA;padding: 10px 30px;position: relative;}
+.galleryItem{ overflow: hidden;background-color: #EFEEEF;}
 .galleryItem:last-of-type{margin-bottom: 0px;}
-.galleryItem .imgWrapper{ border: 1px solid #666;width: 100px;height: 100px;float: left;}
+.galleryItem .imgWrapper{ border: 1px solid #CACACA;width: 100px;height: 100px;float: left;}
 .galleryItem .infoWrapper{height: 80px;margin-left: 110px;}
 .galleryItem .galleryTitle{ font-weight: bold;margin-bottom: 10px;}
 .galleryItem .galleryTitle div{ display: inline;margin-left: 190px;font-weight: normal;}
@@ -1042,11 +1042,25 @@ padding: 0 1.5%;
 .blockWP input[type=text]{ width: 240px;}
 .left_side{ float: left;}
 .right_side{ float:right;}
-.action_button{margin-bottom: 15px;border: 1px solid #D4D4D4;display: table;width: 100%;}
-.action_button .button_list{display: table-cell;background-color: #000;width: 100px;text-align: center;}
-.action_button .button_list ul{ list-style:none;margin: 0;padding: 0;}
+.action_button{margin-bottom: 15px;border: 1px solid #CACACA;width: 100%;}
+.action_button .button_list{float: left;background-color: #fff;width: 25px;}
+.action_button .button_list ul{ list-style:none;margin: 0;padding: 0;-webkit-margin-before: 0;-webkit-margin-after: 0;-webkit-margin-start: 0px;-webkit-margin-end: 0px;-webkit-padding-start: 0px;}
 .action_button .button_list ul li{ cursor: pointer;}
-.action_button .button_list ul a{ display: block;padding: 5px;color: #fff;}
+.action_button .button_list ul a{ display: block;background: url('../Images/button_sprite.png') no-repeat;width: 25px;height: 25px;padding: 0px;}
+
+.action_button .button_list ul a.delete{ background-position: 0 0;}
+.action_button .button_list ul a.lock{ background-position: 0 -25px;}
+.action_button .button_list ul a.edit{ background-position: 0 -50px;}
+.action_button .button_list ul a.unlock{background-position: 0 -75px}
+.action_button .button_list ul a.preview{ background-position: 0 -100px;}
+
+.action_button .button_list ul a.delete:hover{ background-position: -25px 0;}
+.action_button .button_list ul a.lock:hover{ background-position: -25px -25px;}
+.action_button .button_list ul a.edit:hover{ background-position: -25px -50px;}
+.action_button .button_list ul a.unlock:hover{background-position: -25px -75px}
+.action_button .button_list ul a.preview:hover{ background-position: -25px -100px;}
+
+
 /*
 .templPreview{overflow: hidden;zoom:1;}
 .templPreview ul{list-style: none;}

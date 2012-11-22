@@ -205,9 +205,12 @@
     <Compile Include="Code\Gallery\TemplateContent\GalleryTemplate.cs" />
     <Compile Include="Code\Gallery\TemplateContent\IGalleryTemplate.cs" />
     <Compile Include="Code\Gallery\TemplateContent\GalleryTemplateDescriptor.cs" />
+    <Compile Include="Code\SystemJobs\FCG.cs" />
+    <Compile Include="Code\SystemJobs\GalleryPublisher.cs" />
     <Compile Include="Code\RepositoryProvider.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Api\ApiControllerBase.cs" />
+    <Compile Include="Controllers\Api\JobController.cs" />
     <Compile Include="Controllers\Api\UploadController.cs" />
     <Compile Include="Controllers\CMSControllerBase.cs" />
     <Compile Include="Controllers\GalleryController.cs" />
@@ -315,6 +318,7 @@
     <Content Include="Images\toolbar_button.png" />
     <Content Include="Images\trash.png" />
     <Content Include="Images\up_down_button.png" />
+    <Content Include="JobConfig.xml" />
     <Content Include="Scripts\Corbis\Corbis.Gallery.js" />
     <Content Include="Scripts\Corbis\Corbis.Common.js" />
     <Content Include="Scripts\Corbis\Corbis.GalleryIndex.js" />
@@ -401,6 +405,10 @@
     <ProjectReference Include="..\..\Share\Corbis.Presentation.Common\Corbis.Presentation.Common.csproj">
       <Project>{A749A606-1A43-4A0F-8A29-D42B1C0339B4}</Project>
       <Name>Corbis.Presentation.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Share\Corbis.ScheduledJob\Corbis.Job.csproj">
+      <Project>{4A232CDA-DF71-4E11-8080-973381FC841F}</Project>
+      <Name>Corbis.Job</Name>
     </ProjectReference>
     <ProjectReference Include="..\Corbis.CMS.Entity\Corbis.CMS.Entity.csproj">
       <Project>{FE8695FC-0FD1-491A-AF8D-ABB6E74B14EF}</Project>
