@@ -1,0 +1,16 @@
+﻿<CONFIG_FILE_ROOT>
+
+    <!-- Section registration -->
+    <configSections>
+        <section name="JobSection" type="Corbis.Job.Core.JobConfigurationSection, Corbis.Job, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"/>
+    </configSections>
+
+    <!-- Section definition -->
+    <JobSection configFilePath="Jobs.xml">
+        <Jobs>
+            <add name="default" enabled="true" type=".. job assembly-qualified type name .." period="120000" />
+            <add ...="" />
+        </Jobs>
+    </JobSection>
+
+</CONFIG_FILE_ROOT>

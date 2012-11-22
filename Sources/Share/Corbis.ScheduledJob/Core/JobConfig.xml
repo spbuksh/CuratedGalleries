@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<jobs>
+    <job name="job unique name1">
+        <!-- job specific configuration -->
+    </job>
+    <job name="job unique name2">
+        <!-- job specific configuration -->
+    </job>
+</jobs>

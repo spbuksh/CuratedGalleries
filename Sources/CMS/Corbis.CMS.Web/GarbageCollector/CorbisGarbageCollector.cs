@@ -18,12 +18,6 @@ namespace Corbis.CMS.Web.GarbageCollector
     /// </summary>
     public static class CorbisGarbageCollector
     {
-        #region Constructor
-
-        #endregion
-
-        #region Properties
-
         /// <summary>
         /// System logger
         /// </summary>
@@ -31,91 +25,6 @@ namespace Corbis.CMS.Web.GarbageCollector
         {
             get { return LogManagerProvider.Instance; }
         }
-
-        private static string ConnectionString
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(m_ConnectionString))
-                {
-                    lock (typeof(CorbisGarbageCollector))
-                    {
-                        if (string.IsNullOrEmpty(m_ConnectionString))
-                            m_ConnectionString = ConfigurationManager.ConnectionStrings["FGC"].ConnectionString;
-                    }
-                }
-                return m_ConnectionString;
-            }
-        }
-        private static string m_ConnectionString = null;
-
-        #endregion
-
-        #region Methods
-
-        /// <summary>
-        /// Checks if need to clear.
-        /// </summary>
-        /// <returns></returns>
-        private static bool Check()
-        {
-            var result = false;
-            try
-            {
-                using (var connection = SqlHelper.GetConnection(ConnectionString))
-                {
-                    if (connection.State != ConnectionState.Open)
-                        connection.Open();
-
-                    using (var command = connection.GetCommand("SELECT TOP 1 ID, LastTimeCollected FROM Tasks  ORDER BY LastTimeCollected", CommandType.Text))
-                    {
-                        using (var reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                var lastTimeCollected = (DateTime)reader["LastTimeCollected"];
-                                if ((DateTime.Now - lastTimeCollected).Days >= 1)
-                                {
-                                    result = true;
-                                }
-                            }
-                            reader.Close();
-
-                        }
-                    }
-                }
-            }
-            catch (SqlException e)
-            {
-                Logger.WriteError(e);
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// Adds new Record when Collected Finished.
-        /// </summary>
-        private static void ApplyResults()
-        {
-            try
-            {
-                using (var connection = SqlHelper.GetConnection(ConnectionString))
-                {
-                    using (var command = connection.GetCommand("INSERT INTO dbo.Tasks (LastTimeCollected) VALUES (@LastTimeCollected)", CommandType.Text))
-                    {
-                        command.AddParameter("@LastTimeCollected", DateTime.Now, SqlDbType.DateTime);
-                        command.ExecuteNonQuery();
-                    }
-                }
-            }
-            catch (SqlException e)
-            {
-                Logger.WriteError(e);
-            }
-        }
-
-
-
 
         /// <summary>
         /// Removes all not actual Templates.
@@ -128,18 +37,20 @@ namespace Corbis.CMS.Web.GarbageCollector
                 var actualTemplates = GalleryRuntime.GetTemplates().Select(_ => _.ID.ToString()).ToList();
                 var dirictories = root.GetDirectories().Select(_ => _.Name).ToList();
                 var dirictoriesToRemove = dirictories.Except(actualTemplates).ToList();
-                var itemToRemove = root.GetDirectories().Where(_ => dirictoriesToRemove.Contains(_.Name)).ToList();
-                foreach (var directoryInfo in itemToRemove)
+
+                foreach (var directoryInfo in root.GetDirectories().Where(_ => dirictoriesToRemove.Contains(_.Name)))
                 {
-                    directoryInfo.Remove();
+                    try     { directoryInfo.Remove(); }
+                    catch   { }
                 }
             }
             catch (Exception ex)
             {
                 Logger.WriteError(ex);
+#if DEBUG
                 throw;
+#endif
             }
-
         }
 
         /// <summary>
@@ -153,16 +64,19 @@ namespace Corbis.CMS.Web.GarbageCollector
                 var actualGalleries = GalleryRuntime.GetGalleries().Select(_ => _.ID.ToString()).ToList();
                 var dirictories = root.GetDirectories().Select(_ => _.Name).ToList();
                 var dirictoriesToRemove = dirictories.Except(actualGalleries).ToList();
-                var itemToRemove = root.GetDirectories().Where(_ => dirictoriesToRemove.Contains(_.Name)).ToList();
-                foreach (var directoryInfo in itemToRemove)
+
+                foreach (var directoryInfo in root.GetDirectories().Where(_ => dirictoriesToRemove.Contains(_.Name)))
                 {
-                    directoryInfo.Remove();
+                    try     { directoryInfo.Remove(); }
+                    catch   { }
                 }
             }
             catch (Exception ex)
             {
                 Logger.WriteError(ex);
+#if DEBUG
                 throw;
+#endif
             }
         }
 
@@ -173,17 +87,19 @@ namespace Corbis.CMS.Web.GarbageCollector
         {
             try
             {
-                if (!Check()) return;
-                CollectTemplates();
+                //If we have N actions then (N-1) are started async. Last one is working in the same thread
+                Action action = delegate() { CollectTemplates(); };
+                var asyncRslt = action.BeginInvoke(null, null);
                 CollectGalleries();
-                ApplyResults();
+                System.Threading.WaitHandle.WaitAll(new System.Threading.WaitHandle[] { asyncRslt.AsyncWaitHandle });
             }
             catch (Exception ex)
             {
                 Logger.WriteError(ex);
+#if DEBUG
+                throw;
+#endif
             }
         }
-
-        #endregion
     }
 }

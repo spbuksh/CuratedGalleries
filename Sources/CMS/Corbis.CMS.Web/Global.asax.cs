@@ -22,25 +22,15 @@ namespace Corbis.CMS.Web
     public class MvcApplication : System.Web.HttpApplication
     {
         public MvcApplication()
-        {
-            //BeginRequest += MvcApplicationBeginRequest;
-        }
-
-        static void MvcApplicationBeginRequest(object sender, EventArgs e)
-        {
-            CorbisGarbageCollector.Collect();
-        }
-       
+        { }
 
         /// <summary>
         /// Root unity container for the entire application
         /// </summary>
         public static IUnityContainer Container { get; set; }
 
-
         protected void Application_Start()
-        {
-            
+        {            
             AreaRegistration.RegisterAllAreas();
 
             WebApiConfig.Register(GlobalConfiguration.Configuration);
@@ -48,7 +38,6 @@ namespace Corbis.CMS.Web
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             AuthConfig.RegisterAuth();
-
 
             //*************************************************************
             AppDomain.CurrentDomain.UnhandledException +=

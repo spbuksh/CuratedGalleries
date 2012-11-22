@@ -4,16 +4,18 @@
 
 @{
     var user = this.GetCurrentUser();
+
+    bool isLocked = this.Model.Editor.HasValue;
 }
 <div class="action_button">
-    <div class="button_list">
+@*    <div class="button_list">
         <ul>
-            <li><a>Edit</a></li>
-            <li><a>Unlock</a></li>
-            <li><a>Preview</a></li>
-            <li><a>Delete</a></li>
+            <li><a class="edit"></a></li>
+            <li><a class="unlock"></a></li>
+            <li><a class="preview"></a></li>
+            <li><a class="delete"></a></li>
         </ul>
-    </div>
+    </div>*@
     <div class="galleryItem" corbis-item-id="@this.Model.ID">
         <div class="imgWrapper">
             <img src="@Url.Action("GetGalleryCover", "Gallery", new { id = this.Model.ID, height = 100, width = 100 })" alt="" />
@@ -47,7 +49,7 @@
                 </tr>
                 <tr>
                     <td>Status</td>
-                    <td>Draft</td>
+                    <td>Un-Published</td>
                 </tr>
             </table>
             </div>
