@@ -474,6 +474,25 @@ namespace Corbis.CMS.Web.Controllers
             return this.Json(new { success = true });
         }
 
+        [HttpPost]
+        public ActionResult SetEmptyCoverContent(int id)
+        {
+            if (!this.ModelState.IsValid)
+                return this.Json(new { success = false });
+
+            var content = GalleryRuntime.LoadGalleryContent(id);
+            content.CoverImage.Biography = string.Empty;
+            content.CoverImage.Headline.Text = string.Empty;
+            content.CoverImage.Headline.FontSize = 0;
+            content.CoverImage.Standfirst.Text = string.Empty;
+            content.CoverImage.Standfirst.FontSize = 0;
+            content.CoverImage.TextPosition = CoverTextContentPositions.TopLeft;
+            GalleryRuntime.SaveGalleryContent(id, content);
+
+            return this.Json(new { success = true });
+        }
+
+
         #endregion Edit Gallery
 
         /// <summary>
