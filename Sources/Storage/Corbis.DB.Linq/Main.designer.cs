@@ -45,9 +45,15 @@ namespace Corbis.DB.Linq
     partial void InsertGalleryTemplateRecord(GalleryTemplateRecord instance);
     partial void UpdateGalleryTemplateRecord(GalleryTemplateRecord instance);
     partial void DeleteGalleryTemplateRecord(GalleryTemplateRecord instance);
+    partial void InsertCuratedGalleryStatusRecord(CuratedGalleryStatusRecord instance);
+    partial void UpdateCuratedGalleryStatusRecord(CuratedGalleryStatusRecord instance);
+    partial void DeleteCuratedGalleryStatusRecord(CuratedGalleryStatusRecord instance);
     partial void InsertCuratedGalleryRecord(CuratedGalleryRecord instance);
     partial void UpdateCuratedGalleryRecord(CuratedGalleryRecord instance);
     partial void DeleteCuratedGalleryRecord(CuratedGalleryRecord instance);
+    partial void InsertGalleryPublicationPeriodRecord(GalleryPublicationPeriodRecord instance);
+    partial void UpdateGalleryPublicationPeriodRecord(GalleryPublicationPeriodRecord instance);
+    partial void DeleteGalleryPublicationPeriodRecord(GalleryPublicationPeriodRecord instance);
     #endregion
 		
 		public MainDataContext() : 
@@ -128,11 +134,27 @@ namespace Corbis.DB.Linq
 			}
 		}
 		
+		public System.Data.Linq.Table<CuratedGalleryStatusRecord> CuratedGalleryStatusRecords
+		{
+			get
+			{
+				return this.GetTable<CuratedGalleryStatusRecord>();
+			}
+		}
+		
 		public System.Data.Linq.Table<CuratedGalleryRecord> CuratedGalleryRecords
 		{
 			get
 			{
 				return this.GetTable<CuratedGalleryRecord>();
+			}
+		}
+		
+		public System.Data.Linq.Table<GalleryPublicationPeriodRecord> GalleryPublicationPeriodRecords
+		{
+			get
+			{
+				return this.GetTable<GalleryPublicationPeriodRecord>();
 			}
 		}
 	}
@@ -1146,6 +1168,120 @@ namespace Corbis.DB.Linq
 		}
 	}
 	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.CuratedGalleryStatus")]
+	public partial class CuratedGalleryStatusRecord : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private short _ID;
+		
+		private string _Name;
+		
+		private EntitySet<CuratedGalleryRecord> _CuratedGalleryRecords;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIDChanging(short value);
+    partial void OnIDChanged();
+    partial void OnNameChanging(string value);
+    partial void OnNameChanged();
+    #endregion
+		
+		public CuratedGalleryStatusRecord()
+		{
+			this._CuratedGalleryRecords = new EntitySet<CuratedGalleryRecord>(new Action<CuratedGalleryRecord>(this.attach_CuratedGalleryRecords), new Action<CuratedGalleryRecord>(this.detach_CuratedGalleryRecords));
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", AutoSync=AutoSync.OnInsert, DbType="SmallInt NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public short ID
+		{
+			get
+			{
+				return this._ID;
+			}
+			set
+			{
+				if ((this._ID != value))
+				{
+					this.OnIDChanging(value);
+					this.SendPropertyChanging();
+					this._ID = value;
+					this.SendPropertyChanged("ID");
+					this.OnIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string Name
+		{
+			get
+			{
+				return this._Name;
+			}
+			set
+			{
+				if ((this._Name != value))
+				{
+					this.OnNameChanging(value);
+					this.SendPropertyChanging();
+					this._Name = value;
+					this.SendPropertyChanged("Name");
+					this.OnNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CuratedGalleryStatusRecord_CuratedGallery", Storage="_CuratedGalleryRecords", ThisKey="ID", OtherKey="StatusID")]
+		public EntitySet<CuratedGalleryRecord> CuratedGalleryRecords
+		{
+			get
+			{
+				return this._CuratedGalleryRecords;
+			}
+			set
+			{
+				this._CuratedGalleryRecords.Assign(value);
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_CuratedGalleryRecords(CuratedGalleryRecord entity)
+		{
+			this.SendPropertyChanging();
+			entity.CuratedGalleryStatusRecord = this;
+		}
+		
+		private void detach_CuratedGalleryRecords(CuratedGalleryRecord entity)
+		{
+			this.SendPropertyChanging();
+			entity.CuratedGalleryStatusRecord = null;
+		}
+	}
+	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.CuratedGallery")]
 	public partial class CuratedGalleryRecord : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -1168,7 +1304,13 @@ namespace Corbis.DB.Linq
 		
 		private System.Nullable<int> _Editor;
 		
+		private short _StatusID;
+		
+		private EntitySet<GalleryPublicationPeriodRecord> _GalleryPublicationPeriodRecords;
+		
 		private EntityRef<AdminUserMembershipRecord> _AdminUserMembershipRecord;
+		
+		private EntityRef<CuratedGalleryStatusRecord> _CuratedGalleryStatusRecord;
 		
 		private EntityRef<FileRecord> _FileRecord;
 		
@@ -1194,11 +1336,15 @@ namespace Corbis.DB.Linq
     partial void OnArchiveChanged();
     partial void OnEditorChanging(System.Nullable<int> value);
     partial void OnEditorChanged();
+    partial void OnStatusIDChanging(short value);
+    partial void OnStatusIDChanged();
     #endregion
 		
 		public CuratedGalleryRecord()
 		{
+			this._GalleryPublicationPeriodRecords = new EntitySet<GalleryPublicationPeriodRecord>(new Action<GalleryPublicationPeriodRecord>(this.attach_GalleryPublicationPeriodRecords), new Action<GalleryPublicationPeriodRecord>(this.detach_GalleryPublicationPeriodRecords));
 			this._AdminUserMembershipRecord = default(EntityRef<AdminUserMembershipRecord>);
+			this._CuratedGalleryStatusRecord = default(EntityRef<CuratedGalleryStatusRecord>);
 			this._FileRecord = default(EntityRef<FileRecord>);
 			this._GalleryTemplateRecord = default(EntityRef<GalleryTemplateRecord>);
 			OnCreated();
@@ -1376,6 +1522,43 @@ namespace Corbis.DB.Linq
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StatusID", DbType="SmallInt NOT NULL")]
+		public short StatusID
+		{
+			get
+			{
+				return this._StatusID;
+			}
+			set
+			{
+				if ((this._StatusID != value))
+				{
+					if (this._CuratedGalleryStatusRecord.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnStatusIDChanging(value);
+					this.SendPropertyChanging();
+					this._StatusID = value;
+					this.SendPropertyChanged("StatusID");
+					this.OnStatusIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CuratedGallery_GalleryPublicationPeriod", Storage="_GalleryPublicationPeriodRecords", ThisKey="ID", OtherKey="GalleryID")]
+		public EntitySet<GalleryPublicationPeriodRecord> GalleryPublicationPeriodRecords
+		{
+			get
+			{
+				return this._GalleryPublicationPeriodRecords;
+			}
+			set
+			{
+				this._GalleryPublicationPeriodRecords.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AdminUserMembershipRecord_CuratedGallery", Storage="_AdminUserMembershipRecord", ThisKey="Editor", OtherKey="ID", IsForeignKey=true)]
 		public AdminUserMembershipRecord AdminUserMembershipRecord
 		{
@@ -1406,6 +1589,40 @@ namespace Corbis.DB.Linq
 						this._Editor = default(Nullable<int>);
 					}
 					this.SendPropertyChanged("AdminUserMembershipRecord");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CuratedGalleryStatusRecord_CuratedGallery", Storage="_CuratedGalleryStatusRecord", ThisKey="StatusID", OtherKey="ID", IsForeignKey=true)]
+		public CuratedGalleryStatusRecord CuratedGalleryStatusRecord
+		{
+			get
+			{
+				return this._CuratedGalleryStatusRecord.Entity;
+			}
+			set
+			{
+				CuratedGalleryStatusRecord previousValue = this._CuratedGalleryStatusRecord.Entity;
+				if (((previousValue != value) 
+							|| (this._CuratedGalleryStatusRecord.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CuratedGalleryStatusRecord.Entity = null;
+						previousValue.CuratedGalleryRecords.Remove(this);
+					}
+					this._CuratedGalleryStatusRecord.Entity = value;
+					if ((value != null))
+					{
+						value.CuratedGalleryRecords.Add(this);
+						this._StatusID = value.ID;
+					}
+					else
+					{
+						this._StatusID = default(short);
+					}
+					this.SendPropertyChanged("CuratedGalleryStatusRecord");
 				}
 			}
 		}
@@ -1474,6 +1691,193 @@ namespace Corbis.DB.Linq
 						this._TemplateID = default(int);
 					}
 					this.SendPropertyChanged("GalleryTemplateRecord");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_GalleryPublicationPeriodRecords(GalleryPublicationPeriodRecord entity)
+		{
+			this.SendPropertyChanging();
+			entity.CuratedGalleryRecord = this;
+		}
+		
+		private void detach_GalleryPublicationPeriodRecords(GalleryPublicationPeriodRecord entity)
+		{
+			this.SendPropertyChanging();
+			entity.CuratedGalleryRecord = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.GalleryPublicationPeriod")]
+	public partial class GalleryPublicationPeriodRecord : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private long _ID;
+		
+		private int _GalleryID;
+		
+		private System.DateTime _Start;
+		
+		private System.Nullable<System.DateTime> _End;
+		
+		private EntityRef<CuratedGalleryRecord> _CuratedGalleryRecord;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIDChanging(long value);
+    partial void OnIDChanged();
+    partial void OnGalleryIDChanging(int value);
+    partial void OnGalleryIDChanged();
+    partial void OnStartChanging(System.DateTime value);
+    partial void OnStartChanged();
+    partial void OnEndChanging(System.Nullable<System.DateTime> value);
+    partial void OnEndChanged();
+    #endregion
+		
+		public GalleryPublicationPeriodRecord()
+		{
+			this._CuratedGalleryRecord = default(EntityRef<CuratedGalleryRecord>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", AutoSync=AutoSync.OnInsert, DbType="BigInt NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public long ID
+		{
+			get
+			{
+				return this._ID;
+			}
+			set
+			{
+				if ((this._ID != value))
+				{
+					this.OnIDChanging(value);
+					this.SendPropertyChanging();
+					this._ID = value;
+					this.SendPropertyChanged("ID");
+					this.OnIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GalleryID", DbType="Int NOT NULL")]
+		public int GalleryID
+		{
+			get
+			{
+				return this._GalleryID;
+			}
+			set
+			{
+				if ((this._GalleryID != value))
+				{
+					if (this._CuratedGalleryRecord.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnGalleryIDChanging(value);
+					this.SendPropertyChanging();
+					this._GalleryID = value;
+					this.SendPropertyChanged("GalleryID");
+					this.OnGalleryIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Start", DbType="DateTime2 NOT NULL")]
+		public System.DateTime Start
+		{
+			get
+			{
+				return this._Start;
+			}
+			set
+			{
+				if ((this._Start != value))
+				{
+					this.OnStartChanging(value);
+					this.SendPropertyChanging();
+					this._Start = value;
+					this.SendPropertyChanged("Start");
+					this.OnStartChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Name="[End]", Storage="_End", DbType="DateTime2")]
+		public System.Nullable<System.DateTime> End
+		{
+			get
+			{
+				return this._End;
+			}
+			set
+			{
+				if ((this._End != value))
+				{
+					this.OnEndChanging(value);
+					this.SendPropertyChanging();
+					this._End = value;
+					this.SendPropertyChanged("End");
+					this.OnEndChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CuratedGallery_GalleryPublicationPeriod", Storage="_CuratedGalleryRecord", ThisKey="GalleryID", OtherKey="ID", IsForeignKey=true)]
+		public CuratedGalleryRecord CuratedGalleryRecord
+		{
+			get
+			{
+				return this._CuratedGalleryRecord.Entity;
+			}
+			set
+			{
+				CuratedGalleryRecord previousValue = this._CuratedGalleryRecord.Entity;
+				if (((previousValue != value) 
+							|| (this._CuratedGalleryRecord.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CuratedGalleryRecord.Entity = null;
+						previousValue.GalleryPublicationPeriodRecords.Remove(this);
+					}
+					this._CuratedGalleryRecord.Entity = value;
+					if ((value != null))
+					{
+						value.GalleryPublicationPeriodRecords.Add(this);
+						this._GalleryID = value.ID;
+					}
+					else
+					{
+						this._GalleryID = default(int);
+					}
+					this.SendPropertyChanged("CuratedGalleryRecord");
 				}
 			}
 		}

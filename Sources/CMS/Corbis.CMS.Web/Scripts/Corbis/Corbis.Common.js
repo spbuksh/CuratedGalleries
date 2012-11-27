@@ -82,7 +82,7 @@ function clientLogger(options) {
         this._options.showErrorAlerts = false;
 
     window.onerror = function (msg, url, line) {
-        this._error(msg, url, line);
+        this.error(msg, url, line);
     };
 };
 clientLogger.prototype._log = function (logEntry) {

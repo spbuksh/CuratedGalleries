@@ -39,5 +39,18 @@ namespace Corbis.CMS.Web.Code
             return context.Session.GetCurrentUser();
         }
 
+
+        public static string GetText(this CuratedGalleryStatuses item)
+        {
+            switch (item)
+            {
+                case CuratedGalleryStatuses.Published:
+                    return "Published";
+                case CuratedGalleryStatuses.UnPublished:
+                    return "Un-Published";
+                default:
+                    throw new NotImplementedException();
+            }            
+        }
     }
 }

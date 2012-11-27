@@ -11,13 +11,13 @@ namespace Corbis.CMS.Web.Code
     public static partial class Extensions
     {
         /// <summary>
-        /// Gets absolute gallery root folder path. All gallery data is located inside this folder
+        /// Gets absolute gallery dev root folder path. All gallery data is located inside this folder
         /// </summary>
         /// <param name="gallery">Curated gallery</param>
         /// <returns></returns>
-        public static string GetRootPath(this CuratedGallery gallery)
+        public static string GetDevPath(this CuratedGallery gallery)
         {
-            return GalleryRuntime.GetGalleryPath(gallery.ID);
+            return GalleryRuntime.GetGalleryDevPath(gallery.ID);
         }
 
         /// <summary>
@@ -40,6 +40,15 @@ namespace Corbis.CMS.Web.Code
             return GalleryRuntime.GetGalleryContentPath(gallery.ID);
         }
 
+        /// <summary>
+        /// Gets absolute gallery live root folder path.
+        /// </summary>
+        /// <param name="gallery"></param>
+        /// <returns></returns>
+        public static string GetLivePath(this CuratedGallery gallery)
+        {
+            return GalleryRuntime.GetGalleryLivePath(gallery.ID);
+        }
 
         /// <summary>
         /// Gets url to the entry point html file
@@ -74,6 +83,15 @@ namespace Corbis.CMS.Web.Code
         public static object GetSyncRoot(this CuratedGallery gallery)
         {
             return GalleryRuntime.GetGallerySyncRoot(gallery.ID);
+        }
+
+        public static void GoLive(this CuratedGallery gallery)
+        {
+            GalleryRuntime.GoLive(gallery.ID);
+        }
+        public static void StopLive(this CuratedGallery gallery)
+        {
+            GalleryRuntime.StopLive(gallery.ID);
         }
 
     }

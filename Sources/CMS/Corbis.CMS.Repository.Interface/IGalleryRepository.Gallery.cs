@@ -26,6 +26,11 @@ namespace Corbis.CMS.Repository.Interface
         /// <returns></returns>
         OperationResult<OperationResults, object> LockGallery(int id, int userID);
 
+        /// <summary>
+        /// Unlocks gallery
+        /// </summary>
+        /// <param name="id">Unique gallery identifier</param>
+        /// <returns></returns>
         OperationResult<OperationResults, object> UnLockGallery(int id);
 
         /// <summary>
@@ -57,5 +62,22 @@ namespace Corbis.CMS.Repository.Interface
         /// <param name="gallery">Gallery object</param>
         /// <returns></returns>
         OperationResult<OperationResults, object> UpdateGallery(CuratedGallery gallery, bool includePackage = false);
+
+        /// <summary>
+        /// Publishes gallery
+        /// </summary>
+        /// <param name="id">Unique gallery identifier</param>
+        /// <param name="dtStart">Publication start date in UTC</param>
+        /// <param name="dtEnd">Publication end date in UTC</param>
+        /// <returns></returns>
+        OperationResult<OperationResults, GalleryPublicationPeriod> Publish(int id, DateTime dtStartUTC, DateTime? dtEndUTC);
+
+        /// <summary>
+        /// Un-Publishes gallery
+        /// </summary>
+        /// <param name="id">Unique gallery identifier</param>
+        /// <returns></returns>
+        OperationResult<OperationResults, object> UnPublish(int id);
+
     }
 }

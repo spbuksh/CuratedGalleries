@@ -1,5 +1,6 @@
 ﻿@using Corbis.CMS.Web.Code
 @using Corbis.CMS.Web.Models
+@using Corbis.CMS.Entity
 @model GalleryItemModel
 
 @{
@@ -28,12 +29,27 @@
                 if (this.Model.Editor.Value == user.ID) {
                     @Html.ActionLink("Edit", "EditGallery", "Gallery", new { id = this.Model.ID }, null)
                     <a href="javascript:void(0)">Unlock</a>
-                    <a href="javascript:void(0)" onclick="DeleteGallery(@this.Model.ID,'@(Url.Action("DeleteGallery", "Gallery"))'); return false;" >Delete</a>                
+                    <a href="javascript:void(0)" onclick="DeleteGallery(@this.Model.ID,'@(Url.Action("DeleteGallery", "Gallery"))'); return false;" >Delete</a>   
+                
+                    if(this.Model.Status == CuratedGalleryStatuses.UnPublished) {
+                        <a href="javascript:void(0)" onclick="publishGallery(@this.Model.ID); return false;" >Publish</a>                    
+                    }
+                    else {
+                        <a href="javascript:void(0)" onclick="unPublishGallery(@this.Model.ID); return false;" >Un-Publish</a>
+                    }
                 }
             }
-            else {
+            else
+            {
                 @Html.ActionLink("Lock and Edit", "EditGallery", "Gallery", new { id = this.Model.ID }, new { onclick = string.Format("return onLockGalleryClick('{0}',{1}, this);", this.Url.Action("LockGallery", "Gallery"), this.Model.ID) })
                 <a href="javascript:void(0)" onclick="DeleteGallery(@this.Model.ID,'@(Url.Action("DeleteGallery", "Gallery"))'); return false;" >Delete</a>
+                
+                if (this.Model.Status == CuratedGalleryStatuses.UnPublished) {
+                    <a href="javascript:void(0)" onclick="publishGallery(@this.Model.ID); return false;" >Publish</a>
+                }
+                else {
+                    <a href="javascript:void(0)" onclick="unPublishGallery(@this.Model.ID); return false;" >Un-Publish</a>
+                }
             }
                 </div>
             </div>
@@ -49,12 +65,26 @@
                 </tr>
                 <tr>
                     <td>Status</td>
-                    <td>Un-Published</td>
+                    <td>@this.Model.Status.GetText()</td>
                 </tr>
+                @if (this.Model.Status == Corbis.CMS.Entity.CuratedGalleryStatuses.Published && this.Model.PublicationPeriod != null) {
+                    if (this.Model.PublicationPeriod != null) {
+                <tr>
+                    <td>Publication Period</td>
+                    <td>Start: @this.Model.PublicationPeriod.From</td>
+                    <td>End: @(string.IsNullOrEmpty(this.Model.PublicationPeriod.To) ? "-" : this.Model.PublicationPeriod.To)</td>
+                </tr>   
+                    }       
+                <tr>
+                    <td>URL</td>
+                    <td>@this.Model.PublicationUrl</td>
+                </tr>                                 
+                }
             </table>
-            </div>
-           
+            </div>           
         </div>
     </div> 
     <div class="clear-fix"></div> 
 </div>
+
+

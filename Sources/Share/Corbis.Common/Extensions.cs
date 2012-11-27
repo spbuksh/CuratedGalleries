@@ -121,6 +121,46 @@ namespace Corbis.Common
                 Directory.Delete(dir.FullName, true);
         }
 
+        public static T ToEnum<T>(this byte item)
+        {
+            return ((object)item).ToEnum<T>();
+        }
+        public static T ToEnum<T>(this short item)
+        {
+            return ((object)item).ToEnum<T>();
+        }
+        public static T ToEnum<T>(this ushort item)
+        {
+            return ((object)item).ToEnum<T>();
+        }
+        public static T ToEnum<T>(this int item)
+        {
+            return ((object)item).ToEnum<T>();
+        }
+        public static T ToEnum<T>(this uint item)
+        {
+            return ((object)item).ToEnum<T>();
+        }
+        public static T ToEnum<T>(this long item)
+        {
+            return ((object)item).ToEnum<T>();
+        }
+        public static T ToEnum<T>(this ulong item)
+        {
+            return ((object)item).ToEnum<T>();
+        }
+
+        public static T ToEnum<T>(this object item)
+        {
+            var type = typeof(T);
+
+            if (!type.IsEnum)
+                throw new ArgumentException(string.Format("Type '{0}' is not enum", type.AssemblyQualifiedName));
+
+            var itype = Enum.GetUnderlyingType(type);
+
+            return (T)Enum.ToObject(type, (item.GetType() == itype ? item : Convert.ChangeType(item, itype)));
+        }
 
     }
 }

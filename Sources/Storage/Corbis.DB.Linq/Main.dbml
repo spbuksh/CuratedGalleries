@@ -60,6 +60,13 @@
       <Association Name="FileRecord_GalleryTemplateRecord" Member="FileRecord" ThisKey="PackageID" OtherKey="ID" Type="FileRecord" IsForeignKey="true" />
     </Type>
   </Table>
+  <Table Name="dbo.CuratedGalleryStatus" Member="CuratedGalleryStatusRecords">
+    <Type Name="CuratedGalleryStatusRecord">
+      <Column Name="ID" Type="System.Int16" DbType="SmallInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="CuratedGalleryStatusRecord_CuratedGallery" Member="CuratedGalleryRecords" ThisKey="ID" OtherKey="StatusID" Type="CuratedGalleryRecord" />
+    </Type>
+  </Table>
   <Table Name="dbo.CuratedGallery" Member="CuratedGalleryRecords">
     <Type Name="CuratedGalleryRecord">
       <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -70,9 +77,21 @@
       <Column Name="DateModified" Type="System.DateTime" DbType="DateTime2" CanBeNull="true" />
       <Column Name="Archive" Type="System.Int64" DbType="BigInt" CanBeNull="true" />
       <Column Name="Editor" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="StatusID" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Association Name="CuratedGallery_GalleryPublicationPeriod" Member="GalleryPublicationPeriodRecords" ThisKey="ID" OtherKey="GalleryID" Type="GalleryPublicationPeriodRecord" />
       <Association Name="AdminUserMembershipRecord_CuratedGallery" Member="AdminUserMembershipRecord" ThisKey="Editor" OtherKey="ID" Type="AdminUserMembershipRecord" IsForeignKey="true" />
+      <Association Name="CuratedGalleryStatusRecord_CuratedGallery" Member="CuratedGalleryStatusRecord" ThisKey="StatusID" OtherKey="ID" Type="CuratedGalleryStatusRecord" IsForeignKey="true" />
       <Association Name="FileRecord_CuratedGallery" Member="FileRecord" ThisKey="Archive" OtherKey="ID" Type="FileRecord" IsForeignKey="true" />
       <Association Name="GalleryTemplateRecord_CuratedGallery" Member="GalleryTemplateRecord" ThisKey="TemplateID" OtherKey="ID" Type="GalleryTemplateRecord" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.GalleryPublicationPeriod" Member="GalleryPublicationPeriodRecords">
+    <Type Name="GalleryPublicationPeriodRecord">
+      <Column Name="ID" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="GalleryID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Start" Type="System.DateTime" DbType="DateTime2 NOT NULL" CanBeNull="false" />
+      <Column Name="[End]" Member="End" Type="System.DateTime" DbType="DateTime2" CanBeNull="true" />
+      <Association Name="CuratedGallery_GalleryPublicationPeriod" Member="CuratedGalleryRecord" ThisKey="GalleryID" OtherKey="ID" Type="CuratedGalleryRecord" IsForeignKey="true" />
     </Type>
   </Table>
 </Database>

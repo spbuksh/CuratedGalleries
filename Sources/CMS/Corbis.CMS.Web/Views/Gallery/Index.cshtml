@@ -3,9 +3,6 @@
 @{
     ViewBag.Title = "Curated Galleries";
 }
-
-@Scripts.Render("~/Scripts/Corbis/Corbis.GalleryIndex.js")
-
 <h2>Curated Galleries</h2>
 <p>
     @Html.ActionLink("Create New Gallery", "CreateGallery", "Gallery")
@@ -16,9 +13,9 @@
 }
 </div>
 
+@Scripts.Render("~/Scripts/Corbis/Corbis.GalleryIndex.js")
 <script type="text/javascript">
-/// ***********  ADD REFERENCES HERE FOR INTELLISENSE SUPPORTING **********
-/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="~/Scripts/Corbis/Corbis.Common.js" />
-/// ***********************************************************************
+    GalleryIndexPage.publishUrl = '@Url.Action("PublishPopup_GET", "Gallery")';
+    GalleryIndexPage.unpublishUrl = '@Url.Action("UnPublish", "Gallery")';
+    GalleryIndexPage.getGalleryItemUrl = '@Url.Action("GetGalleryListItem", "Gallery")';
 </script>

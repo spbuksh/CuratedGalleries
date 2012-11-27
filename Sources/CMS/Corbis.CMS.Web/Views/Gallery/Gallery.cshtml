@@ -1,5 +1,6 @@
 ﻿@using System.Drawing
 @using Corbis.CMS.Web.Models
+@using Corbis.CMS.Entity
 @model GalleryModel
 @{
     ViewBag.Title = "Edit Gallery";
@@ -54,10 +55,21 @@
         <li>
             @Html.ActionLink("Unlock", "UnLockGallery", "Gallery", new { id = this.Model.ID }, null)
         </li>
+        @if (this.Model.Status == CuratedGalleryStatuses.UnPublished) { 
+        <li>
+            <a href="javascript:void(0)" onclick="publishGallery(); return false;">Publish</a>
+        </li>            
+        }
+        else { 
+        <li>
+            @Html.ActionLink("Un-Publish", "UnPublishGallery", "Gallery", new { id = this.Model.ID }, null)
+        </li>
+        }
     </ul>
 </div>
 
-@using (Ajax.BeginForm("SaveGalleryAttributes", "Gallery", new { id = this.Model.ID }, new AjaxOptions() { OnBegin = "onBeginMsAjaxRequest", OnComplete = "onCompleteMsAjaxRequest", OnSuccess = "onSaveGalleryAttributes" }, new { id = "galleryAttributesForm" })) {
+@using (Ajax.BeginForm("SaveGalleryAttributes", "Gallery", new { id = this.Model.ID }, new AjaxOptions() { OnBegin = "onBeginMsAjaxRequest", OnComplete = "onCompleteMsAjaxRequest", OnSuccess = "onSaveGalleryAttributes" }, new { id = "galleryAttributesForm" }))
+{
     @Html.ValidationSummary();
 <div class="galleryGeneralAction">
     <input type="submit" value="Save" />
@@ -88,11 +100,14 @@
     <a href="javascript:void(0)" onclick="uploadGalleryImages(); return false;">Upload Images</a>
 </div>
 <div class="galleryContent">
-    @if (this.Model.CoverImage != null) { 
+    @if (this.Model.CoverImage != null)
+    { 
         @Html.Partial("CoverImagePartial", this.Model.CoverImage)
     }
-    @if (this.Model.ContentImages != null) {
-        foreach (var image in this.Model.ContentImages) {
+    @if (this.Model.ContentImages != null)
+    {
+        foreach (var image in this.Model.ContentImages)
+        {
             @Html.Partial("ContentImagePartial", image);
         }
     }
@@ -138,5 +153,17 @@
             onClosed: function () { swfobject.removeSWF(swfElementID); } //TODO: it is hack. In the future it must be deleted and refactored
         });
     }
-
+    function publishGallery() {
+        showPopupWindow({
+            popupID: 'publishGalleryPopup',
+            title: 'Publish Period',
+            url: '@Url.Action("PublishPopup_GET", "Gallery")',
+            params: { galleryID: '@this.Model.ID' },
+            onLoaded: function () {
+                GalleryPublicationPopup.onPublishSucceeded = function (result) {
+                    window.location = '@Url.Action("EditGallery", "Gallery", new { id = this.Model.ID })'; 
+                };
+            }
+        });
+    }
 </script>

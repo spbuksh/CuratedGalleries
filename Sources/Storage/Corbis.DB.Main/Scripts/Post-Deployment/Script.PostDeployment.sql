@@ -12,8 +12,20 @@ Post-Deployment Script Template
 
 USE [$(DatabaseName)]
 GO
+	/***************** [dbo].[CuratedGalleryStatus] table */
+	DELETE FROM [dbo].[CuratedGalleryStatus]
+
+	INSERT INTO [dbo].[CuratedGalleryStatus] ([Name])
+		 VALUES (N'Published')
+
+	INSERT INTO [dbo].[CuratedGalleryStatus] ([Name])
+		 VALUES (N'UnPublished')
+
+	PRINT N'Table [dbo].[CuratedGalleryStatus] is filled with values successfully'
 
 	/***************** [dbo].[AdminUserRole] table */
+	DELETE FROM [dbo].[AdminUserRole]
+
 	-- NOTE: Role identifiers are FLAGs!!! It means if role includes any other then super role contains these roles via logical OR
 	-- Regular admin role
 	INSERT INTO [dbo].[AdminUserRole] ([ID], [Name], [Description])
@@ -26,6 +38,7 @@ GO
 
 
 	/***************** [dbo].[AdminUserProfile] table */
+	DELETE FROM [dbo].[AdminUserProfile]
 
 	-- Active Regular admin
 	INSERT INTO [dbo].[AdminUserProfile] ([FirstName], [MiddleName], [LastName], [Email])

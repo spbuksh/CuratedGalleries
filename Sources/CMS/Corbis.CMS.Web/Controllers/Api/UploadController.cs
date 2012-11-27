@@ -65,7 +65,7 @@ namespace Corbis.CMS.Web.Controllers.Api
             var template = GalleryRuntime.GetTemplate(gallery.TemplateID);
 
             string contentpath = gallery.GetContentPath();
-            string rootpath = gallery.GetRootPath();
+            string rootpath = gallery.GetDevPath();
 
             if (!Directory.Exists(contentpath))
                 Directory.CreateDirectory(contentpath);
@@ -202,7 +202,7 @@ namespace Corbis.CMS.Web.Controllers.Api
                                 ID = string.Format("gallery-image_{0}", Guid.NewGuid().ToString("N")),
                                 Name = filename,
                                 Order = 1,
-                                ImageSource = new GalleryImageSource() { Type = ImageSourceTypes.LocalFile, Source = filepath.Substring(GalleryRuntime.GetGalleryPath(id.Value).Length) },
+                                ImageSource = new GalleryImageSource() { Type = ImageSourceTypes.LocalFile, Source = filepath.Substring(GalleryRuntime.GetGalleryDevPath(id.Value).Length) },
                                 GalleryUrls = gllrUrls,
                                 SiteUrls = siteUrls,
                                 EditUrls = editUrls
@@ -222,7 +222,7 @@ namespace Corbis.CMS.Web.Controllers.Api
                                 ID = string.Format("gallery-image_{0}", Guid.NewGuid().ToString("N")),
                                 Name = filename,
                                 Order = content.Images.Count + 1,
-                                ImageSource = new GalleryImageSource() { Type = ImageSourceTypes.LocalFile, Source = filepath.Substring(GalleryRuntime.GetGalleryPath(id.Value).Length) },
+                                ImageSource = new GalleryImageSource() { Type = ImageSourceTypes.LocalFile, Source = filepath.Substring(GalleryRuntime.GetGalleryDevPath(id.Value).Length) },
                                 GalleryUrls = gllrUrls,
                                 SiteUrls = siteUrls,
                                 EditUrls = editUrls
@@ -238,7 +238,7 @@ namespace Corbis.CMS.Web.Controllers.Api
                         if (content.CoverImage.ID == imageID)
                         {
                             content.CoverImage.Name = filename;
-                            content.CoverImage.ImageSource = new GalleryImageSource() { Type = ImageSourceTypes.LocalFile, Source = filepath.Substring(GalleryRuntime.GetGalleryPath(id.Value).Length) };
+                            content.CoverImage.ImageSource = new GalleryImageSource() { Type = ImageSourceTypes.LocalFile, Source = filepath.Substring(GalleryRuntime.GetGalleryDevPath(id.Value).Length) };
                             content.DeleteImages(content.CoverImage.GalleryUrls, this.HttpContext);
                             content.CoverImage.GalleryUrls = gllrUrls;
                             content.DeleteImages(content.CoverImage.SiteUrls, this.HttpContext);
@@ -253,7 +253,7 @@ namespace Corbis.CMS.Web.Controllers.Api
                             var item = content.Images.Where(x => x.ID == imageID).SingleOrDefault();
 
                             item.Name = filename;
-                            item.ImageSource = new GalleryImageSource() { Type = ImageSourceTypes.LocalFile, Source = filepath.Substring(GalleryRuntime.GetGalleryPath(id.Value).Length) };
+                            item.ImageSource = new GalleryImageSource() { Type = ImageSourceTypes.LocalFile, Source = filepath.Substring(GalleryRuntime.GetGalleryDevPath(id.Value).Length) };
                             content.DeleteImages(item.GalleryUrls, this.HttpContext);
                             item.GalleryUrls = gllrUrls;
                             content.DeleteImages(item.SiteUrls, this.HttpContext);

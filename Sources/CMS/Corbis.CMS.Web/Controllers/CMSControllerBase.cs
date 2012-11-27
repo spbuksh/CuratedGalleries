@@ -81,19 +81,19 @@ namespace Corbis.CMS.Web.Controllers
 
                 return this.m_Culture;
             }
+            set 
+            {
+                this.m_Culture = value;
+            }
         }
         private CultureInfo m_Culture = null;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        protected override void ExecuteCore()
+        protected override IAsyncResult BeginExecuteCore(AsyncCallback callback, object state)
         {
-            //If we have multiple culture
             Thread.CurrentThread.CurrentCulture = this.UserCulture;
             Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentCulture;
 
-            base.ExecuteCore();
+            return base.BeginExecuteCore(callback, state);
         }
 
         /// <summary>

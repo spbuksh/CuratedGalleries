@@ -42,9 +42,19 @@ namespace Corbis.CMS.Web.Code
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static string GetGalleryPath(int id)
+        public static string GetGalleryDevPath(int id)
         {
-            return Path.Combine(GalleryRuntime.GalleryDirectory, id.ToString());
+            return Path.Combine(GalleryRuntime.GalleryDevelopmentDirectory, id.ToString());
+        }
+
+        /// <summary>
+        /// Gets absolute folder path to the gallery based on its identifier
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public static string GetGalleryLivePath(int id)
+        {
+            return Path.Combine(GalleryRuntime.GalleryLiveDirectory, id.ToString());
         }
 
         /// <summary>
@@ -54,7 +64,7 @@ namespace Corbis.CMS.Web.Code
         /// <returns></returns>
         public static string GetGalleryOutputPath(int id)
         {
-            return Path.Combine(GetGalleryPath(id), GalleryOutputDirName);
+            return Path.Combine(GetGalleryDevPath(id), GalleryOutputDirName);
         }
 
         /// <summary>
@@ -64,7 +74,7 @@ namespace Corbis.CMS.Web.Code
         /// <returns></returns>
         public static string GetGalleryContentPath(int id)
         {
-            return Path.Combine(GetGalleryPath(id), GalleryContentDirName);
+            return Path.Combine(GetGalleryDevPath(id), GalleryContentDirName);
         }
 
         /// <summary>
@@ -236,7 +246,7 @@ namespace Corbis.CMS.Web.Code
 
             lock (gallery.GetSyncRoot())
             {
-                string galleryRoot = gallery.GetRootPath();
+                string galleryRoot = gallery.GetDevPath();
                 string galeryOutput = gallery.GetOutputPath();
 
                 Directory.CreateDirectory(galleryRoot);
@@ -297,7 +307,7 @@ namespace Corbis.CMS.Web.Code
                     case OperationResults.Success:
                     case OperationResults.NotFound:
                         {
-                            var dir = new DirectoryInfo(GetGalleryPath(id));
+                            var dir = new DirectoryInfo(GetGalleryDevPath(id));
 
                             if (dir.Exists)
                             {
@@ -506,5 +516,11 @@ namespace Corbis.CMS.Web.Code
                 SaveGalleryContent(galleryID, content, false);
             }
         }
+
+        public static void GoLive(int galleryID)
+        { }
+        public static void StopLive(int galleryID)
+        { }
+
     }
 }

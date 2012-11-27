@@ -53,6 +53,16 @@ namespace Corbis.CMS.Entity
         public Nullable<int> Editor { get; set; }
 
         /// <summary>
+        /// Current gallery status
+        /// </summary>
+        public CuratedGalleryStatuses Status { get; set; }
+
+        /// <summary>
+        /// Gallery publication period
+        /// </summary>
+        public GalleryPublicationPeriod PublicationPeriod { get; set; }
+
+        /// <summary>
         /// True - this gallery is in edit mode now.
         /// </summary>
         public bool IsInEditMode
@@ -66,6 +76,7 @@ namespace Corbis.CMS.Entity
         public CuratedGallery()
         {
             this.Enabled = true;
+            this.Status = CuratedGalleryStatuses.UnPublished;
         }
     }
 }

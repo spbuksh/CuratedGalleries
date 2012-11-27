@@ -1,6 +1,7 @@
 ﻿/// ***********  ADD REFERENCES HERE FOR INTELLISENSE SUPPORTING **********
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-ui-1.8.20.js" />
+/// <reference path="~/Scripts/jquery-ui-timepicker-addon.js" />
 /// <reference path="~/Scripts/Corbis/Corbis.Common.js" />
 /// ***********************************************************************
 
@@ -311,7 +312,8 @@ function reUploadGalleryImageCallback(result) {
     return "OK";
 }
 
-
+function onGalleryPublishSuccess(result) { 
+}
 
 
 
