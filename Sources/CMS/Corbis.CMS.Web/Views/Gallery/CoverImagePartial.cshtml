@@ -1,14 +1,19 @@
 ﻿@using Corbis.CMS.Web.Models
 @model GalleryCoverImageModel
+@{
+    var imageUIID = Guid.NewGuid().ToString("N");
+    
+    var emptyClass = "empty";
+    var textClass = "text";
 
+    var position = this.Model.TextPosition;
 
-<div class="coverImage" corbis-item-id="@this.Model.ID">
-    @*<span class="dragndrop"></span>*@
-    <span class="toolbar">
-        <a href="javascript:void(0)" class="minimal"></a>
-        <a href="javascript:void(0)" class="close"></a>
-    </span>
-@*    <span class="up_down">
+    var txtMode = emptyClass;
+ }
+<div class="contentImage" corbis-item-id="@this.Model.ID">
+    @*<span class="dragndrop"></span>*@ <span class="toolbar"><a href="javascript:void(0)"
+        class="minimal"></a>@*<a href="javascript:void(0)" class="close"></a>*@ </span>
+    @*    <span class="up_down">
         <a class="up" href="javascript:void(0)"></a>
         <a class="down" href="javascript:void(0)"></a>
     </span>*@
@@ -18,68 +23,84 @@
     <div class="expanded">
         <div class="imgArea">
             <div class="imgToolbar">
-                <a href="javascript:void(0)" onclick="editImage('@this.Model.ID'); return false;">Change Image</a>
+                <a href="javascript:void(0)" onclick="editImage('@this.Model.ID'); return false;">Change
+                    Image</a>
             </div>
             <div class="imgPresenter">
                 <img src="@this.Model.Urls.Large" alt="@this.Model.Text" />
             </div>
             <div class="txtAlign">
                 <ul>
-                    <li corbis-data-position="topleft" class="tLeft"><a href="javascript:void(0)"></a></li>
-                    <li corbis-data-position="topright" class="tRight"><a href="javascript:void(0)"></a></li>
-                    <li corbis-data-position="center" class="center"><a href="javascript:void(0)"></a></li>
-                    <li corbis-data-position="bottomleft" class="bLeft"><a href="javascript:void(0)"></a></li>
-                    <li corbis-data-position="bottomright" class="bRight"><a href="javascript:void(0)"></a></li>
+                    <li corbis-data-position="topleft" class="tLeft"><a href="javascript:void(0)"></a>
+                    </li>
+                    <li corbis-data-position="topright" class="tRight"><a href="javascript:void(0)"></a>
+                    </li>
+                    <li corbis-data-position="center" class="center"><a href="javascript:void(0)"></a>
+                    </li>
+                    <li corbis-data-position="bottomleft" class="bLeft"><a href="javascript:void(0)"></a>
+                    </li>
+                    <li corbis-data-position="bottomright" class="bRight"><a href="javascript:void(0)"></a>
+                    </li>
                 </ul>
             </div>
         </div>
         <div class="txtArea">
-@*            <div class="radioGroup"> 
-                <label for="empty_CoverImageContent">None</label><input name="radioGroup_CoverImageContent" id="empty_CoverImageContent" corbis-txt-type="coverEmpty" checked="checked" type="radio" />       
-                <label for="txt_CoverImageContent">Text</label><input name="radioGroup_CoverImageContent" id="txt_CoverImageContent" corbis-txt-type="coverText" type="radio" />
-            </div>*@
+            <div class="radioGroup">
+                 <label for="empty_@this.Model.ID">None</label><input name="radioGroup_@this.Model.ID" id="empty_@this.Model.ID" corbis-txt-type="@emptyClass" checked="checked" type="radio" />       
+                <label for="text_@this.Model.ID">Text</label><input name="radioGroup_@this.Model.ID" id="text_@this.Model.ID" corbis-txt-type="@textClass" type="radio" />
+            </div>
             <div class="txtInputs">
-                <div class="coverText">
+                <div style="display: none;" class="@textClass">
                     @using (Ajax.BeginForm("SetCoverContent", "Gallery",
-                        new { id = this.Model.GalleryID },
-                        new AjaxOptions() { HttpMethod = "POST", OnBegin = "onBeginMsAjaxRequest", OnComplete = "onCompleteMsAjaxRequest", OnSuccess = "onCoverContentSaveSuccess" },
-                        new { id = "coverTextContentForm" }))
+                                           new { id = this.Model.GalleryID },
+                                           new AjaxOptions() { HttpMethod = "POST", OnBegin = "onBeginMsAjaxRequest", OnComplete = "onCompleteMsAjaxRequest", OnSuccess = "onCoverContentSaveSuccess" },
+                                           new { id = "coverTextContentForm" }))
                     {
                         @Html.ValidationSummary()
                         @Html.HiddenFor(x => x.TextPosition);
                         <div class="string">
-                            <label class="filed_lb">Headline copy</label>@Html.TextBoxFor(x => x.HeadlineCopyText)
-                            <label>Size</label>@Html.TextBoxFor(x => x.HeadlineCopyFontSize, new { @class = "size" })
+                            <label class="filed_lb">
+                                Headline copy</label>@Html.TextBoxFor(x => x.HeadlineCopyText)
+                            <label>
+                                Size</label>@Html.TextBoxFor(x => x.HeadlineCopyFontSize, new { @class = "size" })
                         </div>
                         <div class="string">
-                            <label class="filed_lb">Standfirst</label>@Html.TextBoxFor(x => x.StandfirstText)
-                            <label>Size</label>@Html.TextBoxFor(x => x.StandfirstFontSize, new { @class = "size" })
+                            <label class="filed_lb">
+                                Standfirst</label>@Html.TextBoxFor(x => x.StandfirstText)
+                            <label>
+                                Size</label>@Html.TextBoxFor(x => x.StandfirstFontSize, new { @class = "size" })
                         </div>
                         <div class="mt10">
-                            <label>Biography</label>
+                            <label>
+                                Biography</label>
                             @Html.TextAreaFor(x => x.Biography)
                         </div>
                         <input value="Apply" type="submit" />
                     }
                 </div>
-@*                <div class="coverEmpty">
+                <div style="display: none;" class="@emptyClass">
                     @using (Ajax.BeginForm("SetEmptyCoverContent", "Gallery",
-                        new { id = this.Model.GalleryID },
-                        new AjaxOptions() { HttpMethod = "POST", OnBegin = "onBeginMsAjaxRequest", OnComplete = "onCompleteMsAjaxRequest", OnSuccess = "onCoverContentSaveSuccess" },
-                        new { id = "coverEmptyTextContentForm" }))
+                                           new { id = this.Model.GalleryID },
+                                           new AjaxOptions() { HttpMethod = "POST", OnBegin = "onBeginMsAjaxRequest", OnComplete = "onCompleteMsAjaxRequest", OnSuccess = "onCoverContentSaveSuccess" },
+                                           new { id = "coverEmptyTextContentForm" }))
                     {
                         @Html.HiddenFor(x => x.TextPosition);
                         <input value="Apply" type="submit" />
                     }
-                </div>*@
+                </div>
             </div>
         </div>
     </div>
-    <div class="clear-fix"></div>
+    <div class="clear-fix">
+    </div>
     <script type="text/javascript">
         $(function () {
             _setCoverTextPosition('@(this.Model.TextPosition.ToString().ToLower())');
 
+             InitContentImage({ imageID: '@this.Model.ID',
+                 position: ('@(this.Model.TextPosition.ToString().ToLower())'),
+                txtMode: '@txtMode'
+            });
             //add client validation supporting
             if ('@(this.IsPost.ToString().ToLower())' == 'true') {
                 $.validator.unobtrusive.parse('div.coverImage');
