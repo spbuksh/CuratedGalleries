@@ -373,7 +373,7 @@ namespace Corbis.CMS.Web.Controllers
         [HttpGet]
         public ActionResult GetFontFamilies()
         { 
-            int lcid = Thread.CurrentThread.CurrentCulture.LCID;
+            int lcid = this.UserCulture.LCID;
             return this.Json(FontFamily.Families.Select(x => new { text = x.GetName(lcid), value = x.Name }).ToArray(), JsonRequestBehavior.AllowGet);
         }
 
@@ -666,9 +666,7 @@ namespace Corbis.CMS.Web.Controllers
             if (this.CurrentUser == null)
                 this.RedirectToLoginPage();
 
-            var culture = Thread.CurrentThread.CurrentCulture;
-
-            var model = new GalleryPublicationPeriodModel() { GalleryID = galleryID, From = DateTime.Now.ToString(DateTimeFormat, culture) };
+            var model = new GalleryPublicationPeriodModel() { GalleryID = galleryID, From = DateTime.Now.ToString(DateTimeFormat, this.UserCulture) };
             this.ViewBag.PopupID = popupID;
 
             return this.PartialView("GalleryPublishPopup", model);
@@ -685,13 +683,11 @@ namespace Corbis.CMS.Web.Controllers
                 return this.PartialView("GalleryPublishPopup", model);
             }
 
-            var culture = Thread.CurrentThread.CurrentCulture;
+            var result = GalleryRuntime.PublishGallery(model.GalleryID,
+                DateTime.ParseExact(model.From, DateTimeFormat, this.UserCulture).ToUniversalTime(),
+                string.IsNullOrEmpty(model.To) ? (DateTime?)null : DateTime.ParseExact(model.To, DateTimeFormat, this.UserCulture).ToUniversalTime());
 
-            var ares = this.GalleryRepository.Publish(model.GalleryID, 
-                DateTime.ParseExact(model.From, DateTimeFormat, culture).ToUniversalTime(),
-                string.IsNullOrEmpty(model.To) ? (DateTime?)null : DateTime.ParseExact(model.To, DateTimeFormat, culture).ToUniversalTime());
-
-            switch(ares.Result)
+            switch(result)
             {
                 case OperationResults.Success:
                     return this.Json(new { success = true });
@@ -739,12 +735,34 @@ namespace Corbis.CMS.Web.Controllers
 
         public ActionResult UnPublish(int id)
         {
-            this.GalleryRepository.UnPublish(id);
+            var result = GalleryRuntime.UnPublishGallery(id);
+
+            switch (result)
+            {
+                case OperationResults.Success:
+                    return this.Json(new { success = true });
+                case OperationResults.NotFound:
+                    return this.Json(new { success = false, error = "Gallery was not found" });
+                case OperationResults.Failure:
+                    return this.Json(new { success = false, error = "Server error" });
+            }
+
             return this.Json(new { success = true }, JsonRequestBehavior.AllowGet);
         }
         public ActionResult UnPublishGallery(int id)
         {
-            this.GalleryRepository.UnPublish(id);
+            var result = GalleryRuntime.UnPublishGallery(id);
+
+            switch (result)
+            {
+                case OperationResults.Success:
+                    return this.Json(new { success = true });
+                case OperationResults.NotFound:
+                    return this.Json(new { success = false, error = "Gallery was not found" });
+                case OperationResults.Failure:
+                    return this.Json(new { success = false, error = "Server error" });
+            }
+
             return this.RedirectToAction("EditGallery", "Gallery", new { id = id });
         }
 

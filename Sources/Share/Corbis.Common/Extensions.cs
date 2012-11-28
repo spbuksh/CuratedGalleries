@@ -98,12 +98,30 @@ namespace Corbis.Common
         }
 
 
-
-        public static DirectoryInfo CopyTo(this DirectoryInfo from, string to)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <param name="filter">This logic filters files and folders. string input parameter is fullpath, second boolean parameter indicates if it folder or file(true if folder).</param>
+        /// <returns></returns>
+        public static DirectoryInfo CopyTo(this DirectoryInfo from, string to, ActionHandler<string, bool, bool> filter = null)
         {
             var dir = new DirectoryInfo(to);
-            Utils.DirectoryCopy(from, dir);
-            return dir;
+            return from.CopyTo(dir, filter);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <param name="filter">This logic filters files and folders. string input parameter is fullpath, second boolean parameter indicates if it folder or file(true if folder).</param>
+        /// <returns></returns>
+        public static DirectoryInfo CopyTo(this DirectoryInfo from, DirectoryInfo to, ActionHandler<string, bool, bool> filter = null)
+        {
+            Utils.DirectoryCopy(from, to, filter);
+            to.Refresh();
+            return to;
         }
 
         public static void Clear(this DirectoryInfo dir)

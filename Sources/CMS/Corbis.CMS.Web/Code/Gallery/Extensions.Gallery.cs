@@ -5,6 +5,7 @@ using System.Web;
 using Corbis.CMS.Entity;
 using System.IO;
 using System.Xml.Linq;
+using Corbis.Common;
 
 namespace Corbis.CMS.Web.Code
 {
@@ -85,13 +86,17 @@ namespace Corbis.CMS.Web.Code
             return GalleryRuntime.GetGallerySyncRoot(gallery.ID);
         }
 
-        public static void GoLive(this CuratedGallery gallery)
+        public static OperationResults Publish(this CuratedGallery gallery, DateTime fromUTC, DateTime? toUTC)
         {
-            GalleryRuntime.GoLive(gallery.ID);
+            return GalleryRuntime.PublishGallery(gallery.ID, fromUTC, toUTC);
         }
-        public static void StopLive(this CuratedGallery gallery)
+        public static OperationResults GoLive(this CuratedGallery gallery)
         {
-            GalleryRuntime.StopLive(gallery.ID);
+            return GalleryRuntime.GoGalleryLive(gallery.ID);
+        }
+        public static OperationResults UnPublish(this CuratedGallery gallery)
+        {
+            return GalleryRuntime.UnPublishGallery(gallery.ID);
         }
 
     }

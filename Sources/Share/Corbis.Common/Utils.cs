@@ -50,16 +50,33 @@ namespace Corbis.Common
         /// </summary>
         /// <param name="from"></param>
         /// <param name="to"></param>
-        public static void DirectoryCopy(DirectoryInfo from, DirectoryInfo to)
+        /// <param name="filter">This logic filters files and folders. string input parameter is fullpath, second boolean parameter indicates if it folder or file(true if folder).</param>
+        public static void DirectoryCopy(DirectoryInfo from, DirectoryInfo to, ActionHandler<string, bool, bool> filter = null)
         {
             if (!to.Exists)
                 to.Create();
 
             foreach (var fi in from.GetFiles())
+            {
+                if (filter != null)
+                {
+                    if(!filter(fi.FullName, false))
+                        continue;
+                }
+
                 fi.CopyTo(Path.Combine(to.ToString(), fi.Name), true);
+            }
 
             foreach (var subdir in from.GetDirectories())
-                DirectoryCopy(subdir, to.CreateSubdirectory(subdir.Name));
+            {
+                if (filter != null)
+                {
+                    if (!filter(subdir.FullName, true))
+                        continue;
+                }
+
+                DirectoryCopy(subdir, to.CreateSubdirectory(subdir.Name), filter);
+            }
         }
 
         public static string AbsoluteToVirtual(string absolutePath, HttpContextBase context = null, bool vdirProcess = true)

@@ -177,14 +177,11 @@ namespace Corbis.CMS.Repository
                     if (filter.Enabled.HasValue)
                         query = query.Where(x => x.Enabled == filter.Enabled.Value);
 
+                    if (filter.Status.HasValue)
+                        query = query.Where(x => x.StatusID == (short)filter.Status.Value);
+
                     //default sorting
                     query = query.OrderByDescending(x => x.DateCreated).ThenBy(x => x.Name);
-
-                    //point gallery portion at end of query building
-                    query = query.Skip(filter.StartIndex);
-
-                    if (filter.Count.HasValue)
-                        query = query.Take(filter.Count.Value);
                 }
                 else
                 {
@@ -195,6 +192,14 @@ namespace Corbis.CMS.Repository
                         join p in context.GalleryPublicationPeriodRecords on g.ID equals p.GalleryID into set
                         from item in set.DefaultIfEmpty()
                         select new { gallery = g, period = set };
+
+                if (filter != null)
+                {
+                    q = q.Skip(filter.StartIndex);
+
+                    if (filter.Count.HasValue)
+                        q = q.Take(filter.Count.Value);
+                }
 
                 rslt.Output = new List<CuratedGallery>();
 

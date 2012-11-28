@@ -205,6 +205,7 @@
     <Compile Include="Code\Gallery\TemplateContent\GalleryTemplate.cs" />
     <Compile Include="Code\Gallery\TemplateContent\IGalleryTemplate.cs" />
     <Compile Include="Code\Gallery\TemplateContent\GalleryTemplateDescriptor.cs" />
+    <Compile Include="Code\SystemJobs\Backuper.cs" />
     <Compile Include="Code\SystemJobs\FCG.cs" />
     <Compile Include="Code\SystemJobs\GalleryPublisher.cs" />
     <Compile Include="Code\RepositoryProvider.cs" />
