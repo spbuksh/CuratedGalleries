@@ -23,6 +23,13 @@ namespace Corbis.CMS.Repository.Interface
         //*********************
 
         /// <summary>
+        /// Gets admin user info by his memebership identifier
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        OperationResult<OperationResults, AdminUserInfo> GetUserInfo(int id);
+
+        /// <summary>
         /// Authenticates admin user
         /// </summary>
         /// <param name="login">user login name</param>

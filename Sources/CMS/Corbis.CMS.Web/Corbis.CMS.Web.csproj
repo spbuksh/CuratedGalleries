@@ -231,6 +231,7 @@
     <Compile Include="Models\DateTimeRangeModel.cs" />
     <Compile Include="Models\EditImagePopupModel.cs" />
     <Compile Include="Models\FlashUploaderModel.cs" />
+    <Compile Include="Models\GalleryInfoModel.cs" />
     <Compile Include="Models\GalleryImageModel.cs" />
     <Compile Include="Models\GalleryItemModel.cs" />
     <Compile Include="Models\GalleryModel.cs" />
@@ -541,6 +542,7 @@
     <Content Include="Views\Gallery\GalleryListItemPartial.cshtml" />
     <Content Include="Views\Gallery\UploadMultipleImagesPopup.cshtml" />
     <Content Include="Views\Gallery\GalleryPublishPopup.cshtml" />
+    <Content Include="Views\Gallery\GalleryInfoPopup.cshtml" />
     <None Include="Web.config.local">
       <SubType>Designer</SubType>
     </None>

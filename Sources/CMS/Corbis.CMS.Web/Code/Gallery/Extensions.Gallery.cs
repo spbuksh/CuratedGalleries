@@ -30,6 +30,15 @@ namespace Corbis.CMS.Web.Code
         {
             return GalleryRuntime.GetGalleryOutputPath(gallery.ID);
         }
+        /// <summary>
+        /// Gets absolute gallery output folder path. This folder contains output gallery files
+        /// </summary>
+        /// <param name="gallery">Curated gallery</param>
+        /// <returns></returns>
+        public static string GetLiveOutputPath(this CuratedGallery gallery)
+        {
+            return GalleryRuntime.GetGalleryLiveOutputPath(gallery.ID);
+        }
 
         /// <summary>
         /// Gets absolute gallery root folder path. All gallery data is located inside this folder
@@ -58,19 +67,35 @@ namespace Corbis.CMS.Web.Code
         /// <returns></returns>
         public static string GetPreviewUrl(this CuratedGallery gallery, HttpContextBase context = null, bool vdirProcess = true)
         {
-            var dir = new DirectoryInfo(GalleryRuntime.GetTemplatePath(gallery.TemplateID));
+            var file = GetTemplateEntryPointFile(gallery.TemplateID);
+            string htmlpath = Path.Combine(gallery.GetOutputPath(), file.Name.Substring(0, file.Name.Length - ".xlst".Length));
+            return Corbis.Common.Utils.AbsoluteToVirtual(htmlpath, context, vdirProcess);
+        }
+        /// <summary>
+        /// Gets url to the entry point html file
+        /// </summary>
+        /// <param name="gallery">Curated gallery</param>
+        /// <returns></returns>
+        public static string GetLiveUrl(this CuratedGallery gallery, HttpContextBase context = null, bool vdirProcess = true)
+        {
+            var file = GetTemplateEntryPointFile(gallery.TemplateID);
+            string htmlpath = Path.Combine(gallery.GetLiveOutputPath(), file.Name.Substring(0, file.Name.Length - ".xlst".Length));
+            return Corbis.Common.Utils.AbsoluteToVirtual(htmlpath, context, vdirProcess);
+        }
+        private static FileInfo GetTemplateEntryPointFile(int templateID)
+        {
+            var dir = new DirectoryInfo(GalleryRuntime.GetTemplatePath(templateID));
 
             //TODO: temporary I guess that template directory exists
-            if(!dir.Exists)
+            if (!dir.Exists)
                 throw new Exception();
 
             var file = dir.GetFiles("*.xslt").Where(x => x.Name.ToLower().EndsWith(".html.xslt")).SingleOrDefault();
 
-            if(file == null)
+            if (file == null)
                 throw new Exception("Template must have single entry point file with extension '.html.xslt'");
 
-            string htmlpath = Path.Combine(gallery.GetOutputPath(), file.Name.Substring(0, file.Name.Length - ".xlst".Length));
-            return Corbis.Common.Utils.AbsoluteToVirtual(htmlpath, context, vdirProcess);
+            return file;
         }
 
         public static GalleryContent LoadContent(this CuratedGallery gallery, bool bSync = true)

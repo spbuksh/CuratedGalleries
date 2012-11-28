@@ -106,6 +106,40 @@ namespace Corbis.CMS.Repository
 
         #endregion Obsolete
 
+        /// <summary>
+        /// Gets admin user info by his memebership identifier
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public OperationResult<OperationResults, AdminUserInfo> GetUserInfo(int id)
+        {
+            var result = new OperationResult<OperationResults, AdminUserInfo>() { Result = OperationResults.Success };
+
+            using (var context = this.CreateMainContext())
+            {
+                var query = from m in context.AdminUserMembershipRecords
+                            join u in context.AdminUserProfileRecords on m.ProfileID equals u.ID
+                            where m.ID == id
+                            select new { ID = m.ID, FirstName = u.FirstName, MiddleName = u.MiddleName, LastName = u.LastName, IsActive = m.IsActive, Password = m.Password };
+
+                var record = query.SingleOrDefault();
+
+                if (record == null)
+                {
+                    result.Result = OperationResults.NotFound;
+                    return result;
+                }
+
+                var user = this.ObjectMapper.DoMapping<AdminUserInfo>(record);
+
+                foreach (int item in context.AdminUserToRoleRecords.Where(x => x.MemberID == record.ID).Select(x => x.RoleID))
+                    user.Roles = user.Roles.HasValue ? (user.Roles.Value | this.GetRole(item)) : (AdminUserRoles)item;
+
+                result.Output = user;
+            }
+
+            return result;
+        }
 
         private string EncryptPassword(string password)
         {
@@ -264,31 +298,5 @@ namespace Corbis.CMS.Repository
                 default: throw new NotImplementedException();
             }            
         }
-        //private int[] GetRoleIDs(AdminUserRoles roles)
-        //{
-        //    List<int> roles = new List<int>();
-
-        //    foreach (AdminUserRoles item in roles.GetItems())
-        //    {
-        //        switch(item)
-        //        {
-        //            case AdminUserRoles.Admin:
-        //                roles.Add(1);
-        //                break;
-        //            case AdminUserRoles.SuperAdmin:
-        //                roles.Add(1);
-        //                break;
-
-        //        }
-        //    }
-        //    switch (roleID)
-        //    {
-        //        case 1: return AdminUserRoles.Admin;
-        //        case 2: return AdminUserRoles.SuperAdmin;
-        //        default: throw new NotImplementedException();
-        //    }
-        //}
-
-
     }
 }

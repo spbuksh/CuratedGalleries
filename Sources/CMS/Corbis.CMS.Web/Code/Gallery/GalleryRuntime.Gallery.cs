@@ -66,6 +66,15 @@ namespace Corbis.CMS.Web.Code
         {
             return Path.Combine(GetGalleryDevPath(id), GalleryOutputDirName);
         }
+        /// <summary>
+        /// This folder contains result gallery for preview. This folder has strict name.
+        /// </summary>
+        /// <param name="id">Gallery identifier</param>
+        /// <returns></returns>
+        public static string GetGalleryLiveOutputPath(int id)
+        {
+            return Path.Combine(GetGalleryLivePath(id), GalleryOutputDirName);
+        }
 
         /// <summary>
         /// This folder contains gallery content (images, xml view state file and ect). This folder has strict name.

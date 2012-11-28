@@ -60,6 +60,20 @@ validationSummaryHelper.prototype.reset = function reset() {
     jelem.removeClass('validation-summary-errors');
     jelem.addClass('validation-summary-valid');
 }
+validationSummaryHelper.prototype.addError = function addError(error, inputSelector) {
+    var jelem = $(this._selector);
+
+    var jul = jelem.children('ul').html('');
+    $(jul).append('<li>' + error + '</li>');
+
+    if (inputSelector) {
+        $(inputSelector).addClass('input-validation-error');
+    }
+
+    jelem.removeClass('validation-summary-valid');
+    jelem.addClass('validation-summary-errors');
+}
+
 
 
 function onBeginMsAjaxRequest() {
@@ -220,7 +234,7 @@ function showPopupWindow(options) {
                     create: options.onCreated,
                     open: options.onOpened
                 });
-                jdiv.parent().draggable({ handle: "#draggable" });
+                jdiv.parent().draggable({ handle: "div.ui-dialog-titlebar" });
 
                 $(function () {
                     $.validator.unobtrusive.parse(jdiv);

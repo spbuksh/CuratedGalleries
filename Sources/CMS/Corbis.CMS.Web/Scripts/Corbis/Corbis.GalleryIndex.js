@@ -112,4 +112,17 @@ function unPublishGallery(id) {
     });
 }
 
+function showGalleryInfoPopup(id) {
+    showPopupWindow({
+        popupID: 'galleryInfoPopup',
+        title: 'Gallery Info',
+        url: GalleryIndexPage.galleryInfoUrl,
+        params: { id: id },
+        jdialogOptions: {
+            resizable: true
+        }
+    });
+}
+
+
 

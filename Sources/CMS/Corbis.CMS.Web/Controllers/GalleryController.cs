@@ -28,6 +28,9 @@ namespace Corbis.CMS.Web.Controllers
         [Dependency]
         public ICuratedGalleryRepository GalleryRepository { get; set; }
 
+        [Dependency]
+        public IAdminUserRepository UserRepository { get; set; }
+
         /// <summary>
         /// Gallety index page
         /// </summary>
@@ -764,6 +767,56 @@ namespace Corbis.CMS.Web.Controllers
             }
 
             return this.RedirectToAction("EditGallery", "Gallery", new { id = id });
+        }
+
+        public ActionResult GetGalleryInfoPopup(int id)
+        {
+            var model = new GalleryInfoModel();
+
+            lock (GalleryRuntime.GetGallerySyncRoot(id))
+            {
+                var gallery = GalleryRuntime.GetGallery(id);
+
+                model.Name = gallery.Name;
+                model.CreationTime = gallery.DateCreated.ToString(DateTimeFormat);
+                model.Template = GalleryRuntime.GetTemplate(gallery.TemplateID).Name;
+                model.Status = gallery.Status.GetText();
+
+                if (gallery.Status == CuratedGalleryStatuses.Published)
+                {
+                    model.PublicationPeriod = string.Format("{0} - {1}", gallery.PublicationPeriod.Start.ToString(DateTimeFormat), gallery.PublicationPeriod.End.HasValue ? gallery.PublicationPeriod.End.Value.ToString(DateTimeFormat) : "Undefined");
+                    model.LiveURL = string.Format("http://{0}/{1}", this.Request.Url.Authority, gallery.GetLiveUrl(this.HttpContext).TrimStart('/'));
+                }
+
+                if (gallery.IsInEditMode)
+                {
+                    AdminUserInfo editor = null;
+
+                    if (gallery.Editor == this.CurrentUser.ID)
+                    {
+                        editor = this.CurrentUser;
+                    }
+                    else
+                    {
+                        try
+                        {
+                            var ares = this.UserRepository.GetUserInfo(gallery.Editor.Value);
+                            editor = ares.Output;
+                        }
+                        catch(Exception ex)
+                        {
+                            this.Logger.WriteError(ex);
+                        }
+                    }
+
+                    model.LockedBy = editor == null ? "unknown" : editor.GetFullName();
+                }
+
+                var content = gallery.LoadContent(false);
+                model.ImageCount = content.Images.Count;
+            }
+
+            return this.PartialView("GalleryInfoPopup", model);
         }
 
     }
