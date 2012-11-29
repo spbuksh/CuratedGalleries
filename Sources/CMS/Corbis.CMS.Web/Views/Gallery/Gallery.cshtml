@@ -62,7 +62,7 @@
         }
         else { 
         <li>
-            @Html.ActionLink("Un-Publish", "UnPublishGallery", "Gallery", new { id = this.Model.ID }, null)
+            <a href="javascript:void(0)" onclick="unPublishGallery(); return false;">Un-Publish</a>
         </li>
         }
     </ul>
@@ -163,6 +163,18 @@
                 GalleryPublicationPopup.onPublishSucceeded = function (result) {
                     window.location = '@Url.Action("EditGallery", "Gallery", new { id = this.Model.ID })'; 
                 };
+            }
+        });
+    }
+    function unPublishGallery() {
+        $.ajax({
+            url: '@this.Url.Action("UnPublish", "Gallery")',
+            type: 'POST',
+            data: { id: @this.Model.ID },
+            success: function (result) {
+                if (result.success == true) {
+                    window.location = '@Url.Action("EditGallery", "Gallery", new { id = this.Model.ID })';
+                }
             }
         });
     }

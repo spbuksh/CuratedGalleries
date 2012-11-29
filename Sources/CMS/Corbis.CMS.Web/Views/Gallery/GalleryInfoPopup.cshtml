@@ -10,6 +10,10 @@
             <td>@this.Model.Name</td>
         </tr>
         <tr>
+            <td>Created</td>
+            <td>@this.Model.CreationTime</td>
+        </tr>
+        <tr>
             <td>Template</td>
             <td>@this.Model.Template</td>
         </tr>
@@ -17,10 +21,12 @@
             <td>Status</td>
             <td>@this.Model.Status</td>
         </tr>
+        @if (!string.IsNullOrEmpty(this.Model.PublishedBy)) {
         <tr>
-            <td>Created</td>
-            <td>@this.Model.CreationTime</td>
-        </tr>
+            <td>Published By</td>
+            <td>@this.Model.PublishedBy</td>
+        </tr>                        
+        }
         @if (!string.IsNullOrEmpty(this.Model.PublicationPeriod)) {
         <tr>
             <td>Live Period</td>
@@ -45,6 +51,7 @@
             <td>@this.Model.LockedBy</td>
         </tr>            
         }
+        
         <tr>
             <td>Image Count</td>
             <td>@this.Model.ImageCount.ToString()</td>

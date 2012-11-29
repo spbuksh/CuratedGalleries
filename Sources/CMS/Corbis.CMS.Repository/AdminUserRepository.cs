@@ -11,6 +11,7 @@ using Corbis.Public.Entity;
 using Corbis.Common;
 using System.Configuration;
 using Corbis.Common.Utilities.Password;
+using Corbis.Common.ObjectMapping.Mappers;
 
 
 namespace Corbis.CMS.Repository

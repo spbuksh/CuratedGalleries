@@ -4,7 +4,8 @@
 /// <reference path="~/Scripts/Corbis/Corbis.Common.js" />
 /// ***********************************************************************
 var GalleryIndexPage = {
-    publishUrl: null
+    publishUrl: null,
+    unLockUrl: null
 };
 function DeleteGallery(id, url) {
     if (!confirm("Do you really want to detele gallery?"))
@@ -52,6 +53,36 @@ function onLockGalleryClick(lockUrl, galleryID, link) {
 
     return false;
 }
+function onUnLockGalleryClick(galleryID, trigger) {
+    var jelem = $(trigger);
+
+    var onUnLockSuccess = function (result) {
+        if (result.success == true) {
+            var onSuccess = function (data) {
+                $('div.galleryItem[corbis-item-id="' + galleryID + '"]').parent().replaceWith(data);
+            };
+
+            $.ajax({
+                url: GalleryIndexPage.getGalleryItemUrl,
+                type: "POST",
+                data: { id: galleryID },
+                success: onSuccess
+            });
+        }
+        else {
+            alert('Error');
+        }
+    };
+    $.ajax({
+        url: GalleryIndexPage.unLockUrl,
+        type: 'POST',
+        data: { id: galleryID },
+        success: onUnLockSuccess
+    });
+
+    return false;
+}
+
 
 function publishGallery(id) {
     showPopupWindow({

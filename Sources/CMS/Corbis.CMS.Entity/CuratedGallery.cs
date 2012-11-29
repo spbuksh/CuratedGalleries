@@ -50,7 +50,7 @@ namespace Corbis.CMS.Entity
         /// <summary>
         /// Admin person who is editing this gallery. We must prevent gallery editing wy several persons
         /// </summary>
-        public Nullable<int> Editor { get; set; }
+        public AdminUserInfo Editor { get; set; }
 
         /// <summary>
         /// Current gallery status
@@ -63,11 +63,16 @@ namespace Corbis.CMS.Entity
         public GalleryPublicationPeriod PublicationPeriod { get; set; }
 
         /// <summary>
+        /// Gallery publisher
+        /// </summary>
+        public AdminUserInfo Publisher { get; set; }
+
+        /// <summary>
         /// True - this gallery is in edit mode now.
         /// </summary>
         public bool IsInEditMode
         {
-            get { return this.Editor.HasValue; }
+            get { return this.Editor != null; }
         }
 
         /// <summary>

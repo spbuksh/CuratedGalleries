@@ -11,6 +11,8 @@
         OnSuccess = "onGalleryPublishSuccess"
     };
 }
+@Styles.Render("~/Content/site.css")
+
 <div class="publishPeriodContent">
 @using (Ajax.BeginForm("PublishPopup_POST", "Gallery", ajaxOptions))
 {

@@ -526,7 +526,7 @@ namespace Corbis.CMS.Web.Code
             }
         }
 
-        public static OperationResults PublishGallery(int id, DateTime fromUTC, DateTime? toUTC)
+        public static OperationResults PublishGallery(int? userID, int id, DateTime fromUTC, DateTime? toUTC)
         {
             lock (GetGallerySyncRoot(id))
             {
@@ -534,7 +534,7 @@ namespace Corbis.CMS.Web.Code
 
                 try
                 {
-                    ares = GalleryRepository.Publish(id, fromUTC, toUTC);
+                    ares = GalleryRepository.Publish(userID, id, fromUTC, toUTC);
                 }
                 catch (Exception ex)
                 {
@@ -613,8 +613,14 @@ namespace Corbis.CMS.Web.Code
                 {
                     dir.Clear();
                     dir.Refresh();
+
+                    try
+                    {
+                        dir.Delete(true);
+                    }
+                    catch (Exception)
+                    { }
                 }
-                dir.Delete(true);
 
                 return ares.Result;
             }

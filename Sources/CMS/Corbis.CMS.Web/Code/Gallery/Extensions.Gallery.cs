@@ -111,9 +111,9 @@ namespace Corbis.CMS.Web.Code
             return GalleryRuntime.GetGallerySyncRoot(gallery.ID);
         }
 
-        public static OperationResults Publish(this CuratedGallery gallery, DateTime fromUTC, DateTime? toUTC)
+        public static OperationResults Publish(this CuratedGallery gallery, int? userID, DateTime fromUTC, DateTime? toUTC)
         {
-            return GalleryRuntime.PublishGallery(gallery.ID, fromUTC, toUTC);
+            return GalleryRuntime.PublishGallery(userID, gallery.ID, fromUTC, toUTC);
         }
         public static OperationResults GoLive(this CuratedGallery gallery)
         {

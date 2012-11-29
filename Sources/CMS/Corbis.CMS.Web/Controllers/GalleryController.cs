@@ -272,6 +272,17 @@ namespace Corbis.CMS.Web.Controllers
         /// Create/Edit gallery
         /// </summary>
         /// <returns></returns>
+        [HttpPost]
+        public ActionResult UnLockGallery_AJAX(int id)
+        {
+            var rslt = this.GalleryRepository.UnLockGallery(id);
+            return this.Json(new { success = rslt.Result == OperationResults.Success });
+        }
+
+        /// <summary>
+        /// Create/Edit gallery
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [ActionName("EditGallery")]
         public ActionResult EditGallery_GET(Nullable<int> id)
@@ -686,7 +697,7 @@ namespace Corbis.CMS.Web.Controllers
                 return this.PartialView("GalleryPublishPopup", model);
             }
 
-            var result = GalleryRuntime.PublishGallery(model.GalleryID,
+            var result = GalleryRuntime.PublishGallery(this.CurrentUser.ID, model.GalleryID,
                 DateTime.ParseExact(model.From, DateTimeFormat, this.UserCulture).ToUniversalTime(),
                 string.IsNullOrEmpty(model.To) ? (DateTime?)null : DateTime.ParseExact(model.To, DateTimeFormat, this.UserCulture).ToUniversalTime());
 
@@ -752,22 +763,6 @@ namespace Corbis.CMS.Web.Controllers
 
             return this.Json(new { success = true }, JsonRequestBehavior.AllowGet);
         }
-        public ActionResult UnPublishGallery(int id)
-        {
-            var result = GalleryRuntime.UnPublishGallery(id);
-
-            switch (result)
-            {
-                case OperationResults.Success:
-                    return this.Json(new { success = true });
-                case OperationResults.NotFound:
-                    return this.Json(new { success = false, error = "Gallery was not found" });
-                case OperationResults.Failure:
-                    return this.Json(new { success = false, error = "Server error" });
-            }
-
-            return this.RedirectToAction("EditGallery", "Gallery", new { id = id });
-        }
 
         public ActionResult GetGalleryInfoPopup(int id)
         {
@@ -789,28 +784,10 @@ namespace Corbis.CMS.Web.Controllers
                 }
 
                 if (gallery.IsInEditMode)
-                {
-                    AdminUserInfo editor = null;
+                    model.LockedBy = gallery.Editor == null ? "unknown" : gallery.Editor.GetFullName();
 
-                    if (gallery.Editor == this.CurrentUser.ID)
-                    {
-                        editor = this.CurrentUser;
-                    }
-                    else
-                    {
-                        try
-                        {
-                            var ares = this.UserRepository.GetUserInfo(gallery.Editor.Value);
-                            editor = ares.Output;
-                        }
-                        catch(Exception ex)
-                        {
-                            this.Logger.WriteError(ex);
-                        }
-                    }
-
-                    model.LockedBy = editor == null ? "unknown" : editor.GetFullName();
-                }
+                if (gallery.Publisher != null)
+                    model.PublishedBy = gallery.Publisher.GetFullName();
 
                 var content = gallery.LoadContent(false);
                 model.ImageCount = content.Images.Count;

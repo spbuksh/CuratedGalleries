@@ -30,9 +30,6 @@ namespace Corbis.DB.Linq
 		
     #region Extensibility Method Definitions
     partial void OnCreated();
-    partial void InsertAdminUserMembershipRecord(AdminUserMembershipRecord instance);
-    partial void UpdateAdminUserMembershipRecord(AdminUserMembershipRecord instance);
-    partial void DeleteAdminUserMembershipRecord(AdminUserMembershipRecord instance);
     partial void InsertAdminUserRoleRecord(AdminUserRoleRecord instance);
     partial void UpdateAdminUserRoleRecord(AdminUserRoleRecord instance);
     partial void DeleteAdminUserRoleRecord(AdminUserRoleRecord instance);
@@ -48,6 +45,9 @@ namespace Corbis.DB.Linq
     partial void InsertCuratedGalleryStatusRecord(CuratedGalleryStatusRecord instance);
     partial void UpdateCuratedGalleryStatusRecord(CuratedGalleryStatusRecord instance);
     partial void DeleteCuratedGalleryStatusRecord(CuratedGalleryStatusRecord instance);
+    partial void InsertAdminUserMembershipRecord(AdminUserMembershipRecord instance);
+    partial void UpdateAdminUserMembershipRecord(AdminUserMembershipRecord instance);
+    partial void DeleteAdminUserMembershipRecord(AdminUserMembershipRecord instance);
     partial void InsertCuratedGalleryRecord(CuratedGalleryRecord instance);
     partial void UpdateCuratedGalleryRecord(CuratedGalleryRecord instance);
     partial void DeleteCuratedGalleryRecord(CuratedGalleryRecord instance);
@@ -84,14 +84,6 @@ namespace Corbis.DB.Linq
 				base(connection, mappingSource)
 		{
 			OnCreated();
-		}
-		
-		public System.Data.Linq.Table<AdminUserMembershipRecord> AdminUserMembershipRecords
-		{
-			get
-			{
-				return this.GetTable<AdminUserMembershipRecord>();
-			}
 		}
 		
 		public System.Data.Linq.Table<AdminUserRoleRecord> AdminUserRoleRecords
@@ -142,6 +134,14 @@ namespace Corbis.DB.Linq
 			}
 		}
 		
+		public System.Data.Linq.Table<AdminUserMembershipRecord> AdminUserMembershipRecords
+		{
+			get
+			{
+				return this.GetTable<AdminUserMembershipRecord>();
+			}
+		}
+		
 		public System.Data.Linq.Table<CuratedGalleryRecord> CuratedGalleryRecords
 		{
 			get
@@ -156,281 +156,6 @@ namespace Corbis.DB.Linq
 			{
 				return this.GetTable<GalleryPublicationPeriodRecord>();
 			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.AdminUserMembership")]
-	public partial class AdminUserMembershipRecord : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _ID;
-		
-		private int _ProfileID;
-		
-		private string _Login;
-		
-		private string _Password;
-		
-		private System.Nullable<System.DateTime> _PasswordExpirationDate;
-		
-		private bool _IsActive;
-		
-		private System.DateTime _DateCreated;
-		
-		private EntitySet<CuratedGalleryRecord> _CuratedGalleryRecords;
-		
-		private EntityRef<AdminUserProfileRecord> _AdminUserProfileRecord;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnIDChanging(int value);
-    partial void OnIDChanged();
-    partial void OnProfileIDChanging(int value);
-    partial void OnProfileIDChanged();
-    partial void OnLoginChanging(string value);
-    partial void OnLoginChanged();
-    partial void OnPasswordChanging(string value);
-    partial void OnPasswordChanged();
-    partial void OnPasswordExpirationDateChanging(System.Nullable<System.DateTime> value);
-    partial void OnPasswordExpirationDateChanged();
-    partial void OnIsActiveChanging(bool value);
-    partial void OnIsActiveChanged();
-    partial void OnDateCreatedChanging(System.DateTime value);
-    partial void OnDateCreatedChanged();
-    #endregion
-		
-		public AdminUserMembershipRecord()
-		{
-			this._CuratedGalleryRecords = new EntitySet<CuratedGalleryRecord>(new Action<CuratedGalleryRecord>(this.attach_CuratedGalleryRecords), new Action<CuratedGalleryRecord>(this.detach_CuratedGalleryRecords));
-			this._AdminUserProfileRecord = default(EntityRef<AdminUserProfileRecord>);
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int ID
-		{
-			get
-			{
-				return this._ID;
-			}
-			set
-			{
-				if ((this._ID != value))
-				{
-					this.OnIDChanging(value);
-					this.SendPropertyChanging();
-					this._ID = value;
-					this.SendPropertyChanged("ID");
-					this.OnIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProfileID", DbType="Int NOT NULL")]
-		public int ProfileID
-		{
-			get
-			{
-				return this._ProfileID;
-			}
-			set
-			{
-				if ((this._ProfileID != value))
-				{
-					if (this._AdminUserProfileRecord.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnProfileIDChanging(value);
-					this.SendPropertyChanging();
-					this._ProfileID = value;
-					this.SendPropertyChanged("ProfileID");
-					this.OnProfileIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Login", DbType="NVarChar(100) NOT NULL", CanBeNull=false)]
-		public string Login
-		{
-			get
-			{
-				return this._Login;
-			}
-			set
-			{
-				if ((this._Login != value))
-				{
-					this.OnLoginChanging(value);
-					this.SendPropertyChanging();
-					this._Login = value;
-					this.SendPropertyChanged("Login");
-					this.OnLoginChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Password", DbType="NVarChar(150) NOT NULL", CanBeNull=false)]
-		public string Password
-		{
-			get
-			{
-				return this._Password;
-			}
-			set
-			{
-				if ((this._Password != value))
-				{
-					this.OnPasswordChanging(value);
-					this.SendPropertyChanging();
-					this._Password = value;
-					this.SendPropertyChanged("Password");
-					this.OnPasswordChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PasswordExpirationDate", DbType="DateTime2")]
-		public System.Nullable<System.DateTime> PasswordExpirationDate
-		{
-			get
-			{
-				return this._PasswordExpirationDate;
-			}
-			set
-			{
-				if ((this._PasswordExpirationDate != value))
-				{
-					this.OnPasswordExpirationDateChanging(value);
-					this.SendPropertyChanging();
-					this._PasswordExpirationDate = value;
-					this.SendPropertyChanged("PasswordExpirationDate");
-					this.OnPasswordExpirationDateChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsActive", DbType="Bit NOT NULL")]
-		public bool IsActive
-		{
-			get
-			{
-				return this._IsActive;
-			}
-			set
-			{
-				if ((this._IsActive != value))
-				{
-					this.OnIsActiveChanging(value);
-					this.SendPropertyChanging();
-					this._IsActive = value;
-					this.SendPropertyChanged("IsActive");
-					this.OnIsActiveChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DateCreated", DbType="DateTime2 NOT NULL")]
-		public System.DateTime DateCreated
-		{
-			get
-			{
-				return this._DateCreated;
-			}
-			set
-			{
-				if ((this._DateCreated != value))
-				{
-					this.OnDateCreatedChanging(value);
-					this.SendPropertyChanging();
-					this._DateCreated = value;
-					this.SendPropertyChanged("DateCreated");
-					this.OnDateCreatedChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AdminUserMembershipRecord_CuratedGallery", Storage="_CuratedGalleryRecords", ThisKey="ID", OtherKey="Editor")]
-		public EntitySet<CuratedGalleryRecord> CuratedGalleryRecords
-		{
-			get
-			{
-				return this._CuratedGalleryRecords;
-			}
-			set
-			{
-				this._CuratedGalleryRecords.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AdminUserProfileRecord_AdminUserMembershipRecord", Storage="_AdminUserProfileRecord", ThisKey="ProfileID", OtherKey="ID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
-		public AdminUserProfileRecord AdminUserProfileRecord
-		{
-			get
-			{
-				return this._AdminUserProfileRecord.Entity;
-			}
-			set
-			{
-				AdminUserProfileRecord previousValue = this._AdminUserProfileRecord.Entity;
-				if (((previousValue != value) 
-							|| (this._AdminUserProfileRecord.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._AdminUserProfileRecord.Entity = null;
-						previousValue.AdminUserMembershipRecords.Remove(this);
-					}
-					this._AdminUserProfileRecord.Entity = value;
-					if ((value != null))
-					{
-						value.AdminUserMembershipRecords.Add(this);
-						this._ProfileID = value.ID;
-					}
-					else
-					{
-						this._ProfileID = default(int);
-					}
-					this.SendPropertyChanged("AdminUserProfileRecord");
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-		
-		private void attach_CuratedGalleryRecords(CuratedGalleryRecord entity)
-		{
-			this.SendPropertyChanging();
-			entity.AdminUserMembershipRecord = this;
-		}
-		
-		private void detach_CuratedGalleryRecords(CuratedGalleryRecord entity)
-		{
-			this.SendPropertyChanging();
-			entity.AdminUserMembershipRecord = null;
 		}
 	}
 	
@@ -895,7 +620,7 @@ namespace Corbis.DB.Linq
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AdminUserProfileRecord_AdminUserMembershipRecord", Storage="_AdminUserMembershipRecords", ThisKey="ID", OtherKey="ProfileID")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AdminUserProfileRecord_AdminUserMembership", Storage="_AdminUserMembershipRecords", ThisKey="ID", OtherKey="ProfileID")]
 		public EntitySet<AdminUserMembershipRecord> AdminUserMembershipRecords
 		{
 			get
@@ -1282,6 +1007,309 @@ namespace Corbis.DB.Linq
 		}
 	}
 	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.AdminUserMembership")]
+	public partial class AdminUserMembershipRecord : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ID;
+		
+		private int _ProfileID;
+		
+		private string _Login;
+		
+		private string _Password;
+		
+		private System.Nullable<System.DateTime> _PasswordExpirationDate;
+		
+		private bool _IsActive;
+		
+		private System.DateTime _DateCreated;
+		
+		private EntitySet<CuratedGalleryRecord> _CuratedGalleryRecords;
+		
+		private EntitySet<GalleryPublicationPeriodRecord> _GalleryPublicationPeriodRecords;
+		
+		private EntityRef<AdminUserProfileRecord> _AdminUserProfileRecord;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIDChanging(int value);
+    partial void OnIDChanged();
+    partial void OnProfileIDChanging(int value);
+    partial void OnProfileIDChanged();
+    partial void OnLoginChanging(string value);
+    partial void OnLoginChanged();
+    partial void OnPasswordChanging(string value);
+    partial void OnPasswordChanged();
+    partial void OnPasswordExpirationDateChanging(System.Nullable<System.DateTime> value);
+    partial void OnPasswordExpirationDateChanged();
+    partial void OnIsActiveChanging(bool value);
+    partial void OnIsActiveChanged();
+    partial void OnDateCreatedChanging(System.DateTime value);
+    partial void OnDateCreatedChanged();
+    #endregion
+		
+		public AdminUserMembershipRecord()
+		{
+			this._CuratedGalleryRecords = new EntitySet<CuratedGalleryRecord>(new Action<CuratedGalleryRecord>(this.attach_CuratedGalleryRecords), new Action<CuratedGalleryRecord>(this.detach_CuratedGalleryRecords));
+			this._GalleryPublicationPeriodRecords = new EntitySet<GalleryPublicationPeriodRecord>(new Action<GalleryPublicationPeriodRecord>(this.attach_GalleryPublicationPeriodRecords), new Action<GalleryPublicationPeriodRecord>(this.detach_GalleryPublicationPeriodRecords));
+			this._AdminUserProfileRecord = default(EntityRef<AdminUserProfileRecord>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int ID
+		{
+			get
+			{
+				return this._ID;
+			}
+			set
+			{
+				if ((this._ID != value))
+				{
+					this.OnIDChanging(value);
+					this.SendPropertyChanging();
+					this._ID = value;
+					this.SendPropertyChanged("ID");
+					this.OnIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProfileID", DbType="Int NOT NULL")]
+		public int ProfileID
+		{
+			get
+			{
+				return this._ProfileID;
+			}
+			set
+			{
+				if ((this._ProfileID != value))
+				{
+					if (this._AdminUserProfileRecord.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnProfileIDChanging(value);
+					this.SendPropertyChanging();
+					this._ProfileID = value;
+					this.SendPropertyChanged("ProfileID");
+					this.OnProfileIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Login", DbType="NVarChar(100) NOT NULL", CanBeNull=false)]
+		public string Login
+		{
+			get
+			{
+				return this._Login;
+			}
+			set
+			{
+				if ((this._Login != value))
+				{
+					this.OnLoginChanging(value);
+					this.SendPropertyChanging();
+					this._Login = value;
+					this.SendPropertyChanged("Login");
+					this.OnLoginChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Password", DbType="NVarChar(150) NOT NULL", CanBeNull=false)]
+		public string Password
+		{
+			get
+			{
+				return this._Password;
+			}
+			set
+			{
+				if ((this._Password != value))
+				{
+					this.OnPasswordChanging(value);
+					this.SendPropertyChanging();
+					this._Password = value;
+					this.SendPropertyChanged("Password");
+					this.OnPasswordChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PasswordExpirationDate", DbType="DateTime2")]
+		public System.Nullable<System.DateTime> PasswordExpirationDate
+		{
+			get
+			{
+				return this._PasswordExpirationDate;
+			}
+			set
+			{
+				if ((this._PasswordExpirationDate != value))
+				{
+					this.OnPasswordExpirationDateChanging(value);
+					this.SendPropertyChanging();
+					this._PasswordExpirationDate = value;
+					this.SendPropertyChanged("PasswordExpirationDate");
+					this.OnPasswordExpirationDateChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsActive", DbType="Bit NOT NULL")]
+		public bool IsActive
+		{
+			get
+			{
+				return this._IsActive;
+			}
+			set
+			{
+				if ((this._IsActive != value))
+				{
+					this.OnIsActiveChanging(value);
+					this.SendPropertyChanging();
+					this._IsActive = value;
+					this.SendPropertyChanged("IsActive");
+					this.OnIsActiveChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DateCreated", DbType="DateTime2 NOT NULL")]
+		public System.DateTime DateCreated
+		{
+			get
+			{
+				return this._DateCreated;
+			}
+			set
+			{
+				if ((this._DateCreated != value))
+				{
+					this.OnDateCreatedChanging(value);
+					this.SendPropertyChanging();
+					this._DateCreated = value;
+					this.SendPropertyChanged("DateCreated");
+					this.OnDateCreatedChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AdminUserMembershipRecord_CuratedGallery", Storage="_CuratedGalleryRecords", ThisKey="ID", OtherKey="Editor")]
+		public EntitySet<CuratedGalleryRecord> CuratedGalleryRecords
+		{
+			get
+			{
+				return this._CuratedGalleryRecords;
+			}
+			set
+			{
+				this._CuratedGalleryRecords.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AdminUserMembershipRecord_GalleryPublicationPeriod", Storage="_GalleryPublicationPeriodRecords", ThisKey="ID", OtherKey="PublisherID")]
+		public EntitySet<GalleryPublicationPeriodRecord> GalleryPublicationPeriodRecords
+		{
+			get
+			{
+				return this._GalleryPublicationPeriodRecords;
+			}
+			set
+			{
+				this._GalleryPublicationPeriodRecords.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AdminUserProfileRecord_AdminUserMembership", Storage="_AdminUserProfileRecord", ThisKey="ProfileID", OtherKey="ID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public AdminUserProfileRecord AdminUserProfileRecord
+		{
+			get
+			{
+				return this._AdminUserProfileRecord.Entity;
+			}
+			set
+			{
+				AdminUserProfileRecord previousValue = this._AdminUserProfileRecord.Entity;
+				if (((previousValue != value) 
+							|| (this._AdminUserProfileRecord.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._AdminUserProfileRecord.Entity = null;
+						previousValue.AdminUserMembershipRecords.Remove(this);
+					}
+					this._AdminUserProfileRecord.Entity = value;
+					if ((value != null))
+					{
+						value.AdminUserMembershipRecords.Add(this);
+						this._ProfileID = value.ID;
+					}
+					else
+					{
+						this._ProfileID = default(int);
+					}
+					this.SendPropertyChanged("AdminUserProfileRecord");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_CuratedGalleryRecords(CuratedGalleryRecord entity)
+		{
+			this.SendPropertyChanging();
+			entity.AdminUserMembershipRecord = this;
+		}
+		
+		private void detach_CuratedGalleryRecords(CuratedGalleryRecord entity)
+		{
+			this.SendPropertyChanging();
+			entity.AdminUserMembershipRecord = null;
+		}
+		
+		private void attach_GalleryPublicationPeriodRecords(GalleryPublicationPeriodRecord entity)
+		{
+			this.SendPropertyChanging();
+			entity.AdminUserMembershipRecord = this;
+		}
+		
+		private void detach_GalleryPublicationPeriodRecords(GalleryPublicationPeriodRecord entity)
+		{
+			this.SendPropertyChanging();
+			entity.AdminUserMembershipRecord = null;
+		}
+	}
+	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.CuratedGallery")]
 	public partial class CuratedGalleryRecord : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -1546,7 +1574,7 @@ namespace Corbis.DB.Linq
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CuratedGallery_GalleryPublicationPeriod", Storage="_GalleryPublicationPeriodRecords", ThisKey="ID", OtherKey="GalleryID")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CuratedGalleryRecord_GalleryPublicationPeriod", Storage="_GalleryPublicationPeriodRecords", ThisKey="ID", OtherKey="GalleryID")]
 		public EntitySet<GalleryPublicationPeriodRecord> GalleryPublicationPeriodRecords
 		{
 			get
@@ -1742,6 +1770,12 @@ namespace Corbis.DB.Linq
 		
 		private System.Nullable<System.DateTime> _End;
 		
+		private string _Publisher;
+		
+		private System.Nullable<int> _PublisherID;
+		
+		private EntityRef<AdminUserMembershipRecord> _AdminUserMembershipRecord;
+		
 		private EntityRef<CuratedGalleryRecord> _CuratedGalleryRecord;
 		
     #region Extensibility Method Definitions
@@ -1756,10 +1790,15 @@ namespace Corbis.DB.Linq
     partial void OnStartChanged();
     partial void OnEndChanging(System.Nullable<System.DateTime> value);
     partial void OnEndChanged();
+    partial void OnPublisherChanging(string value);
+    partial void OnPublisherChanged();
+    partial void OnPublisherIDChanging(System.Nullable<int> value);
+    partial void OnPublisherIDChanged();
     #endregion
 		
 		public GalleryPublicationPeriodRecord()
 		{
+			this._AdminUserMembershipRecord = default(EntityRef<AdminUserMembershipRecord>);
 			this._CuratedGalleryRecord = default(EntityRef<CuratedGalleryRecord>);
 			OnCreated();
 		}
@@ -1848,7 +1887,85 @@ namespace Corbis.DB.Linq
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CuratedGallery_GalleryPublicationPeriod", Storage="_CuratedGalleryRecord", ThisKey="GalleryID", OtherKey="ID", IsForeignKey=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Publisher", DbType="NVarChar(255)")]
+		public string Publisher
+		{
+			get
+			{
+				return this._Publisher;
+			}
+			set
+			{
+				if ((this._Publisher != value))
+				{
+					this.OnPublisherChanging(value);
+					this.SendPropertyChanging();
+					this._Publisher = value;
+					this.SendPropertyChanged("Publisher");
+					this.OnPublisherChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PublisherID", DbType="Int")]
+		public System.Nullable<int> PublisherID
+		{
+			get
+			{
+				return this._PublisherID;
+			}
+			set
+			{
+				if ((this._PublisherID != value))
+				{
+					if (this._AdminUserMembershipRecord.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnPublisherIDChanging(value);
+					this.SendPropertyChanging();
+					this._PublisherID = value;
+					this.SendPropertyChanged("PublisherID");
+					this.OnPublisherIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AdminUserMembershipRecord_GalleryPublicationPeriod", Storage="_AdminUserMembershipRecord", ThisKey="PublisherID", OtherKey="ID", IsForeignKey=true)]
+		public AdminUserMembershipRecord AdminUserMembershipRecord
+		{
+			get
+			{
+				return this._AdminUserMembershipRecord.Entity;
+			}
+			set
+			{
+				AdminUserMembershipRecord previousValue = this._AdminUserMembershipRecord.Entity;
+				if (((previousValue != value) 
+							|| (this._AdminUserMembershipRecord.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._AdminUserMembershipRecord.Entity = null;
+						previousValue.GalleryPublicationPeriodRecords.Remove(this);
+					}
+					this._AdminUserMembershipRecord.Entity = value;
+					if ((value != null))
+					{
+						value.GalleryPublicationPeriodRecords.Add(this);
+						this._PublisherID = value.ID;
+					}
+					else
+					{
+						this._PublisherID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("AdminUserMembershipRecord");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CuratedGalleryRecord_GalleryPublicationPeriod", Storage="_CuratedGalleryRecord", ThisKey="GalleryID", OtherKey="ID", IsForeignKey=true)]
 		public CuratedGalleryRecord CuratedGalleryRecord
 		{
 			get

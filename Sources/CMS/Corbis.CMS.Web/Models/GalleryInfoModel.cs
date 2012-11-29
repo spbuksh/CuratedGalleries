@@ -24,6 +24,8 @@ namespace Corbis.CMS.Web.Models
 
         public string LockedBy { get; set; }
 
+        public string PublishedBy { get; set; }
+
         public int ImageCount { get; set; }
     }
 }

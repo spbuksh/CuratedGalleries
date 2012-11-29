@@ -33,5 +33,9 @@ namespace Corbis.CMS.Repository.Interface.Communication
         public Nullable<int> Count { get; set; }
 
         public Nullable<CuratedGalleryStatuses> Status { get; set; }
+
+        public Nullable<DateTime> PublicationPeriodFrom { get; set; }
+
+        public Nullable<int> PublisherID { get; set; }
     }
 }

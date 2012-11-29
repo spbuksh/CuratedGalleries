@@ -270,5 +270,8 @@
     <Build Include="Schema Objects\Schemas\dbo\Tables\Keys\FK_GalleryPublicationPeriod_CuratedGallery.fkey.sql">
       <SubType>Code</SubType>
     </Build>
+    <Build Include="Schema Objects\Schemas\dbo\Tables\Keys\FK_GalleryPublicationPeriod_AdminUserMembership.fkey.sql">
+      <SubType>Code</SubType>
+    </Build>
   </ItemGroup>
 </Project>

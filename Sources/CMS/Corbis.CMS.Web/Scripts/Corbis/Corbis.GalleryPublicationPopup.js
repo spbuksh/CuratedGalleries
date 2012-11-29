@@ -99,6 +99,18 @@ function onPublishSubmit(trigger) {
         return;
     }
 
+    var helper = new validationSummaryHelper(jform.find('div.validation-summary-valid,div.validation-summary-errors'));
+    helper.reset();
+
+    var dtFrom = jfrom.datetimepicker('getDate');
+    var dtTo = jto.datetimepicker('getDate');
+
+    if (dtTo != null && dtTo < dtFrom) {
+        helper.showErrors(["Start Date must be less than End date"]);
+        return;
+    }
+
+
     var onsuccess = function (result) {
         if (result.success == true) {
             closePopupWindow(GalleryPublicationPopup.popupID);

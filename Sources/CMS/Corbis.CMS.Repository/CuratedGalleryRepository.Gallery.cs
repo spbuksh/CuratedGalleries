@@ -8,11 +8,22 @@ using Corbis.CMS.Entity;
 using Corbis.CMS.Repository.Interface.Communication;
 using Corbis.DB.Linq;
 using Corbis.Common.ObjectMapping.Interface;
+using Corbis.CMS.Repository.Interface;
+using Microsoft.Practices.Unity;
 
 namespace Corbis.CMS.Repository
 {
     public partial class CuratedGalleryRepository
     {
+        [Dependency]
+        public IAdminUserRepository UserRepository { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="templateID"></param>
+        /// <returns></returns>
         public OperationResult<OperationResults, CuratedGallery> CreateGallery(string name, int? templateID = null)
         {
             var rslt = new OperationResult<OperationResults, CuratedGallery>();
@@ -125,7 +136,7 @@ namespace Corbis.CMS.Repository
 
         protected CuratedGallery Convert(CuratedGalleryRecord record)
         {
-            MappingData md = new MappingData();
+            MappingData md = new MappingData(new string[] { Utils.GetPropertyName<CuratedGallery, AdminUserInfo>(x => x.Editor) });
             md.PropertiesMapping.Add(new MappingDataItem(Utils.GetPropertyName<CuratedGalleryRecord, short>(x => x.StatusID), Utils.GetPropertyName<CuratedGallery, CuratedGalleryStatuses>(x => x.Status), x => x.ToEnum<CuratedGalleryStatuses>()));
             md.PropertiesMapping.Add(new MappingDataItem(Utils.GetPropertyName<CuratedGalleryRecord, DateTime>(x => x.DateCreated), null, x => ((DateTime)x).ToLocalTime()));
             md.PropertiesMapping.Add(new MappingDataItem(Utils.GetPropertyName<CuratedGalleryRecord, DateTime?>(x => x.DateModified), null, x => (x == null ? (DateTime?)null : ((DateTime)x).ToLocalTime())));
@@ -148,6 +159,12 @@ namespace Corbis.CMS.Repository
                 var period = record.GalleryPublicationPeriodRecords.SingleOrDefault();
                 rslt.Output.PublicationPeriod = period == null ? null : this.ObjectMapper.DoMapping<GalleryPublicationPeriod>(period);
 
+                if (record.Editor.HasValue)
+                    rslt.Output.Editor = this.UserRepository.GetUserInfo(record.Editor.Value).Output;
+
+                if (period != null && period.PublisherID.HasValue)
+                    rslt.Output.Publisher = this.UserRepository.GetUserInfo(period.PublisherID.Value).Output;
+
                 if (includePackage)
                 {
                     var frec = record.FileRecord;
@@ -162,53 +179,59 @@ namespace Corbis.CMS.Repository
 
         public OperationResult<OperationResults, List<CuratedGallery>> GetGalleries(CuratedGalleryFilter filter = null)
         {
+            //!!! TODO: refactor this method!!! I imaplemented quite fast and it has performance issue and logic issues which I skipped due to some reasons !!!
+
             var rslt = new OperationResult<OperationResults, List<CuratedGallery>>() { Result = OperationResults.Success };
 
             using (var context = this.CreateMainContext())
             { 
-                IQueryable<CuratedGalleryRecord> query = context.CuratedGalleryRecords;
+                var query1 = 
+                    from p in context.GalleryPublicationPeriodRecords
+                    join m in context.AdminUserMembershipRecords on p.PublisherID equals m.ID into set
+                    select new { period = p, publisher = set == null ? null : set.FirstOrDefault() };
+
+                var query = from g in context.CuratedGalleryRecords
+                         join e in context.AdminUserMembershipRecords on g.Editor equals e.ID into editors
+                         join p in query1 on g.ID equals p.period.GalleryID into periods
+                            select new { gallery = g, period = (periods == null ? null : periods.First().period), publisher = (periods == null ? null : periods.First().publisher), editor = (editors == null ? null : editors.First()) };
 
                 if (filter != null)
                 {
-                    //
                     if (!string.IsNullOrEmpty(filter.NamePattern))
-                        query = query.Where(x => x.Name.ToLower().Contains(filter.NamePattern.ToLower()));
+                        query = query.Where(x => x.gallery.Name.ToLower().Contains(filter.NamePattern.ToLower()));
 
                     if (filter.Enabled.HasValue)
-                        query = query.Where(x => x.Enabled == filter.Enabled.Value);
+                        query = query.Where(x => x.gallery.Enabled == filter.Enabled.Value);
 
                     if (filter.Status.HasValue)
-                        query = query.Where(x => x.StatusID == (short)filter.Status.Value);
+                        query = query.Where(x => x.gallery.StatusID == (short)filter.Status.Value);
 
-                    //default sorting
-                    query = query.OrderByDescending(x => x.DateCreated).ThenBy(x => x.Name);
-                }
-                else
-                {
-                    query = query.OrderByDescending(x => x.DateCreated).ThenBy(x => x.Name);
+                    if (filter.PublicationPeriodFrom.HasValue)
+                        query = query.Where(x => x.period != null && (x.period.Start <= filter.PublicationPeriodFrom.Value && (!x.period.End.HasValue || filter.PublicationPeriodFrom.Value < x.period.End.Value)));
+
+                    if (filter.PublisherID.HasValue)
+                        query = query.Where(x => x.publisher != null && x.publisher.ID == filter.PublisherID.Value);
                 }
 
-                var q = from g in query
-                        join p in context.GalleryPublicationPeriodRecords on g.ID equals p.GalleryID into set
-                        from item in set.DefaultIfEmpty()
-                        select new { gallery = g, period = set };
+                query = query.OrderByDescending(x => x.gallery.DateCreated).ThenBy(x => x.gallery.Name);
 
                 if (filter != null)
                 {
-                    q = q.Skip(filter.StartIndex);
+                    query = query.Skip(filter.StartIndex);
 
                     if (filter.Count.HasValue)
-                        q = q.Take(filter.Count.Value);
+                        query = query.Take(filter.Count.Value);
                 }
 
                 rslt.Output = new List<CuratedGallery>();
 
-                foreach (var item in q)
+                foreach (var item in query)
                 {
                     var gallery = this.Convert(item.gallery);
+                    gallery.PublicationPeriod = item.period == null ? null : this.ObjectMapper.DoMapping<GalleryPublicationPeriod>(item.period);
 
-                    var period = item.period.FirstOrDefault();
-                    gallery.PublicationPeriod = period == null ? null : this.ObjectMapper.DoMapping<GalleryPublicationPeriod>(period);
+                    gallery.Editor = item.editor == null ? null : this.UserRepository.GetUserInfo(item.editor.ID).Output;
+                    gallery.Publisher = item.publisher == null ? null : this.UserRepository.GetUserInfo(item.publisher.ID).Output;
 
                     rslt.Output.Add(gallery);
                 }
@@ -263,11 +286,12 @@ namespace Corbis.CMS.Repository
         /// <summary>
         /// Publishes/republishes gallery
         /// </summary>
+        /// <param name="userID">Gallery publisher</param>
         /// <param name="id">Unique gallery identifier</param>
         /// <param name="dtStartUTC">Publication start date</param>
         /// <param name="dtEnd">Publication end date</param>
         /// <returns></returns>
-        public OperationResult<OperationResults, GalleryPublicationPeriod> Publish(int id, DateTime dtStartUTC, DateTime? dtEndUTC)
+        public OperationResult<OperationResults, GalleryPublicationPeriod> Publish(int? userID, int id, DateTime dtStartUTC, DateTime? dtEndUTC)
         {
             using (var context = this.CreateMainContext())
             {
@@ -282,7 +306,7 @@ namespace Corbis.CMS.Repository
                 foreach (var item in context.GalleryPublicationPeriodRecords.Where(x => x.GalleryID == id).ToArray())
                     context.GalleryPublicationPeriodRecords.DeleteOnSubmit(item);
 
-                var period = new GalleryPublicationPeriodRecord() { GalleryID = id, Start = dtStartUTC, End = dtEndUTC };
+                var period = new GalleryPublicationPeriodRecord() { GalleryID = id, Start = dtStartUTC, End = dtEndUTC, PublisherID = userID };
                 context.GalleryPublicationPeriodRecords.InsertOnSubmit(period);
 
                 galleryRec.StatusID = (int)CuratedGalleryStatuses.Published;

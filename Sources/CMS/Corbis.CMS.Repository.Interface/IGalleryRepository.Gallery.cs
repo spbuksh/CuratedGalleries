@@ -70,7 +70,7 @@ namespace Corbis.CMS.Repository.Interface
         /// <param name="dtStart">Publication start date in UTC</param>
         /// <param name="dtEnd">Publication end date in UTC</param>
         /// <returns></returns>
-        OperationResult<OperationResults, GalleryPublicationPeriod> Publish(int id, DateTime dtStartUTC, DateTime? dtEndUTC);
+        OperationResult<OperationResults, GalleryPublicationPeriod> Publish(int? userID, int id, DateTime dtStartUTC, DateTime? dtEndUTC);
 
         /// <summary>
         /// Un-Publishes gallery

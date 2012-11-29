@@ -45,7 +45,12 @@ namespace Corbis.CMS.Web.Models
         /// <summary>
         /// 
         /// </summary>
-        public Nullable<int> Editor { get; set; }
+        public AdminUserInfo Editor { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public AdminUserInfo Publisher { get; set; }
 
         /// <summary>
         /// Gallery status

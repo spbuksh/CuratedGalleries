@@ -5,8 +5,6 @@
 
 @{
     var user = this.GetCurrentUser();
-
-    bool isLocked = this.Model.Editor.HasValue;
 }
 <div class="action_button">
 @*    <div class="button_list">
@@ -25,10 +23,10 @@
             <div class="galleryTitle">
                 <a href="@Url.Action("BuildGallery", "Gallery", new { id = this.Model.ID })" target="_blank">@Html.Raw(this.Model.Name)</a>
             <div>
-            @if (this.Model.Editor.HasValue) {
-                if (this.Model.Editor.Value == user.ID) {
+            @if (this.Model.Editor != null) {
+                if (this.Model.Editor.ID == user.ID) {
                     @Html.ActionLink("Edit", "EditGallery", "Gallery", new { id = this.Model.ID }, null)
-                    <a href="javascript:void(0)">Unlock</a>
+                    <a href="javascript:void(0)" onclick="onUnLockGalleryClick(@this.Model.ID, this); return false;">Unlock</a>
                     <a href="javascript:void(0)" onclick="DeleteGallery(@this.Model.ID,'@(Url.Action("DeleteGallery", "Gallery"))'); return false;" >Delete</a>   
                 
                     if(this.Model.Status == CuratedGalleryStatuses.UnPublished) {
@@ -57,30 +55,13 @@
             <div class="createDate">
             <table>
                 <tr>
-                    <td>Date created</td>
-                    <td>@this.Model.DateCreated.ToString()</td>
+                    <td>Status</td>
+                    <td>@this.Model.Status.GetText()</td>
                 </tr>
                 <tr>
                     <td>Template</td>
                     <td>@this.Model.TemplateName</td>
                 </tr>
-                <tr>
-                    <td>Status</td>
-                    <td>@this.Model.Status.GetText()</td>
-                </tr>
-                @if (this.Model.Status == Corbis.CMS.Entity.CuratedGalleryStatuses.Published && this.Model.PublicationPeriod != null) {
-                    if (this.Model.PublicationPeriod != null) {
-                <tr>
-                    <td>Publication Period</td>
-                    <td>Start: @this.Model.PublicationPeriod.From</td>
-                    <td>End: @(string.IsNullOrEmpty(this.Model.PublicationPeriod.To) ? "-" : this.Model.PublicationPeriod.To)</td>
-                </tr>   
-                    }       
-                <tr>
-                    <td>URL</td>
-                    <td>@this.Model.PublicationUrl</td>
-                </tr>                                 
-                }
             </table>
             </div>           
         </div>
