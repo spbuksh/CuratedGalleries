@@ -21,35 +21,6 @@ namespace Corbis.CMS.Repository
     {
         #region Obsolete
 
-        public IEnumerable<Entity.AdminUser> GetUsers(AdminUserRoles role)
-        {
-            //using (var context = this.CreateMainContext())
-            //{
-            //    return context.AdminUserRecords.Where(u => (u.RoleID & (int)role) == (int)role).Select(u => new AdminUser() { UserID = u.ID, IsActive = u.IsActive, Login = u.Login, Email = u.Email, Role = (AdminUserRoles)u.RoleID }).ToList<AdminUser>();
-            //}
-
-            throw new NotImplementedException();
-        }
-
-
-        public void AddUser(string login, bool isactive, string email, AdminUserRoles role, string password)
-        {
-            //var user = new AdminUserRecord();
-            //user.Login = login;
-            //user.IsActive = isactive;
-            //user.DateCreated = DateTime.Now;
-            //user.Email = email;
-            //user.RoleID = role;
-            //user.Password = EncryptPassword(password);
-            //using (var context = this.CreateMainContext())
-            //{
-            //    context.AdminUserRecords.InsertOnSubmit(user);
-            //    context.SubmitChanges();
-            //}
-
-            throw new NotImplementedException();
-        }
-
         public void UpdateUser(int id, string login, bool isactive, string email, int roleId, string password)
         {
             //using (var context = this.CreateMainContext())
@@ -83,18 +54,120 @@ namespace Corbis.CMS.Repository
             throw new NotImplementedException();
         }
 
-        public Entity.AdminUser GetById(int id)
-        {
-            //using (var context = this.CreateMainContext())
-            //{
-            //    return context.AdminUserRecords.Where(u => u.UserId == id).Select(u => new AdminUser() { UserID = u.UserId, Email = u.Email, Role = (AdminUserRoles)u.UserRoleId, Login = u.Login, IsActive = u.IsActive }).First<AdminUser>();
-            //}
+        #endregion Obsolete
 
-            throw new NotImplementedException();
+        public OperationResult<OperationResults, int?> CreateUser(int? creatorID, AdminUser user)
+        {
+            var output = new OperationResult<OperationResults, int?>() { Result = OperationResults.Success };
+
+            using (var context = this.CreateMainContext())
+            {
+                if(context.Connection.State != System.Data.ConnectionState.Open)
+                    context.Connection.Open();
+
+                try
+                {
+                    context.Transaction = context.Connection.BeginTransaction();
+
+                    var profile = new AdminUserProfileRecord()
+                    {
+                        FirstName = user.FirstName,
+                        MiddleName = user.MiddleName,
+                        LastName = user.LastName,
+                        Email = user.Email
+                    };
+
+                    context.AdminUserProfileRecords.InsertOnSubmit(profile);
+                    context.SubmitChanges();
+
+                    var member = new AdminUserMembershipRecord()
+                    {
+                        Login = user.Login,
+                        Password = this.PasswordUtility.HashPassword(user.Password, this.PasswordHashKey),
+                        ProfileID = profile.ID,
+                        IsActive = user.IsActive
+                    };
+                    context.AdminUserMembershipRecords.InsertOnSubmit(member);
+                    context.SubmitChanges();
+
+                    foreach (AdminUserRoles item in user.Roles.GetItems())
+                        context.AdminUserToRoleRecords.InsertOnSubmit(new AdminUserToRoleRecord() { RoleID = (int)item, MemberID = member.ID });
+
+                    context.SubmitChanges();
+
+                    context.Transaction.Commit();
+
+                    output.Output = member.ID;
+                }
+                catch(Exception ex)
+                {
+                    output.Result = OperationResults.Failure;
+
+                    this.Logger.WriteError(ex);
+
+                    if (context.Transaction != null)
+                        context.Transaction.Rollback();
+                }
+
+                return output;
+            }
         }
 
-        public void DeleteUser(int id)
+        public OperationResult<OperationResults, object> DeleteUser(int id)
         {
+            var output = new OperationResult<OperationResults, object>() { Result = OperationResults.Success };
+
+            using (var context = this.CreateMainContext())
+            { 
+                if(context.Connection.State != System.Data.ConnectionState.Open)
+                    context.Connection.Open();
+
+                try
+                {
+                    context.Transaction = context.Connection.BeginTransaction();
+
+                    //
+                    foreach (var gallery in context.CuratedGalleryRecords.Where(x => x.Editor != null && x.Editor.Value == id))
+                        gallery.Editor = null;
+
+                    context.SubmitChanges();
+
+                    //
+                    foreach (var period in context.GalleryPublicationPeriodRecords.Where(x => x.PublisherID != null && x.PublisherID.Value == id))
+                        period.PublisherID = null;
+
+                    context.SubmitChanges();
+
+                    //
+                    foreach (var user2role in context.AdminUserToRoleRecords.Where(x => x.MemberID == id).ToList())
+                        context.AdminUserToRoleRecords.DeleteOnSubmit(user2role);
+
+                    context.SubmitChanges();
+
+                    var memeber = context.AdminUserMembershipRecords.Where(x => x.ID == id).Single();
+                    var profileID = memeber.ProfileID;
+                    context.AdminUserMembershipRecords.DeleteOnSubmit(memeber);
+                    context.SubmitChanges();
+
+                    context.AdminUserProfileRecords.DeleteOnSubmit(context.AdminUserProfileRecords.Where(x => x.ID == profileID).Single());
+                    context.SubmitChanges();
+
+                    context.Transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    output.Result = OperationResults.Failure;
+
+                    this.Logger.WriteError(ex);
+
+                    if (context.Transaction != null)
+                        context.Transaction.Rollback();
+                }
+
+            }
+
+            return output;
+
             //using (var context = this.CreateMainContext())
             //{
             //    var user = context.AdminUserRecords.Single(u => u.ID == id);
@@ -105,7 +178,44 @@ namespace Corbis.CMS.Repository
             throw new NotImplementedException();
         }
 
-        #endregion Obsolete
+        public OperationResult<OperationResults, List<AdminUser>> GetUsers()
+        {
+            using (var context = this.CreateMainContext())
+            {
+                var query = from m in context.AdminUserMembershipRecords
+                            join p in context.AdminUserProfileRecords on m.ProfileID equals p.ID
+                            join m2r in context.AdminUserToRoleRecords on m.ID equals m2r.MemberID into roles
+                            select new { member = m, profile = p, roles = roles };
+
+                var users = new List<AdminUser>();
+
+                foreach (var item in query)
+                {
+                    var user = new AdminUser()
+                    {
+                        ID = item.member.ID,
+                        FirstName = item.profile.FirstName,
+                        MiddleName = item.profile.MiddleName,
+                        LastName = item.profile.LastName,
+                        IsActive = item.member.IsActive,
+                        Email = item.profile.Email,
+                        Login = item.member.Login
+                    };
+
+                    if (item.roles != null)
+                    {
+                        foreach (var irole in item.roles)
+                            user.Roles = user.Roles.HasValue ? (user.Roles.Value | this.GetRole(irole.RoleID)) : (AdminUserRoles)irole.RoleID;
+                    }
+
+                    users.Add(user);
+                }
+
+                return new OperationResult<OperationResults, List<AdminUser>>() { Result = OperationResults.Success, Output = users };
+            }
+        }
+
+
 
         /// <summary>
         /// Gets admin user info by his memebership identifier

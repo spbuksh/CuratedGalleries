@@ -238,6 +238,7 @@
     <Compile Include="Models\GalleryPublicationPeriodModel.cs" />
     <Compile Include="Models\GalleryTemplateModel.cs" />
     <Compile Include="Models\ImageTextContentModel.cs" />
+    <Compile Include="Models\AdminUserMembershipModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -389,7 +390,9 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Web.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Views\Shared\Controls\Grid\" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
   </ItemGroup>
@@ -431,7 +434,7 @@
     <Content Include="Views\Shared\ErrorDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Shared\Controls\Grid\_UserGrid.cshtml" />
+    <Content Include="Views\User\UserGridPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\User\Index.cshtml" />

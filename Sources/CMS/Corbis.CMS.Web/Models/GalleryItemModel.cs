@@ -33,14 +33,14 @@ namespace Corbis.CMS.Web.Models
         public bool Enabled { get; set; }
 
         /// <summary>
-        /// Gallery created date
+        /// Formatted gallery created date
         /// </summary>
-        public DateTime DateCreated { get; set; }
+        public string DateCreated { get; set; }
 
         /// <summary>
         /// Gallery created date
         /// </summary>
-        public DateTime DateModified { get; set; }
+        public string DateModified { get; set; }
 
         /// <summary>
         /// 

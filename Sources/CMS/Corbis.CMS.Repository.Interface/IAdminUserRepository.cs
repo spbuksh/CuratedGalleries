@@ -12,15 +12,31 @@ namespace Corbis.CMS.Repository.Interface
     public interface IAdminUserRepository 
     {
         //TODO: These methods are obsolete!!! Refactor them and delete
-        IEnumerable<AdminUser> GetUsers(AdminUserRoles role);
-        void AddUser(string login, bool isactive, string email, AdminUserRoles roleId, string password);
         void UpdateUser(int id, string login, bool isactive, string email, int roleId, string password);
         void UpdateUser(int id, string login, bool isactive, string email, int roleId);
-        AdminUser GetById(int id);
-        void DeleteUser(int id);
 
 
         //*********************
+
+        /// <summary>
+        /// Creates admin user
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns>User identifier</returns>
+        OperationResult<OperationResults, int?> CreateUser(int? creatorID, AdminUser user);
+
+        /// <summary>
+        /// Deletes admin user
+        /// </summary>
+        /// <param name="id">user unique identifier</param>
+        /// <returns></returns>
+        OperationResult<OperationResults, object> DeleteUser(int id);
+
+        /// <summary>
+        /// Gets admin users
+        /// </summary>
+        /// <returns></returns>
+        OperationResult<OperationResults, List<AdminUser>> GetUsers(/* TODO: add filter in the future */);
 
         /// <summary>
         /// Gets admin user info by his memebership identifier

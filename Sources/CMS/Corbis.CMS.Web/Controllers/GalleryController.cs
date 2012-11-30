@@ -75,8 +75,15 @@ namespace Corbis.CMS.Web.Controllers
 
         protected GalleryItemModel Convert(CuratedGallery item)
         {
-            MappingData md = new MappingData(new string[] { Utils.GetPropertyName<CuratedGallery, GalleryPublicationPeriod>(x => x.PublicationPeriod) });
+            MappingData md = new MappingData(new string[] 
+                { 
+                    Utils.GetPropertyName<CuratedGallery, GalleryPublicationPeriod>(x => x.PublicationPeriod),
+                    Utils.GetPropertyName<CuratedGallery, DateTime>(x => x.DateCreated),
+                    Utils.GetPropertyName<CuratedGallery, DateTime?>(x => x.DateModified)
+                });
             var output = this.ObjectMapper.DoMapping<GalleryItemModel>(item, md);
+            output.DateCreated = item.DateCreated.ToString(DateTimeFormat);
+            output.DateModified = item.DateModified.HasValue ? item.DateModified.Value.ToString(DateTimeFormat) : null;
             output.PublicationPeriod = item.PublicationPeriod == null ? null : new Range<string>() { From = item.PublicationPeriod.Start.ToString(), To = item.PublicationPeriod.End.HasValue ? item.PublicationPeriod.End.Value.ToString() : null };
             return output;
         }
@@ -246,7 +253,7 @@ namespace Corbis.CMS.Web.Controllers
         [HttpPost]
         public ActionResult LockGallery(int id)
         {
-            var rslt = this.GalleryRepository.LockGallery(id, this.CurrentUser.ID);
+            var rslt = this.GalleryRepository.LockGallery(id, this.CurrentUser.ID.Value);
  
             switch(rslt.Result)
             {

@@ -27,25 +27,23 @@
                 if (this.Model.Editor.ID == user.ID) {
                     @Html.ActionLink("Edit", "EditGallery", "Gallery", new { id = this.Model.ID }, null)
                     <a href="javascript:void(0)" onclick="onUnLockGalleryClick(@this.Model.ID, this); return false;">Unlock</a>
-                    <a href="javascript:void(0)" onclick="DeleteGallery(@this.Model.ID,'@(Url.Action("DeleteGallery", "Gallery"))'); return false;" >Delete</a>   
-                
-                    if(this.Model.Status == CuratedGalleryStatuses.UnPublished) {
-                        <a href="javascript:void(0)" onclick="publishGallery(@this.Model.ID); return false;" >Publish</a>                    
-                    }
-                    else {
-                        <a href="javascript:void(0)" onclick="unPublishGallery(@this.Model.ID); return false;" >Un-Publish</a>
-                    }
+                    <a href="javascript:void(0)" onclick="DeleteGallery(@this.Model.ID,'@(Url.Action("DeleteGallery", "Gallery"))'); return false;" >Delete</a>        
+                    <a href="javascript:void(0)" onclick="publishGallery(@this.Model.ID); return false;" >Publish</a>
+                }
+                else if (user.Roles.HasValue && (user.Roles.Value & AdminUserRoles.SuperAdmin) == AdminUserRoles.SuperAdmin) { 
+                    <a href="javascript:void(0)" onclick="onUnLockGalleryClick(@this.Model.ID, this); return false;">Unlock</a>
                 }
             }
             else
-            {
-                @Html.ActionLink("Lock and Edit", "EditGallery", "Gallery", new { id = this.Model.ID }, new { onclick = string.Format("return onLockGalleryClick('{0}',{1}, this);", this.Url.Action("LockGallery", "Gallery"), this.Model.ID) })
-                <a href="javascript:void(0)" onclick="DeleteGallery(@this.Model.ID,'@(Url.Action("DeleteGallery", "Gallery"))'); return false;" >Delete</a>
-                
-                if (this.Model.Status == CuratedGalleryStatuses.UnPublished) {
+            {                
+                if (this.Model.Status == CuratedGalleryStatuses.UnPublished)
+                {
+                    @Html.ActionLink("Lock and Edit", "EditGallery", "Gallery", new { id = this.Model.ID }, new { onclick = string.Format("return onLockGalleryClick('{0}',{1}, this);", this.Url.Action("LockGallery", "Gallery"), this.Model.ID) })
                     <a href="javascript:void(0)" onclick="publishGallery(@this.Model.ID); return false;" >Publish</a>
+                    <a href="javascript:void(0)" onclick="DeleteGallery(@this.Model.ID,'@(Url.Action("DeleteGallery", "Gallery"))'); return false;" >Delete</a>
                 }
-                else {
+                else
+                {
                     <a href="javascript:void(0)" onclick="unPublishGallery(@this.Model.ID); return false;" >Un-Publish</a>
                 }
             }
@@ -58,6 +56,18 @@
                     <td>Status</td>
                     <td>@this.Model.Status.GetText()</td>
                 </tr>
+                @if (this.Model.Editor != null) {
+                <tr>
+                    <td>Locked By</td>
+                    <td>@this.Model.Editor.GetFullName()</td>
+                </tr>
+                }
+                else if (this.Model.Publisher != null) { 
+                <tr>
+                    <td>Published By</td>
+                    <td>@this.Model.Publisher.GetFullName()</td>
+                </tr>                    
+                }
                 <tr>
                     <td>Template</td>
                     <td>@this.Model.TemplateName</td>

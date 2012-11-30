@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-
-using System.Web.Http;
-
 using System.Configuration;
 using DotNetOpenAuth.AspNet;
 using Newtonsoft.Json;
@@ -16,6 +13,7 @@ using Microsoft.Practices.Unity;
 using Corbis.CMS.Web.Code;
 using Corbis.CMS.Repository.Interface;
 using Corbis.CMS.Web.Models;
+using Corbis.Common;
 
 
 namespace Corbis.CMS.Web.Controllers
@@ -27,10 +25,9 @@ namespace Corbis.CMS.Web.Controllers
 
         public ActionResult Index()
         {
-            //return View(this.UserRepository.GetUsers(this.CurrentUser.Roles));
+            var users = this.UserRepository.GetUsers().Output;
 
-            throw new NotImplementedException();
-
+            return this.View(users);
         }
 
 
@@ -39,26 +36,42 @@ namespace Corbis.CMS.Web.Controllers
             return View();
         }
 
+        [HttpGet]
         public ActionResult Create()
         {
-            return View();
+            var model = new AdminUserMembershipModel()
+            {
+                IsActive = true,
+                Roles = AdminUserRoles.Admin
+            };
+            return View("Create", model);
         }
-
-        [System.Web.Mvc.HttpPost]
-        public ActionResult Create(AdminUser user)
+        [HttpPost]
+        public ActionResult Create(AdminUserMembershipModel model)
         {
-            //try
-            //{
+            if (!this.ModelState.IsValid)
+                return this.View("Create", model);
 
-            //    this.UserRepository.AddUser(user.Login, user.IsActive, user.Email, user.Roles, user.Password);
-            //    return RedirectToAction("Index");
-            //}
-            //catch
-            //{
-            //    return View();
-            //}
+            var user = this.ObjectMapper.DoMapping<AdminUser>(model);
 
-            throw new NotImplementedException();
+            OperationResult<OperationResults, int?> rslt = null;
+
+            try
+            {
+                rslt = this.UserRepository.CreateUser(this.CurrentUser.ID, user);
+            }
+            catch (Exception ex)
+            {
+                this.Logger.WriteError(ex);
+            }
+
+            if (rslt == null || rslt.Result != OperationResults.Success)
+            {
+                this.ModelState.AddModelError(string.Empty, "User was not created due to server error");
+                return this.View("Create", model);
+            }
+
+            return this.RedirectToAction("Index", "User");
         }
 
 
@@ -94,12 +107,24 @@ namespace Corbis.CMS.Web.Controllers
             throw new NotImplementedException();
         }
 
+        [HttpPost]
         public ActionResult DeleteUser(int id)
         {
-            //this.UserRepository.DeleteUser(id);
-            //return PartialView("Controls/Grid/_UserGrid", this.UserRepository.GetUsers(((AdminUserPrincipal)this.HttpContext.User).User.Roles));
+            OperationResult<OperationResults, object> rslt = null;
 
-            throw new NotImplementedException();
+            try
+            {
+                rslt = this.UserRepository.DeleteUser(id);
+            }
+            catch (Exception ex)
+            {
+                this.Logger.WriteError(ex);
+            }
+
+            if (rslt == null || rslt.Result != OperationResults.Success)
+                return this.Json(new { success = false, error = "Server error" });
+
+            return this.Json(new { success = true });
         }
     }
 }

@@ -95,6 +95,7 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Corbis.Job", "Share\Corbis.ScheduledJob\Corbis.Job.csproj", "{4A232CDA-DF71-4E11-8080-973381FC841F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Corbis.CMS.Jobs", "CMS\Corbis.CMS.Jobs\Corbis.CMS.Jobs.csproj", "{53C1C924-AEE1-4D07-9EA2-0FC07A477107}"
+EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "FontInstaller", "FontInstaller\FontInstaller.vdproj", "{48125D5E-C427-4ED1-8C96-429E0597EFFE}"
 EndProject
 Global

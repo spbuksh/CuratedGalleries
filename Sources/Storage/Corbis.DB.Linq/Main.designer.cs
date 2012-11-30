@@ -54,6 +54,9 @@ namespace Corbis.DB.Linq
     partial void InsertGalleryPublicationPeriodRecord(GalleryPublicationPeriodRecord instance);
     partial void UpdateGalleryPublicationPeriodRecord(GalleryPublicationPeriodRecord instance);
     partial void DeleteGalleryPublicationPeriodRecord(GalleryPublicationPeriodRecord instance);
+    partial void InsertAdminUserToRoleRecord(AdminUserToRoleRecord instance);
+    partial void UpdateAdminUserToRoleRecord(AdminUserToRoleRecord instance);
+    partial void DeleteAdminUserToRoleRecord(AdminUserToRoleRecord instance);
     #endregion
 		
 		public MainDataContext() : 
@@ -91,14 +94,6 @@ namespace Corbis.DB.Linq
 			get
 			{
 				return this.GetTable<AdminUserRoleRecord>();
-			}
-		}
-		
-		public System.Data.Linq.Table<AdminUserToRoleRecord> AdminUserToRoleRecords
-		{
-			get
-			{
-				return this.GetTable<AdminUserToRoleRecord>();
 			}
 		}
 		
@@ -157,6 +152,14 @@ namespace Corbis.DB.Linq
 				return this.GetTable<GalleryPublicationPeriodRecord>();
 			}
 		}
+		
+		public System.Data.Linq.Table<AdminUserToRoleRecord> AdminUserToRoleRecords
+		{
+			get
+			{
+				return this.GetTable<AdminUserToRoleRecord>();
+			}
+		}
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.AdminUserRole")]
@@ -170,6 +173,8 @@ namespace Corbis.DB.Linq
 		private string _Name;
 		
 		private string _Description;
+		
+		private EntitySet<AdminUserToRoleRecord> _AdminUserToRoleRecords;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -185,6 +190,7 @@ namespace Corbis.DB.Linq
 		
 		public AdminUserRoleRecord()
 		{
+			this._AdminUserToRoleRecords = new EntitySet<AdminUserToRoleRecord>(new Action<AdminUserToRoleRecord>(this.attach_AdminUserToRoleRecords), new Action<AdminUserToRoleRecord>(this.detach_AdminUserToRoleRecords));
 			OnCreated();
 		}
 		
@@ -248,6 +254,19 @@ namespace Corbis.DB.Linq
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AdminUserRoleRecord_AdminUserToRole", Storage="_AdminUserToRoleRecords", ThisKey="ID", OtherKey="RoleID")]
+		public EntitySet<AdminUserToRoleRecord> AdminUserToRoleRecords
+		{
+			get
+			{
+				return this._AdminUserToRoleRecords;
+			}
+			set
+			{
+				this._AdminUserToRoleRecords.Assign(value);
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -267,50 +286,17 @@ namespace Corbis.DB.Linq
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
 		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.AdminUserToRole")]
-	public partial class AdminUserToRoleRecord
-	{
 		
-		private int _MemberID;
-		
-		private int _RoleID;
-		
-		public AdminUserToRoleRecord()
+		private void attach_AdminUserToRoleRecords(AdminUserToRoleRecord entity)
 		{
+			this.SendPropertyChanging();
+			entity.AdminUserRoleRecord = this;
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MemberID", DbType="Int NOT NULL")]
-		public int MemberID
+		private void detach_AdminUserToRoleRecords(AdminUserToRoleRecord entity)
 		{
-			get
-			{
-				return this._MemberID;
-			}
-			set
-			{
-				if ((this._MemberID != value))
-				{
-					this._MemberID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RoleID", DbType="Int NOT NULL")]
-		public int RoleID
-		{
-			get
-			{
-				return this._RoleID;
-			}
-			set
-			{
-				if ((this._RoleID != value))
-				{
-					this._RoleID = value;
-				}
-			}
+			this.SendPropertyChanging();
+			entity.AdminUserRoleRecord = null;
 		}
 	}
 	
@@ -422,7 +408,7 @@ namespace Corbis.DB.Linq
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="FileRecord_CuratedGallery", Storage="_CuratedGalleryRecords", ThisKey="ID", OtherKey="Archive")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="FileRecord_CuratedGalleryRecord", Storage="_CuratedGalleryRecords", ThisKey="ID", OtherKey="Archive")]
 		public EntitySet<CuratedGalleryRecord> CuratedGalleryRecords
 		{
 			get
@@ -620,7 +606,7 @@ namespace Corbis.DB.Linq
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AdminUserProfileRecord_AdminUserMembership", Storage="_AdminUserMembershipRecords", ThisKey="ID", OtherKey="ProfileID")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AdminUserProfileRecord_AdminUserMembershipRecord", Storage="_AdminUserMembershipRecords", ThisKey="ID", OtherKey="ProfileID")]
 		public EntitySet<AdminUserMembershipRecord> AdminUserMembershipRecords
 		{
 			get
@@ -813,7 +799,7 @@ namespace Corbis.DB.Linq
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="GalleryTemplateRecord_CuratedGallery", Storage="_CuratedGalleryRecords", ThisKey="ID", OtherKey="TemplateID")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="GalleryTemplateRecord_CuratedGalleryRecord", Storage="_CuratedGalleryRecords", ThisKey="ID", OtherKey="TemplateID")]
 		public EntitySet<CuratedGalleryRecord> CuratedGalleryRecords
 		{
 			get
@@ -961,7 +947,7 @@ namespace Corbis.DB.Linq
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CuratedGalleryStatusRecord_CuratedGallery", Storage="_CuratedGalleryRecords", ThisKey="ID", OtherKey="StatusID")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CuratedGalleryStatusRecord_CuratedGalleryRecord", Storage="_CuratedGalleryRecords", ThisKey="ID", OtherKey="StatusID")]
 		public EntitySet<CuratedGalleryRecord> CuratedGalleryRecords
 		{
 			get
@@ -1031,6 +1017,8 @@ namespace Corbis.DB.Linq
 		
 		private EntitySet<GalleryPublicationPeriodRecord> _GalleryPublicationPeriodRecords;
 		
+		private EntitySet<AdminUserToRoleRecord> _AdminUserToRoleRecords;
+		
 		private EntityRef<AdminUserProfileRecord> _AdminUserProfileRecord;
 		
     #region Extensibility Method Definitions
@@ -1057,6 +1045,7 @@ namespace Corbis.DB.Linq
 		{
 			this._CuratedGalleryRecords = new EntitySet<CuratedGalleryRecord>(new Action<CuratedGalleryRecord>(this.attach_CuratedGalleryRecords), new Action<CuratedGalleryRecord>(this.detach_CuratedGalleryRecords));
 			this._GalleryPublicationPeriodRecords = new EntitySet<GalleryPublicationPeriodRecord>(new Action<GalleryPublicationPeriodRecord>(this.attach_GalleryPublicationPeriodRecords), new Action<GalleryPublicationPeriodRecord>(this.detach_GalleryPublicationPeriodRecords));
+			this._AdminUserToRoleRecords = new EntitySet<AdminUserToRoleRecord>(new Action<AdminUserToRoleRecord>(this.attach_AdminUserToRoleRecords), new Action<AdminUserToRoleRecord>(this.detach_AdminUserToRoleRecords));
 			this._AdminUserProfileRecord = default(EntityRef<AdminUserProfileRecord>);
 			OnCreated();
 		}
@@ -1205,7 +1194,7 @@ namespace Corbis.DB.Linq
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AdminUserMembershipRecord_CuratedGallery", Storage="_CuratedGalleryRecords", ThisKey="ID", OtherKey="Editor")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AdminUserMembershipRecord_CuratedGalleryRecord", Storage="_CuratedGalleryRecords", ThisKey="ID", OtherKey="Editor")]
 		public EntitySet<CuratedGalleryRecord> CuratedGalleryRecords
 		{
 			get
@@ -1218,7 +1207,7 @@ namespace Corbis.DB.Linq
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AdminUserMembershipRecord_GalleryPublicationPeriod", Storage="_GalleryPublicationPeriodRecords", ThisKey="ID", OtherKey="PublisherID")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AdminUserMembershipRecord_GalleryPublicationPeriodRecord", Storage="_GalleryPublicationPeriodRecords", ThisKey="ID", OtherKey="PublisherID")]
 		public EntitySet<GalleryPublicationPeriodRecord> GalleryPublicationPeriodRecords
 		{
 			get
@@ -1231,7 +1220,20 @@ namespace Corbis.DB.Linq
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AdminUserProfileRecord_AdminUserMembership", Storage="_AdminUserProfileRecord", ThisKey="ProfileID", OtherKey="ID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AdminUserMembershipRecord_AdminUserToRole", Storage="_AdminUserToRoleRecords", ThisKey="ID", OtherKey="MemberID")]
+		public EntitySet<AdminUserToRoleRecord> AdminUserToRoleRecords
+		{
+			get
+			{
+				return this._AdminUserToRoleRecords;
+			}
+			set
+			{
+				this._AdminUserToRoleRecords.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AdminUserProfileRecord_AdminUserMembershipRecord", Storage="_AdminUserProfileRecord", ThisKey="ProfileID", OtherKey="ID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
 		public AdminUserProfileRecord AdminUserProfileRecord
 		{
 			get
@@ -1304,6 +1306,18 @@ namespace Corbis.DB.Linq
 		}
 		
 		private void detach_GalleryPublicationPeriodRecords(GalleryPublicationPeriodRecord entity)
+		{
+			this.SendPropertyChanging();
+			entity.AdminUserMembershipRecord = null;
+		}
+		
+		private void attach_AdminUserToRoleRecords(AdminUserToRoleRecord entity)
+		{
+			this.SendPropertyChanging();
+			entity.AdminUserMembershipRecord = this;
+		}
+		
+		private void detach_AdminUserToRoleRecords(AdminUserToRoleRecord entity)
 		{
 			this.SendPropertyChanging();
 			entity.AdminUserMembershipRecord = null;
@@ -1574,7 +1588,7 @@ namespace Corbis.DB.Linq
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CuratedGalleryRecord_GalleryPublicationPeriod", Storage="_GalleryPublicationPeriodRecords", ThisKey="ID", OtherKey="GalleryID")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CuratedGalleryRecord_GalleryPublicationPeriodRecord", Storage="_GalleryPublicationPeriodRecords", ThisKey="ID", OtherKey="GalleryID")]
 		public EntitySet<GalleryPublicationPeriodRecord> GalleryPublicationPeriodRecords
 		{
 			get
@@ -1587,7 +1601,7 @@ namespace Corbis.DB.Linq
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AdminUserMembershipRecord_CuratedGallery", Storage="_AdminUserMembershipRecord", ThisKey="Editor", OtherKey="ID", IsForeignKey=true)]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AdminUserMembershipRecord_CuratedGalleryRecord", Storage="_AdminUserMembershipRecord", ThisKey="Editor", OtherKey="ID", IsForeignKey=true)]
 		public AdminUserMembershipRecord AdminUserMembershipRecord
 		{
 			get
@@ -1621,7 +1635,7 @@ namespace Corbis.DB.Linq
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CuratedGalleryStatusRecord_CuratedGallery", Storage="_CuratedGalleryStatusRecord", ThisKey="StatusID", OtherKey="ID", IsForeignKey=true)]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CuratedGalleryStatusRecord_CuratedGalleryRecord", Storage="_CuratedGalleryStatusRecord", ThisKey="StatusID", OtherKey="ID", IsForeignKey=true)]
 		public CuratedGalleryStatusRecord CuratedGalleryStatusRecord
 		{
 			get
@@ -1655,7 +1669,7 @@ namespace Corbis.DB.Linq
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="FileRecord_CuratedGallery", Storage="_FileRecord", ThisKey="Archive", OtherKey="ID", IsForeignKey=true)]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="FileRecord_CuratedGalleryRecord", Storage="_FileRecord", ThisKey="Archive", OtherKey="ID", IsForeignKey=true)]
 		public FileRecord FileRecord
 		{
 			get
@@ -1689,7 +1703,7 @@ namespace Corbis.DB.Linq
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="GalleryTemplateRecord_CuratedGallery", Storage="_GalleryTemplateRecord", ThisKey="TemplateID", OtherKey="ID", IsForeignKey=true)]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="GalleryTemplateRecord_CuratedGalleryRecord", Storage="_GalleryTemplateRecord", ThisKey="TemplateID", OtherKey="ID", IsForeignKey=true)]
 		public GalleryTemplateRecord GalleryTemplateRecord
 		{
 			get
@@ -1931,7 +1945,7 @@ namespace Corbis.DB.Linq
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AdminUserMembershipRecord_GalleryPublicationPeriod", Storage="_AdminUserMembershipRecord", ThisKey="PublisherID", OtherKey="ID", IsForeignKey=true)]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AdminUserMembershipRecord_GalleryPublicationPeriodRecord", Storage="_AdminUserMembershipRecord", ThisKey="PublisherID", OtherKey="ID", IsForeignKey=true)]
 		public AdminUserMembershipRecord AdminUserMembershipRecord
 		{
 			get
@@ -1965,7 +1979,7 @@ namespace Corbis.DB.Linq
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CuratedGalleryRecord_GalleryPublicationPeriod", Storage="_CuratedGalleryRecord", ThisKey="GalleryID", OtherKey="ID", IsForeignKey=true)]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CuratedGalleryRecord_GalleryPublicationPeriodRecord", Storage="_CuratedGalleryRecord", ThisKey="GalleryID", OtherKey="ID", IsForeignKey=true)]
 		public CuratedGalleryRecord CuratedGalleryRecord
 		{
 			get
@@ -1995,6 +2009,174 @@ namespace Corbis.DB.Linq
 						this._GalleryID = default(int);
 					}
 					this.SendPropertyChanged("CuratedGalleryRecord");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.AdminUserToRole")]
+	public partial class AdminUserToRoleRecord : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _MemberID;
+		
+		private int _RoleID;
+		
+		private EntityRef<AdminUserMembershipRecord> _AdminUserMembershipRecord;
+		
+		private EntityRef<AdminUserRoleRecord> _AdminUserRoleRecord;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnMemberIDChanging(int value);
+    partial void OnMemberIDChanged();
+    partial void OnRoleIDChanging(int value);
+    partial void OnRoleIDChanged();
+    #endregion
+		
+		public AdminUserToRoleRecord()
+		{
+			this._AdminUserMembershipRecord = default(EntityRef<AdminUserMembershipRecord>);
+			this._AdminUserRoleRecord = default(EntityRef<AdminUserRoleRecord>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MemberID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int MemberID
+		{
+			get
+			{
+				return this._MemberID;
+			}
+			set
+			{
+				if ((this._MemberID != value))
+				{
+					if (this._AdminUserMembershipRecord.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnMemberIDChanging(value);
+					this.SendPropertyChanging();
+					this._MemberID = value;
+					this.SendPropertyChanged("MemberID");
+					this.OnMemberIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RoleID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int RoleID
+		{
+			get
+			{
+				return this._RoleID;
+			}
+			set
+			{
+				if ((this._RoleID != value))
+				{
+					if (this._AdminUserRoleRecord.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnRoleIDChanging(value);
+					this.SendPropertyChanging();
+					this._RoleID = value;
+					this.SendPropertyChanged("RoleID");
+					this.OnRoleIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AdminUserMembershipRecord_AdminUserToRole", Storage="_AdminUserMembershipRecord", ThisKey="MemberID", OtherKey="ID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public AdminUserMembershipRecord AdminUserMembershipRecord
+		{
+			get
+			{
+				return this._AdminUserMembershipRecord.Entity;
+			}
+			set
+			{
+				AdminUserMembershipRecord previousValue = this._AdminUserMembershipRecord.Entity;
+				if (((previousValue != value) 
+							|| (this._AdminUserMembershipRecord.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._AdminUserMembershipRecord.Entity = null;
+						previousValue.AdminUserToRoleRecords.Remove(this);
+					}
+					this._AdminUserMembershipRecord.Entity = value;
+					if ((value != null))
+					{
+						value.AdminUserToRoleRecords.Add(this);
+						this._MemberID = value.ID;
+					}
+					else
+					{
+						this._MemberID = default(int);
+					}
+					this.SendPropertyChanged("AdminUserMembershipRecord");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AdminUserRoleRecord_AdminUserToRole", Storage="_AdminUserRoleRecord", ThisKey="RoleID", OtherKey="ID", IsForeignKey=true)]
+		public AdminUserRoleRecord AdminUserRoleRecord
+		{
+			get
+			{
+				return this._AdminUserRoleRecord.Entity;
+			}
+			set
+			{
+				AdminUserRoleRecord previousValue = this._AdminUserRoleRecord.Entity;
+				if (((previousValue != value) 
+							|| (this._AdminUserRoleRecord.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._AdminUserRoleRecord.Entity = null;
+						previousValue.AdminUserToRoleRecords.Remove(this);
+					}
+					this._AdminUserRoleRecord.Entity = value;
+					if ((value != null))
+					{
+						value.AdminUserToRoleRecords.Add(this);
+						this._RoleID = value.ID;
+					}
+					else
+					{
+						this._RoleID = default(int);
+					}
+					this.SendPropertyChanged("AdminUserRoleRecord");
 				}
 			}
 		}

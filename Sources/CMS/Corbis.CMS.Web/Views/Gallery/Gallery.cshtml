@@ -60,11 +60,6 @@
             <a href="javascript:void(0)" onclick="publishGallery(); return false;">Publish</a>
         </li>            
         }
-        else { 
-        <li>
-            <a href="javascript:void(0)" onclick="unPublishGallery(); return false;">Un-Publish</a>
-        </li>
-        }
     </ul>
 </div>
 
@@ -161,7 +156,7 @@
             params: { galleryID: '@this.Model.ID' },
             onLoaded: function () {
                 GalleryPublicationPopup.onPublishSucceeded = function (result) {
-                    window.location = '@Url.Action("EditGallery", "Gallery", new { id = this.Model.ID })'; 
+                    window.location = '@Url.Action("Index", "Gallery", new { id = this.Model.ID })'; 
                 };
             }
         });

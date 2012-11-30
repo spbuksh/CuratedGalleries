@@ -309,6 +309,7 @@ namespace Corbis.CMS.Repository
                 var period = new GalleryPublicationPeriodRecord() { GalleryID = id, Start = dtStartUTC, End = dtEndUTC, PublisherID = userID };
                 context.GalleryPublicationPeriodRecords.InsertOnSubmit(period);
 
+                galleryRec.Editor = null;
                 galleryRec.StatusID = (int)CuratedGalleryStatuses.Published;
 
                 context.SubmitChanges();
