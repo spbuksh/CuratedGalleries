@@ -190,8 +190,11 @@ namespace Corbis.CMS.Web.Code
                 var image = content.Images.Single(x => x.ID == imageID);
                 handler(image);
                 TypeConverter typeConverter = TypeDescriptor.GetConverter(typeof(Font));
-                image.ImageContentUrl = Utils.AbsoluteToVirtual(ImageContentGenerator.GererateImage(image as GalleryContentImage, galleryID, (Font)typeConverter.ConvertFromString(content.Font.FamilyName)), null);
-                image.ImageContentName = Path.GetFileName(image.ImageContentUrl);
+                if(!(image.ContentImage.TextContent is CustomImageTextContent))
+                {
+                    image.ContentImage.EditUrls = new ImageUrlSet {Large =Utils.AbsoluteToVirtual(ImageContentGenerator.GererateImage(image as GalleryContentImage, galleryID, (Font)typeConverter.ConvertFromString(content.Font.FamilyName)), null)};
+                }
+               
                 SaveGalleryContent(galleryID, content);
             };
 

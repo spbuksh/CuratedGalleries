@@ -7,8 +7,8 @@
     var textClass = "text";
 
     var position = this.Model.TextPosition;
-
-    var txtMode = emptyClass;
+    
+    var txtMode = string.IsNullOrWhiteSpace(this.Model.Biography) ? emptyClass : textClass;
  }
 <div class="contentImage" corbis-item-id="@this.Model.ID">
     @*<span class="dragndrop"></span>*@ <span class="toolbar"><a href="javascript:void(0)"

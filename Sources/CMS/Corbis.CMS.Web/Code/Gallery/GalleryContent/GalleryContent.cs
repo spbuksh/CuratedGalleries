@@ -120,6 +120,26 @@ namespace Corbis.CMS.Web.Code
             }
         }
 
+        public void DeleteImageContent(string url, HttpContextBase context)
+        {
+            var file = new FileInfo(Corbis.Common.Utils.VirtualToAbsolute(url, context));
+
+            if (file.Exists)
+            {
+                try
+                {
+                    file.Delete();
+                }
+                catch (Exception)
+                {
+#if DEBUG
+                    //generate exception not to hide problems (for example file locks)
+                    throw;
+#endif
+                }
+            }
+        }
+
         public void DeleteImages(ImageUrlSet urls, HttpContextBase context)
         {
             Action<string> delHandler = delegate(string filepath)
@@ -152,7 +172,7 @@ namespace Corbis.CMS.Web.Code
 
                 string path = Corbis.Common.Utils.VirtualToAbsolute(vpath, context);
                 delHandler(path);
-                this.SystemFilePathes.Remove(this.SystemFilePathes.Where(x => path.EndsWith(x)).FirstOrDefault());
+                this.SystemFilePathes.Remove(this.SystemFilePathes.FirstOrDefault(path.EndsWith));
             }
         }
 

@@ -30,7 +30,22 @@ namespace Corbis.CMS.Web.Controllers.Api
         public bool IsCover { get; set; }
         [DataMember]
         public string FileName { get; set; }
+        [DataMember]
+        public string ImageID { get; set; }
     }
+
+    internal class UploadedImageContentResponse
+    {
+        [DataMember]
+        public int GalleryID { get; set; }
+        [DataMember]
+        public string ImageID { get; set; }
+        [DataMember]
+        public string ContentUrl { get; set; }
+
+    }
+
+
 
     public class UploadController : ApiControllerBase
     {
@@ -38,6 +53,7 @@ namespace Corbis.CMS.Web.Controllers.Api
         /// Method to Upload File to the system.
         /// </summary>
         /// <param name="message"></param>
+        /// <param name="id"> </param>
         /// <returns></returns>
         [HttpPost]
         public HttpResponseMessage UploadGalleryImage(HttpRequestMessage message,
@@ -45,6 +61,149 @@ namespace Corbis.CMS.Web.Controllers.Api
         {
             return this.UploadGalleryImage(message, id, null);
         }
+
+        /// <summary>
+        /// Method to Upload File to the system.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="id"> </param>
+        /// <param name="imageID"> </param>
+        /// <returns></returns>
+        [HttpPost]
+        public HttpResponseMessage UploadGalleryContentImage(HttpRequestMessage message,
+            [System.Web.Http.FromUri, System.ComponentModel.DataAnnotations.Required]Nullable<int> id, [System.Web.Http.FromUri]string imageID)
+        {
+            if (this.HttpContext.Request.Files.Count != 1)
+                return this.Request.CreateResponse(HttpStatusCode.NotAcceptable, "There are no files or more then one for uploading in the request");
+
+            if (!id.HasValue)
+                throw new Exception("Target gallery is not pointed. Query strin parameter 'id' is required");
+
+            var gallery = GalleryRuntime.GetGallery(id.Value);
+            var template = GalleryRuntime.GetTemplate(gallery.TemplateID);
+
+            string contentpath = gallery.GetContentPath();
+            string rootpath = gallery.GetRootPath();
+
+            if (!Directory.Exists(contentpath))
+                Directory.CreateDirectory(contentpath);
+
+            var file = this.HttpContext.Request.Files[0];
+
+            //TODO: CHANGE VALIDATE LOGIC
+            if (GalleryRuntime.MaxImageSize.HasValue && GalleryRuntime.MaxImageSize.Value < file.ContentLength)
+                return this.Request.CreateResponse<string>(HttpStatusCode.BadRequest, string.Format("Uploading file size is {0}byte. Max file size {1}bytes is exceeded", file.ContentLength, GalleryRuntime.MaxImageSize.Value));
+
+            if (GalleryRuntime.MinImageSize.HasValue && file.ContentLength < GalleryRuntime.MinImageSize.Value)
+                return this.Request.CreateResponse<string>(HttpStatusCode.BadRequest, string.Format("Uploading file size is {0}byte. Min file size is {1}bytes", file.ContentLength, GalleryRuntime.MaxImageSize.Value));
+
+            string filename = file.FileName;
+            string filepath = Path.Combine(contentpath, filename);
+
+            if (File.Exists(filepath))
+            {
+                filepath = Common.Utils.GenerateFilePathForDuplicate(filepath);
+                filename = Path.GetFileName(filepath);
+            }
+
+            //try to save original image
+            try
+            {
+                file.SaveAs(filepath);
+            }
+            catch (Exception ex)
+            {
+                this.Logger.WriteError(ex, string.Format("Uploaded file cannot be saved to '{0}'", filepath));
+                return this.Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
+            finally
+            {
+                file.InputStream.Close();
+            }
+
+            //this handler return gallery relative image url
+            Common.ActionHandler<string, string> gllrUrlHandler =
+                delegate(string fname)
+                {
+                    return string.Format("{0}/{1}", Common.Utils.GetRelativePath(GalleryRuntime.GetGalleryOutputPath(id.Value), contentpath).TrimEnd('\\').Replace('\\', '/'), fname);
+                };
+
+            lock (gallery.GetSyncRoot())
+            {
+                var content = gallery.LoadContent(false);
+                GalleryImageBase img = null;
+
+                    var siteUrls = new ImageUrlSet()
+                                       {Original = Common.Utils.AbsoluteToVirtual(filepath, this.HttpContext)};
+                    var editUrls = new ImageUrlSet()
+                                       {Original = Common.Utils.AbsoluteToVirtual(filepath, this.HttpContext)};
+                    var gllrUrls = new ImageUrlSet() {Original = gllrUrlHandler(filename)};
+
+                    string extension = Path.GetExtension(filename);
+                    string filenameonly = extension.Length > 0
+                                              ? filename.Remove(filename.Length - extension.Length)
+                                              : filename;
+
+                    System.Drawing.Image originalImage = null;
+
+                    //TODO: Implement async image resizing for performance
+                    try
+                    {
+                        originalImage = System.Drawing.Image.FromFile(filepath);
+
+                        //resize images for development
+                        {
+                            string editpath = Path.Combine(contentpath,
+                                                           string.Format("{0}.lrgedit{1}", filenameonly, extension));
+                            ResizeImage(originalImage, editpath, GalleryRuntime.EditedLargeImageSize);
+
+                            editUrls.Large = Common.Utils.AbsoluteToVirtual(editpath, this.HttpContext);
+
+                            content.SystemFilePathes.Add(editpath.Substring(rootpath.Length));
+                        }
+                        {
+                            string editpath = Path.Combine(contentpath,
+                                                           string.Format("{0}.smledit{1}", filenameonly, extension));
+                            ResizeImage(originalImage, editpath, GalleryRuntime.EditedSmallImageSize);
+
+                            editUrls.Small = Common.Utils.AbsoluteToVirtual(editpath, this.HttpContext);
+
+                            content.SystemFilePathes.Add(editpath.Substring(rootpath.Length));
+                        }
+
+                    
+                    }
+                    finally
+                    {
+                        if (originalImage != null)
+                            originalImage.Dispose();
+                    }
+
+                try
+                {
+                    img = content.Images.SingleOrDefault(_ => _.ID == imageID);
+                    if (img.ContentImage != null)
+                    {
+                        if(img.ContentImage.EditUrls!= null)
+                        {
+                            content.DeleteImages(img.ContentImage.EditUrls, this.HttpContext);
+                        }
+                        img.ContentImage.EditUrls = editUrls;
+                    }
+                    
+                    gallery.SaveContent(content, false);
+                }
+                catch (Exception ex)
+                {
+                    this.Logger.WriteError(ex);
+                    File.Delete(filepath);
+                    return message.CreateResponse(HttpStatusCode.InternalServerError);
+                }
+                var output = new UploadedImageContentResponse() { GalleryID = id.Value, ImageID = img.ID, ContentUrl = editUrls.Large};
+                return message.CreateResponse<UploadedImageContentResponse>(HttpStatusCode.OK, output);
+            }
+        }
+
 
         /// <summary>
         /// Method to Upload File to the system.
@@ -227,13 +386,14 @@ namespace Corbis.CMS.Web.Controllers.Api
                                 SiteUrls = siteUrls,
                                 EditUrls = editUrls
                             };
-                            cimg.TextContent = new EmptyTextContent();
+                            cimg.ContentImage = new GalleryImageContent();
+                            cimg.ContentImage.TextContent = new EmptyTextContent();
 
                             content.Images.Add(cimg);
                             img = cimg;
                         }
                     }
-                    else if(content.Images.Count != 0)
+                    else if (content.Images.Count != 0)
                     {
                         if (content.CoverImage.ID == imageID)
                         {
@@ -279,8 +439,8 @@ namespace Corbis.CMS.Web.Controllers.Api
                     return message.CreateResponse(HttpStatusCode.InternalServerError);
                 }
 
-                var output = new UploadedImageResponse() { GalleryID = id.Value, ID = img.ID, Urls = img.SiteUrls, EditUrls = img.EditUrls, IsCover = img is GalleryCoverImage, FileName = img.Name };
-                return message.CreateResponse <UploadedImageResponse>(HttpStatusCode.OK, output);
+                var output = new UploadedImageResponse() { GalleryID = id.Value, ID = img.ID, Urls = img.SiteUrls, EditUrls = img.EditUrls, IsCover = img is GalleryCoverImage, FileName = img.Name, ImageID = imageID };
+                return message.CreateResponse<UploadedImageResponse>(HttpStatusCode.OK, output);
             }
         }
 
@@ -305,7 +465,7 @@ namespace Corbis.CMS.Web.Controllers.Api
             if ((imgFrom.Size.Height < size.Height) && (imgFrom.Size.Width < size.Width))
                 size = imgFrom.Size;
 
-            using(var imgTo = Common.Utilities.Image.ImageHelper.ResizeImage(imgFrom, size))
+            using (var imgTo = Common.Utilities.Image.ImageHelper.ResizeImage(imgFrom, size))
             {
                 imgTo.Save(toImage);
             }

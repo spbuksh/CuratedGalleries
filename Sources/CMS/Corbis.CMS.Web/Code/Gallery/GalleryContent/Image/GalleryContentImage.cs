@@ -13,11 +13,10 @@ namespace Corbis.CMS.Web.Code
     [Serializable]
     [XmlInclude(typeof(QnATextContent))]
     [XmlInclude(typeof(PullQuotedTextContent))]
+    [XmlInclude(typeof(CustomImageTextContent))]
+    [XmlInclude(typeof(BodyCopyTextContent))]
     public class GalleryContentImage : GalleryImageBase
     {
-        /// <summary>
-        /// Image text content
-        /// </summary>
-        public ImageTextContentBase TextContent { get; set; }
+       
     }
 }

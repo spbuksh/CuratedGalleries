@@ -5,6 +5,7 @@ using System.Text;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using System.Drawing;
+using Corbis.CMS.Entity;
 
 namespace Corbis.CMS.Web.Code
 {
@@ -29,7 +30,13 @@ namespace Corbis.CMS.Web.Code
         /// <summary>
         /// TODO: what is this?
         /// </summary>
-        BodyCopy
+        BodyCopy,
+
+        /// <summary>
+        /// CustomImage content.
+        /// </summary>
+        CustomImage,
+
     }
 
     /// <summary>
@@ -68,6 +75,7 @@ namespace Corbis.CMS.Web.Code
     [XmlInclude(typeof(PullQuotedTextContent))]
     [XmlInclude(typeof(BodyCopyTextContent))]
     [XmlInclude(typeof(EmptyTextContent))]
+    [XmlInclude(typeof(CustomImageTextContent))]
     public abstract class ImageTextContentBase
     {
         /// <summary>
@@ -91,6 +99,9 @@ namespace Corbis.CMS.Web.Code
         /// </summary>
         [XmlElement]
         public string BackgroundColor { get; set; }
+
+        [XmlElement]
+        public ImageUrlSet EditUrls { get; set; }
     }
 
 }

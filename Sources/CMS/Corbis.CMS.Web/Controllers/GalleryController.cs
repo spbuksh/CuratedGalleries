@@ -45,7 +45,7 @@ namespace Corbis.CMS.Web.Controllers
                 throw;
             }
 
-            switch(rslt.Result)
+            switch (rslt.Result)
             {
                 case OperationResults.Success:
                 case OperationResults.NotFound:
@@ -78,15 +78,15 @@ namespace Corbis.CMS.Web.Controllers
             Image src = null;
 
             //it is necessary to ensure that cover is not being deleting or changing at the same time
-            lock(GalleryRuntime.GetGallerySyncRoot(id))
+            lock (GalleryRuntime.GetGallerySyncRoot(id))
             {
                 var content = GalleryRuntime.LoadGalleryContent(id, false);
 
-                if(content.CoverImage != null)
+                if (content.CoverImage != null)
                     src = Image.FromFile(Utils.VirtualToAbsolute(content.CoverImage.SiteUrls.Original, this.HttpContext));
             }
-            
-            if(src == null)
+
+            if (src == null)
                 src = Image.FromFile(GalleryRuntime.GetDefaultGalleryCoverPath(this.HttpContext));
 
             byte[] buffer = null;
@@ -172,47 +172,53 @@ namespace Corbis.CMS.Web.Controllers
 
         protected GalleryContentImageModel Convert(GalleryContentImage item, int galleryID)
         {
-            var model = new GalleryContentImageModel() { GalleryID = galleryID, ID = item.ID, Urls = item.EditUrls, Text = item.Name, Order = item.Order };
+            var model = new GalleryContentImageModel() { GalleryID = galleryID, ID = item.ID, Urls = item.EditUrls, Text = item.Name, Order = item.Order,};
 
-            if (item.TextContent != null)
+            if (item.ContentImage.TextContent != null)
             {
-                switch (item.TextContent.ContentType)
+                switch (item.ContentImage.TextContent.ContentType)
                 {
                     case TextContents.None:
-                        model.TextContent = this.ObjectMapper.DoMapping<EmptyTextContentModel>(item.TextContent);
+                        model.ContentImage.TextContent = this.ObjectMapper.DoMapping<EmptyTextContentModel>(item.ContentImage.TextContent);
                         break;
                     case TextContents.QnA:
-                        model.TextContent = this.ObjectMapper.DoMapping<QnATextContentModel>(item.TextContent);
+                        model.ContentImage.TextContent = this.ObjectMapper.DoMapping<QnATextContentModel>(item.ContentImage.TextContent);
                         break;
                     case TextContents.Pullquote:
-                        model.TextContent = this.ObjectMapper.DoMapping<PullQuotedTextContentModel>(item.TextContent);
+                        model.ContentImage.TextContent = this.ObjectMapper.DoMapping<PullQuotedTextContentModel>(item.ContentImage.TextContent);
                         break;
                     case TextContents.BodyCopy:
-                        model.TextContent = this.ObjectMapper.DoMapping<BodyCopyTextContentModel>(item.TextContent);
+                        model.ContentImage.TextContent = this.ObjectMapper.DoMapping<BodyCopyTextContentModel>(item.ContentImage.TextContent);
                         break;
+                    case TextContents.CustomImage:
+                        {
+                            model.ContentImage = this.ObjectMapper.DoMapping<GalleryImageContentModel>(item.ContentImage);
+                            model.ContentImage.TextContent = this.ObjectMapper.DoMapping<CustomImageContentModel>(item.ContentImage.TextContent);
+                            break;
+                        }
                     default:
                         throw new NotImplementedException();
                 }
 
-                model.TextContent.Height = item.TextContent.Size.HasValue ? item.TextContent.Size.Value.Height : (int?)null;
-                model.TextContent.Width = item.TextContent.Size.HasValue ? item.TextContent.Size.Value.Width : (int?)null;
+                model.ContentImage.TextContent.Height = item.ContentImage.TextContent.Size.HasValue ? item.ContentImage.TextContent.Size.Value.Height : (int?)null;
+                model.ContentImage.TextContent.Width = item.ContentImage.TextContent.Size.HasValue ? item.ContentImage.TextContent.Size.Value.Width : (int?)null;
             }
             else
             {
-                model.TextContent = new EmptyTextContentModel() { Position = null };
+                model.ContentImage.TextContent = new EmptyTextContentModel() { Position = null };
             }
 
             return model;
         }
         protected GalleryCoverImageModel Convert(GalleryCoverImage item, int galleryID)
         {
-            var model = new GalleryCoverImageModel() 
-            { 
-                GalleryID = galleryID, 
-                ID = item.ID, 
-                Urls = item.EditUrls, 
-                Text = item.Name, 
-                Order = item.Order, 
+            var model = new GalleryCoverImageModel()
+            {
+                GalleryID = galleryID,
+                ID = item.ID,
+                Urls = item.EditUrls,
+                Text = item.Name,
+                Order = item.Order,
                 Biography = item.Biography,
                 TextPosition = item.TextPosition
             };
@@ -234,8 +240,8 @@ namespace Corbis.CMS.Web.Controllers
         public ActionResult LockGallery(int id)
         {
             var rslt = this.GalleryRepository.LockGallery(id, this.CurrentUser.ID);
- 
-            switch(rslt.Result)
+
+            switch (rslt.Result)
             {
                 case OperationResults.Success:
                     return this.Json(new { success = true });
@@ -330,7 +336,7 @@ namespace Corbis.CMS.Web.Controllers
             gallery.Name = name;
             var result = GalleryRuntime.UpdateGallery(gallery);
 
-            switch(result)
+            switch (result)
             {
                 case OperationResults.Success:
                     {
@@ -362,7 +368,7 @@ namespace Corbis.CMS.Web.Controllers
         /// <returns></returns>
         [HttpGet]
         public ActionResult GetFontFamilies()
-        { 
+        {
             int lcid = Thread.CurrentThread.CurrentCulture.LCID;
             return this.Json(FontFamily.Families.Select(x => new { text = x.GetName(lcid), value = x.Name }).ToArray(), JsonRequestBehavior.AllowGet);
         }
@@ -381,11 +387,11 @@ namespace Corbis.CMS.Web.Controllers
             return this.Json(new { success = true });
         }
 
-        
+
         [HttpPost]
         public ActionResult SetEmptyContent(int galleryID, string imageID, EmptyTextContentModel model)
         {
-            Action<GalleryImageBase> handler = delegate(GalleryImageBase item) { (item as GalleryContentImage).TextContent = this.ObjectMapper.DoMapping<EmptyTextContent>(model); };
+            Action<GalleryImageBase> handler = delegate(GalleryImageBase item) { (item as GalleryContentImage).ContentImage.TextContent = this.ObjectMapper.DoMapping<EmptyTextContent>(model); };
             GalleryRuntime.UpdateGalleryContentImage(galleryID, imageID, handler);
 
             return this.Json(new { success = true });
@@ -396,10 +402,10 @@ namespace Corbis.CMS.Web.Controllers
             if (!this.ModelState.IsValid)
                 this.PartialView("QnATextContentPartial", model);
 
-            Action<GalleryImageBase> handler = delegate(GalleryImageBase item) 
+            Action<GalleryImageBase> handler = delegate(GalleryImageBase item)
             {
-                (item as GalleryContentImage).TextContent = this.ObjectMapper.DoMapping<QnATextContent>(model);
-                (item as GalleryContentImage).TextContent.Size = new Size(model.Width.Value, model.Height.Value);
+                (item as GalleryContentImage).ContentImage.TextContent = this.ObjectMapper.DoMapping<QnATextContent>(model);
+                (item as GalleryContentImage).ContentImage.TextContent.Size = new Size(model.Width.Value, model.Height.Value);
             };
             GalleryRuntime.UpdateGalleryContentImage(galleryID, imageID, handler);
 
@@ -408,13 +414,13 @@ namespace Corbis.CMS.Web.Controllers
         [HttpPost]
         public ActionResult SetPullQuotedContent(int galleryID, string imageID, PullQuotedTextContentModel model)
         {
-            if(!this.ModelState.IsValid)
+            if (!this.ModelState.IsValid)
                 return this.PartialView("PullQuotedTextContentPartial", model);
 
-            Action<GalleryImageBase> handler = delegate(GalleryImageBase item) 
+            Action<GalleryImageBase> handler = delegate(GalleryImageBase item)
             {
-                (item as GalleryContentImage).TextContent = this.ObjectMapper.DoMapping<PullQuotedTextContent>(model);
-                (item as GalleryContentImage).TextContent.Size = new Size(model.Width.Value, model.Height.Value);
+                (item as GalleryContentImage).ContentImage.TextContent = this.ObjectMapper.DoMapping<PullQuotedTextContent>(model);
+                (item as GalleryContentImage).ContentImage.TextContent.Size = new Size(model.Width.Value, model.Height.Value);
             };
             GalleryRuntime.UpdateGalleryContentImage(galleryID, imageID, handler);
 
@@ -423,13 +429,29 @@ namespace Corbis.CMS.Web.Controllers
         [HttpPost]
         public ActionResult SetBodyCopyContent(int galleryID, string imageID, BodyCopyTextContentModel model)
         {
-            if(!this.ModelState.IsValid)
+            if (!this.ModelState.IsValid)
                 this.PartialView("BodyCopyTextContentPartial", model);
 
-            Action<GalleryImageBase> handler = delegate(GalleryImageBase item) 
-            { 
-                (item as GalleryContentImage).TextContent = this.ObjectMapper.DoMapping<BodyCopyTextContent>(model);
-                (item as GalleryContentImage).TextContent.Size = new Size(model.Width.Value, model.Height.Value);
+            Action<GalleryImageBase> handler = delegate(GalleryImageBase item)
+            {
+                (item as GalleryContentImage).ContentImage.TextContent = this.ObjectMapper.DoMapping<BodyCopyTextContent>(model);
+                (item as GalleryContentImage).ContentImage.TextContent.Size = new Size(model.Width.Value, model.Height.Value);
+            };
+            GalleryRuntime.UpdateGalleryContentImage(galleryID, imageID, handler);
+
+            return this.Json(new { success = true });
+        }
+
+        [HttpPost]
+        public ActionResult SetCustomImageContent(int galleryID, string imageID, CustomImageContentModel model)
+        {
+            if (!this.ModelState.IsValid)
+                this.PartialView("CustomImageTextContentPartial", model);
+
+            Action<GalleryImageBase> handler = delegate(GalleryImageBase item)
+            {
+                (item as GalleryContentImage).ContentImage.TextContent = this.ObjectMapper.DoMapping<CustomImageTextContent>(model);
+                (item as GalleryContentImage).ContentImage.TextContent.Size = new Size(model.Width.Value, model.Height.Value);
             };
             GalleryRuntime.UpdateGalleryContentImage(galleryID, imageID, handler);
 
@@ -443,7 +465,7 @@ namespace Corbis.CMS.Web.Controllers
             var images = content.Images.Where(x => x.ID == imageID1 || x.ID == imageID2).ToArray();
 
             if (images.Length != 2)
-                return this.Json(new { success = false, error = "Page data is obsolete. Please refresh page and try again"});
+                return this.Json(new { success = false, error = "Page data is obsolete. Please refresh page and try again" });
 
             var order = images[0].Order;
             images[0].Order = images[1].Order;
@@ -459,7 +481,7 @@ namespace Corbis.CMS.Web.Controllers
         [HttpPost]
         public ActionResult SetCoverContent(int id, GalleryCoverImageModel model)
         {
-            if(!this.ModelState.IsValid)
+            if (!this.ModelState.IsValid)
                 return this.Json(new { success = false });
 
             var content = GalleryRuntime.LoadGalleryContent(id);
@@ -573,7 +595,7 @@ namespace Corbis.CMS.Web.Controllers
                     }
                 }
 
-                using(MemoryStream stream = new MemoryStream())
+                using (MemoryStream stream = new MemoryStream())
                 {
                     package.Save(stream);
 

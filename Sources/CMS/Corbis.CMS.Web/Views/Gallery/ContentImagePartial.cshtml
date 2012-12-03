@@ -1,44 +1,46 @@
-﻿@using Corbis.CMS.Web.Models
+﻿@using Corbis.CMS.Entity
+@using Corbis.CMS.Web.Models
 @using Corbis.CMS.Web.Code
 @model GalleryContentImageModel
-
 @{
     var imageUIID = Guid.NewGuid().ToString("N");
-    
+
     var emptyClass = "empty";
     var QnAClass = "QnA";
     var pullquoteClass = "pullquote";
     var bodycopyClass = "bodycopy";
-    
-    var em = this.Model.TextContent as EmptyTextContentModel;
-    var qa = this.Model.TextContent as QnATextContentModel;
-    var pq = this.Model.TextContent as PullQuotedTextContentModel;
-    var bc = this.Model.TextContent as BodyCopyTextContentModel;
+    var customImageClass = "customImage";
+    var em = this.Model.ContentImage.TextContent as EmptyTextContentModel;
+    var qa = this.Model.ContentImage.TextContent as QnATextContentModel;
+    var pq = this.Model.ContentImage.TextContent as PullQuotedTextContentModel;
+    var bc = this.Model.ContentImage.TextContent as BodyCopyTextContentModel;
+    var ci = this.Model.ContentImage.TextContent as CustomImageContentModel;
+    if(ci!=null)
+    {
+        ci.ContentImageUrl = this.Model.ContentImage.EditUrls;
+    }
+   
+    var position = this.Model.ContentImage.TextContent.Position;
 
-    var position = this.Model.TextContent.Position;
-    
     var txtMode = em != null ? emptyClass :
                         (qa != null ? QnAClass :
                             (pq != null ? pullquoteClass :
-                                (bc != null ? bodycopyClass : null)));
- }
+                            (ci != null ? customImageClass :
+                                (bc != null ? bodycopyClass : null))));
+}
 <div class="contentImage" corbis-item-id="@this.Model.ID">
-    <span class="dragndrop"></span>
-    <span class="toolbar">
-        <a href="javascript:void(0)" class="minimal"></a>
-        <a href="javascript:void(0)" class="close"></a>
-    </span>
-    <span class="up_down">
-        <a class="up" href="javascript:void(0)"></a>
-        <a class="down" href="javascript:void(0)"></a>
-    </span>
+    <span class="dragndrop"></span><span class="toolbar"><a href="javascript:void(0)"
+        class="minimal"></a><a href="javascript:void(0)" class="close"></a></span><span class="up_down">
+            <a class="up" href="javascript:void(0)"></a><a class="down" href="javascript:void(0)">
+            </a></span>
     <div class="collapsed" style="display: none;">
         <img src="@this.Model.Urls.Small" alt="" />
     </div>
     <div class="expanded">
         <div class="imgArea">
             <div class="imgToolbar">
-                <a href="javascript:void(0)" onclick="editImage('@this.Model.ID'); return false;">Change Image</a>
+                <a href="javascript:void(0)" onclick="editImage('@this.Model.ID'); return false;">Change
+                    Image</a>
             </div>
             <div class="imgPresenter">
                 <img src="@this.Model.Urls.Large" alt="@this.Model.Text" />
@@ -46,19 +48,28 @@
             <div class="txtAlign">
                 <ul>
                     <li corbis-data-position="left" class="left"><a href="javascript:void(0)"></a></li>
-                    <li corbis-data-position="right" class="right"><a href="javascript:void(0)"></a></li>
-                    <li corbis-data-position="center" class="center"><a href="javascript:void(0)"></a></li>
-                    <li corbis-data-position="bottom" class="bottom"><a href="javascript:void(0)"></a></li>
+                    <li corbis-data-position="right" class="right"><a href="javascript:void(0)"></a>
+                    </li>
+                    <li corbis-data-position="center" class="center"><a href="javascript:void(0)"></a>
+                    </li>
+                    <li corbis-data-position="bottom" class="bottom"><a href="javascript:void(0)"></a>
+                    </li>
                     <li corbis-data-position="top" class="top"><a href="javascript:void(0)"></a></li>
                 </ul>
             </div>
         </div>
         <div class="txtArea">
-            <div class="radioGroup"> 
-                <label for="empty_@this.Model.ID">None</label><input name="radioGroup_@this.Model.ID" id="empty_@this.Model.ID" corbis-txt-type="@emptyClass" checked="checked" type="radio" />       
-                <label for="qa_@this.Model.ID">Q&amp;A</label><input name="radioGroup_@this.Model.ID" id="qa_@this.Model.ID" corbis-txt-type="@QnAClass" type="radio" />
-                <label for="pq_@this.Model.ID">Pullquote</label><input name="radioGroup_@this.Model.ID" id="pq_@this.Model.ID" corbis-txt-type="@pullquoteClass" type="radio" />
-                <label for="bc_@this.Model.ID">Body copy</label><input name="radioGroup_@this.Model.ID" id="bc_@this.Model.ID" corbis-txt-type="@bodycopyClass" type="radio" />            
+            <div class="radioGroup">
+                <label for="empty_@this.Model.ID">
+                    None</label><input name="radioGroup_@this.Model.ID" id="empty_@this.Model.ID" corbis-txt-type="@emptyClass" checked="checked" type="radio" />
+                <label for="qa_@this.Model.ID">
+                    Q&amp;A</label><input name="radioGroup_@this.Model.ID" id="qa_@this.Model.ID" corbis-txt-type="@QnAClass" type="radio" />
+                <label for="pq_@this.Model.ID">
+                    Pullquote</label><input name="radioGroup_@this.Model.ID" id="pq_@this.Model.ID" corbis-txt-type="@pullquoteClass" type="radio" />
+                <label for="bc_@this.Model.ID">
+                    Body copy</label><input name="radioGroup_@this.Model.ID" id="bc_@this.Model.ID" corbis-txt-type="@bodycopyClass" type="radio" />
+                                    <label for="ci_@this.Model.ID">
+                    Custom Image</label><input name="radioGroup_@this.Model.ID" id="ci_@this.Model.ID" corbis-txt-type="@customImageClass" type="radio" />
             </div>
             <div class="txtInputs">
                 @{ 
@@ -66,11 +77,13 @@
                     var qaContentID = "qaContent_" + this.Model.ID;
                     var pqContentID = "pqContent_" + this.Model.ID;
                     var bcContentID = "bcContent_" + this.Model.ID;
-                
+                    var ciContentID = "ciContent_" + this.Model.ID;
+
                     var routeValues = new { galleryID = this.Model.GalleryID, imageID = this.Model.ID };
                 }
                 <div style="display: none;" class="@emptyClass">
-                    @using (Ajax.BeginForm("SetEmptyContent", "Gallery", routeValues, new AjaxOptions() { HttpMethod = "POST", OnBegin = "onBeginMsAjaxRequest", OnComplete = "onCompleteMsAjaxRequest", OnSuccess = "onEmptySuccess" + imageUIID })) {
+                    @using (Ajax.BeginForm("SetEmptyContent", "Gallery", routeValues, new AjaxOptions() { HttpMethod = "POST", OnBegin = "onBeginMsAjaxRequest", OnComplete = "onCompleteMsAjaxRequest", OnSuccess = "onEmptySuccess" + imageUIID }))
+                    {
                         @Html.Hidden("position")
                         <div id="@emContentID">
                             @Html.Partial("EmptyTextContentPartial", em ?? new EmptyTextContentModel())
@@ -79,7 +92,8 @@
                     }
                 </div>
                 <div style="display: none;" class="@QnAClass">
-                    @using (Ajax.BeginForm("SetQnAContent", "Gallery", routeValues, new AjaxOptions() { HttpMethod = "POST", OnBegin = "onBeginMsAjaxRequest", OnComplete = "onCompleteMsAjaxRequest", OnSuccess = "onQnASuccess" + imageUIID })) {
+                    @using (Ajax.BeginForm("SetQnAContent", "Gallery", routeValues, new AjaxOptions() { HttpMethod = "POST", OnBegin = "onBeginMsAjaxRequest", OnComplete = "onCompleteMsAjaxRequest", OnSuccess = "onQnASuccess" + imageUIID }))
+                    {
                         @Html.ValidationSummary()
                         @Html.Hidden("position")
                         <div id="@qaContentID">
@@ -89,7 +103,8 @@
                     }
                 </div>
                 <div style="display: none;" class="@pullquoteClass">
-                    @using (Ajax.BeginForm("SetPullQuotedContent", "Gallery", routeValues, new AjaxOptions() { HttpMethod = "POST", OnBegin = "onBeginMsAjaxRequest", OnComplete = "onCompleteMsAjaxRequest", OnSuccess = "onPullQuotedSuccess" + imageUIID })) {
+                    @using (Ajax.BeginForm("SetPullQuotedContent", "Gallery", routeValues, new AjaxOptions() { HttpMethod = "POST", OnBegin = "onBeginMsAjaxRequest", OnComplete = "onCompleteMsAjaxRequest", OnSuccess = "onPullQuotedSuccess" + imageUIID }))
+                    {
                         @Html.ValidationSummary()
                         @Html.Hidden("position")
                         <div id="@pqContentID">
@@ -99,7 +114,8 @@
                     }
                 </div>
                 <div style="display: none;" class="@bodycopyClass">
-                    @using (Ajax.BeginForm("SetBodyCopyContent", "Gallery", routeValues, new AjaxOptions() { HttpMethod = "POST", OnBegin = "onBeginMsAjaxRequest", OnComplete = "onCompleteMsAjaxRequest", OnSuccess = "onBodyCopySuccess" + imageUIID })) {
+                    @using (Ajax.BeginForm("SetBodyCopyContent", "Gallery", routeValues, new AjaxOptions() { HttpMethod = "POST", OnBegin = "onBeginMsAjaxRequest", OnComplete = "onCompleteMsAjaxRequest", OnSuccess = "onBodyCopySuccess" + imageUIID }))
+                    {
                         @Html.ValidationSummary()
                         @Html.Hidden("position")
                         <div id="@bcContentID">
@@ -107,11 +123,24 @@
                         </div>
                         <input value="Apply" type="submit" />
                     }
-                </div>            
+                </div>
+                
+                <div style="display: none;" class="@customImageClass">
+                    @using (Ajax.BeginForm("SetCustomImageContent", "Gallery", routeValues, new AjaxOptions() { HttpMethod = "POST", OnBegin = "onBeginMsAjaxRequest", OnComplete = "onCompleteMsAjaxRequest", OnSuccess = "onCustomImageSuccess" + imageUIID }))
+                    {
+                        @Html.ValidationSummary()
+                        @Html.Hidden("position")
+                        <div id="@ciContentID">
+                            @Html.Partial("CustomImageTextContentPartial", ci ?? new CustomImageContentModel(){ImageID = this.Model.ID , GalleryID = this.Model.GalleryID, ContentImageUrl = this.Model.ContentImage.EditUrls ?? new ImageUrlSet()})
+                        </div>
+                        <input value="Apply" type="submit" />
+                    }
+                </div>
             </div>
         </div>
     </div>
-    <div class="clear-fix"></div>
+    <div class="clear-fix">
+    </div>
     <script type="text/javascript">
         function onQnASuccess@(imageUIID)(data) {
             _onTextContentSaveSuccess(data, '#@qaContentID');
@@ -124,6 +153,9 @@
         }
         function onEmptySuccess@(imageUIID)(data) {
             _onTextContentSaveSuccess(data, '#@emContentID');
+        }
+          function onCustomImageSuccess@(imageUIID)(data) {
+            _onTextContentSaveSuccess(data, '#@ciContentID');
         }
         $(function () {
             InitContentImage({ imageID: '@this.Model.ID', 
@@ -138,4 +170,3 @@
         });
     </script>
 </div>
-

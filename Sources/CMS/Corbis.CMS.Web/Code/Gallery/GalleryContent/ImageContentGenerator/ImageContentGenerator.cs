@@ -18,11 +18,11 @@ namespace Corbis.CMS.Web.Code.Gallery.GalleryContent.ImageContentGenerator
             galleryFont = new Font(galleryFont.FontFamily, galleryFont.Size + 10);
             var text = string.Empty;
             var textColor = Color.Black;
-            switch (image.TextContent.ContentType)
+            switch (image.ContentImage.TextContent.ContentType)
             {
                     case TextContents.QnA:
                     {
-                        var result = image.TextContent as QnATextContent;
+                        var result = image.ContentImage.TextContent as QnATextContent;
 
                         return ImageHelper.SaveQaImage(result.Question, result.Answer, result.Size.Value.Width,
                                                        result.Size.Value.Height, galleryFont,
@@ -31,14 +31,14 @@ namespace Corbis.CMS.Web.Code.Gallery.GalleryContent.ImageContentGenerator
                     }
                 case TextContents.Pullquote:
                     {
-                        var result = image.TextContent as PullQuotedTextContent;
+                        var result = image.ContentImage.TextContent as PullQuotedTextContent;
                         textColor = Color.White;
                         text = result.Text;
                         break;
                     }
                     case TextContents.BodyCopy:
                     {
-                        var result = image.TextContent as BodyCopyTextContent;
+                        var result = image.ContentImage.TextContent as BodyCopyTextContent;
                         var builder = new StringBuilder();
                         builder.Append(result.DropCap);
                         for (var i = 0; i < 4; i++)
@@ -56,7 +56,7 @@ namespace Corbis.CMS.Web.Code.Gallery.GalleryContent.ImageContentGenerator
            
 
             var dock = DockStyle.Center;
-            switch (image.TextContent.Position)
+            switch (image.ContentImage.TextContent.Position)
             {
                 case TextContentPositions.Left:
                     {

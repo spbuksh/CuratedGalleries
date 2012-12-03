@@ -31,14 +31,20 @@ namespace Corbis.CMS.Web.Models
         /// Image descriptor
         /// </summary>
         public string Text { get; set; }
+       
     }
 
     public class GalleryContentImageModel : GalleryImageModelBase
     {
-        /// <summary>
-        /// Image text content attached to the image
-        /// </summary>
-        public ImageTextContentModelBase TextContent { get; set; }
+
+        public GalleryContentImageModel()
+        {
+            if(ContentImage == null)
+            {
+                ContentImage = new GalleryImageContentModel();
+            }
+        }
+        public GalleryImageContentModel ContentImage { get; set; }
     }
 
     /// <summary>

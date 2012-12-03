@@ -264,6 +264,7 @@ function InitContentImage(options) {
     initGalleryImageDragDrop(options.imageID);
 }
 
+
 function ClearGalleryContent(id, url) {
     if (!confirm("Do you really want to detele all gallery images?"))
         return;
@@ -303,13 +304,14 @@ function uploadImageErrorCallback(type, errorMessage) {
     return "OK";
 }
 
-function reUploadGalleryImageCallback(result) {
-    var data = jQuery.parseJSON(result);
-    var jimg = $('div[corbis-item-id="' + data.ID + '"] div.imgPresenter img');
-    jimg.attr('src', data.EditUrls.Large);
-    jimg.attr('alt', data.FileName);
-    return "OK";
-}
+//function reUploadGalleryImageCallback(result) {
+//    var data = jQuery.parseJSON(result);
+//    var jimg = $('div[corbis-item-id="' + data.ID + '"] div.imgPresenter img');
+//    jimg.attr('src', data.EditUrls.Large);
+//    jimg.attr('alt', data.FileName);
+//    $('div.galleryContentImage').append(data);
+//    return "OK";
+//}
 
 
 

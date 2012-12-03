@@ -21,8 +21,8 @@ namespace Corbis.CMS.Web.Code
         public GalleryImageBase()
         {
             //TODO: It is temporary due to bad gallery template
-            this.ImageContentName = string.Empty;
-            this.ImageContentUrl = string.Empty;
+            //this.ImageContentName = string.Empty;
+            //this.ImageContentUrl = string.Empty;
         }
 
         /// <summary>
@@ -60,15 +60,21 @@ namespace Corbis.CMS.Web.Code
         /// </summary>
         public GalleryImageSource ImageSource { get; set; }
 
+        public GalleryImageContent ContentImage { get; set; }
 
-        /// <summary>
-        /// png image urls for gallery based on gallery file system (likewise 'GalleryUrls' property)
-        /// </summary>
-        public string ImageContentUrl { get; set; }
+        ///// <summary>
+        ///// Png image urls for gallery based on gallery file system.
+        ///// </summary>
+        //public ImageUrlSet ImageContentUrls { get; set; }
 
-        /// <summary>
-        /// png file name
-        /// </summary>
-        public string ImageContentName { get; set; }
+        ///// <summary>
+        ///// png image urls for gallery based on gallery file system (likewise 'GalleryUrls' property)
+        ///// </summary>
+        //public string ImageContentUrl { get; set; }
+
+        ///// <summary>
+        ///// png file name
+        ///// </summary>
+        //public string ImageContentName { get; set; }
     }
 }

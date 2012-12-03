@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.ComponentModel.DataAnnotations;
+using Corbis.CMS.Entity;
 using Corbis.CMS.Web.Code;
 
 namespace Corbis.CMS.Web.Models
@@ -30,17 +31,65 @@ namespace Corbis.CMS.Web.Models
         public virtual Nullable<int> Width { get; set; }
 
         public virtual Nullable<int> Height { get; set; }
+
+
     }
 
     public class EmptyTextContentModel : ImageTextContentModelBase
     { }
+
+
+    public class CustomImageContentModel : ImageTextContentModelBase
+    {
+        private ImageUrlSet _contentImageUrl;
+        private int _galleryID;
+
+        /// <summary>
+        /// ctor
+        /// </summary>
+        public CustomImageContentModel()
+            : base(TextContentPositions.Left)
+         {
+         }
+
+        public string ImageID { get; set; }
+
+        public int GalleryID
+        {
+            get { return _galleryID; }
+            set { _galleryID = value; }
+        }
+
+        public string Name { get; set; }
+
+        [Required]
+        public override Nullable<int> Width
+        {
+            get { return base.Width; }
+            set { base.Width = value; }
+        }
+
+        public ImageUrlSet ContentImageUrl
+        {
+            get { return _contentImageUrl; }
+            set { _contentImageUrl = value; }
+        }
+
+        [Required]
+        public override Nullable<int> Height
+        {
+            get { return base.Height; }
+            set { base.Height = value; }
+        }
+    }
 
     public class QnATextContentModel : ImageTextContentModelBase
     {
         /// <summary>
         /// ctor
         /// </summary>
-        public QnATextContentModel() : base(TextContentPositions.Left)
+        public QnATextContentModel()
+            : base(TextContentPositions.Left)
         { }
 
         /// <summary>
@@ -74,7 +123,8 @@ namespace Corbis.CMS.Web.Models
         /// <summary>
         /// ctor
         /// </summary>
-        public PullQuotedTextContentModel() : base(TextContentPositions.Center)
+        public PullQuotedTextContentModel()
+            : base(TextContentPositions.Center)
         { }
 
         /// <summary>
@@ -104,7 +154,8 @@ namespace Corbis.CMS.Web.Models
         /// <summary>
         /// ctor
         /// </summary>
-        public BodyCopyTextContentModel() : base(TextContentPositions.Center)
+        public BodyCopyTextContentModel()
+            : base(TextContentPositions.Center)
         { }
 
         /// <summary>

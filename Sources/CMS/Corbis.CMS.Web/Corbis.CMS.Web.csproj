@@ -187,10 +187,13 @@
     <Compile Include="Code\Gallery\GalleryContent\GalleryFont.cs" />
     <Compile Include="Code\Gallery\GalleryContent\ImageContentGenerator\ImageContentGenerator.cs" />
     <Compile Include="Code\Gallery\GalleryContent\Image\GalleryContentImage.cs" />
+    <Compile Include="Code\Gallery\GalleryContent\Image\GalleryImageContent.cs" />
+    <Compile Include="Code\Gallery\GalleryContent\Image\GalleryImageContentBase.cs" />
     <Compile Include="Code\Gallery\GalleryContent\Image\GalleryCoverImage.cs" />
     <Compile Include="Code\Gallery\GalleryContent\Image\GalleryImageBase.cs" />
     <Compile Include="Code\Gallery\GalleryContent\Image\GalleryImageSource.cs" />
     <Compile Include="Code\Gallery\GalleryContent\Text\BodyCopyTextContent.cs" />
+    <Compile Include="Code\Gallery\GalleryContent\Text\CustomImageTextContent.cs" />
     <Compile Include="Code\Gallery\GalleryContent\Text\EmptyTextContent.cs" />
     <Compile Include="Code\Gallery\GalleryContent\Text\ImageTextContentBase.cs" />
     <Compile Include="Code\Gallery\GalleryContent\Text\PullQuotedTextContent.cs" />
@@ -229,6 +232,7 @@
     <Compile Include="Models\CreateGalleryModel.cs" />
     <Compile Include="Models\EditImagePopupModel.cs" />
     <Compile Include="Models\FlashUploaderModel.cs" />
+    <Compile Include="Models\GalleryImageContentModel.cs" />
     <Compile Include="Models\GalleryImageModel.cs" />
     <Compile Include="Models\GalleryItemModel.cs" />
     <Compile Include="Models\GalleryModel.cs" />
@@ -533,6 +537,7 @@
     <None Include="ApplicationFonts\WisdomScript\Wisdom Script.otf" />
     <Content Include="Views\Gallery\GalleryListItemPartial.cshtml" />
     <Content Include="Views\Gallery\UploadMultipleImagesPopup.cshtml" />
+    <Content Include="Views\Gallery\CustomImageTextContentPartial.cshtml" />
     <None Include="Web.config.local">
       <SubType>Designer</SubType>
     </None>
