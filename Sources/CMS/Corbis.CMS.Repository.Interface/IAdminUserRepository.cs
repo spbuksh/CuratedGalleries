@@ -33,6 +33,14 @@ namespace Corbis.CMS.Repository.Interface
         OperationResult<OperationResults, object> DeleteUser(int id);
 
         /// <summary>
+        /// Sets user as active or inactive
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="isActive"></param>
+        /// <returns></returns>
+        OperationResult<OperationResults, object> ChangeUserActivation(int id, bool isActive);
+
+        /// <summary>
         /// Gets admin users
         /// </summary>
         /// <returns></returns>

@@ -126,5 +126,30 @@ namespace Corbis.CMS.Web.Controllers
 
             return this.Json(new { success = true });
         }
+
+        /// <summary>
+        /// Makes admin user or active or inactive
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult ChangeUserActivation(int id, bool isActive)
+        {
+            OperationResult<OperationResults, object> rslt = null;
+
+            try
+            {
+                rslt = this.UserRepository.ChangeUserActivation(id, isActive);
+            }
+            catch (Exception ex)
+            {
+                this.Logger.WriteError(ex);
+            }
+
+            if (rslt == null || rslt.Result != OperationResults.Success)
+                return this.Json(new { success = false, error = "Server error" });
+
+            return this.Json(new { success = true });
+        }
     }
 }

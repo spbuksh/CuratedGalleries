@@ -163,21 +163,33 @@ namespace Corbis.CMS.Repository
                     if (context.Transaction != null)
                         context.Transaction.Rollback();
                 }
-
             }
 
             return output;
-
-            //using (var context = this.CreateMainContext())
-            //{
-            //    var user = context.AdminUserRecords.Single(u => u.ID == id);
-            //    context.AdminUserRecords.DeleteOnSubmit(user);
-            //    context.SubmitChanges();
-            //}
-
-            throw new NotImplementedException();
         }
 
+
+        public OperationResult<OperationResults, object> ChangeUserActivation(int id, bool isActive)
+        {
+            using (var context = this.CreateMainContext())
+            {
+                var record = context.AdminUserMembershipRecords.Where(x => x.ID == id).SingleOrDefault();
+
+                if (record == null)
+                    return new OperationResult<OperationResults, object>() { Result = OperationResults.NotFound };
+
+                record.IsActive = isActive;
+                context.SubmitChanges();
+
+                return new OperationResult<OperationResults, object>() { Result = OperationResults.Success };
+            }
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public OperationResult<OperationResults, List<AdminUser>> GetUsers()
         {
             using (var context = this.CreateMainContext())
@@ -294,7 +306,7 @@ namespace Corbis.CMS.Repository
 
                 var query = from m in context.AdminUserMembershipRecords
                             join u in context.AdminUserProfileRecords on m.ProfileID equals u.ID
-                            where m.Login.ToLower() == loginLower
+                            where m.Login.ToLower() == loginLower && m.IsActive
                             select new { ID = m.ID, FirstName = u.FirstName, MiddleName = u.MiddleName, LastName = u.LastName, IsActive = m.IsActive, Password = m.Password };
 
                 var record = query.SingleOrDefault();
