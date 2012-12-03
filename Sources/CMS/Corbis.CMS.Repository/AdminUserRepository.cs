@@ -421,5 +421,22 @@ namespace Corbis.CMS.Repository
                 default: throw new NotImplementedException();
             }            
         }
+
+        public OperationResult<OperationResults, object> ChangeUserPassword(int userID, string password) 
+        {
+            using (var context = this.CreateMainContext())
+            {
+                var record = context.AdminUserMembershipRecords.Where(x => x.ID == userID).SingleOrDefault();
+
+                if (record == null)
+                    return new OperationResult<OperationResults, object>() { Result = OperationResults.NotFound };
+
+                record.Password = this.PasswordUtility.HashPassword(password, this.PasswordHashKey);
+                context.SubmitChanges();
+
+                return new OperationResult<OperationResults, object>() { Result = OperationResults.Success };
+            }
+        }
+
     }
 }

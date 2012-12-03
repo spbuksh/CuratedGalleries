@@ -67,5 +67,11 @@ namespace Corbis.CMS.Repository.Interface
         /// <param name="form">Admin user registration data</param>
         /// <returns>Admin user member identifier</returns>
         OperationResult<OperationResults, Nullable<int>> Register(AdminRegistrationForm form);
+
+        /// <summary>
+        /// Changes user password
+        /// </summary>
+        OperationResult<OperationResults, object> ChangeUserPassword(int userID, string password);
+
     }
 }

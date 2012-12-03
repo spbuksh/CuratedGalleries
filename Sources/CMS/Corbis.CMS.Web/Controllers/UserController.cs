@@ -151,5 +151,26 @@ namespace Corbis.CMS.Web.Controllers
 
             return this.Json(new { success = true });
         }
+
+        [HttpGet]
+        public ActionResult ChangePasswordPopup(string popupID, int userID)
+        {
+            this.ViewBag.PopupID = popupID;
+            this.ViewBag.UserID = userID;
+            return this.PartialView("ChangePasswordPopup", new ChangePasswordModel());
+        }
+        [HttpPost]
+        public ActionResult ChangePasswordPopup(string popupID, int userID, ChangePasswordModel model)
+        {
+            if (!this.ModelState.IsValid)
+            {
+                this.ViewBag.PopupID = popupID;
+                this.ViewBag.UserID = userID;
+                return this.PartialView("ChangePasswordPopup", model);
+            }
+            var rslt = this.UserRepository.ChangeUserPassword(userID, model.Password);
+            return this.Json(new { success = rslt.Result == OperationResults.Success });
+        }
+
     }
 }

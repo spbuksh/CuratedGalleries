@@ -7,8 +7,9 @@
         <th>Role</th>
         <th>Login</th>
         <th>Email</th>
-        <th>Is Active</th>
+        <th>Active</th>
         <th>Role</th>
+        <th></th>
         <th></th>
         <th></th>
     </tr>
@@ -33,6 +34,9 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Roles)
+            </td>
+            <td>
+                <a href="javascript:void(0)" onclick="showResetPasswordPopup('@item.ID.Value')">Change Password</a>
             </td>
             <td>
                 <a href="/User/Edit/@item.ID" title="Edit" >
@@ -88,4 +92,12 @@
             });
         });
     });
+    function showResetPasswordPopup(userID) {
+        showPopupWindow({
+            popupID: 'changePasswordPopup',
+            title: 'Change Password',
+            url: '@Url.Action("ChangePasswordPopup", "User")',
+            params: { userID: userID }
+        });
+    }
 </script>

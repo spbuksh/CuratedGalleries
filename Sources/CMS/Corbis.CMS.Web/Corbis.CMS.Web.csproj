@@ -239,6 +239,7 @@
     <Compile Include="Models\GalleryTemplateModel.cs" />
     <Compile Include="Models\ImageTextContentModel.cs" />
     <Compile Include="Models\AdminUserMembershipModel.cs" />
+    <Compile Include="Models\ResetPasswordModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -546,6 +547,7 @@
     <Content Include="Views\Gallery\UploadMultipleImagesPopup.cshtml" />
     <Content Include="Views\Gallery\GalleryPublishPopup.cshtml" />
     <Content Include="Views\Gallery\GalleryInfoPopup.cshtml" />
+    <Content Include="Views\User\ChangePasswordPopup.cshtml" />
     <None Include="Web.config.local">
       <SubType>Designer</SubType>
     </None>
