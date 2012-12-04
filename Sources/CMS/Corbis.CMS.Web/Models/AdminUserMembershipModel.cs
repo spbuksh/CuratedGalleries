@@ -8,23 +8,8 @@ using Corbis.CMS.Entity;
 
 namespace Corbis.CMS.Web.Models
 {
-    public class AdminUserMembershipModel
+    public class AdminUserMembershipModel : UserProfileDetailsModel
     {
-        [Required]
-        [Display(Name = "Login")]
-        public string Login { get; set; }
-
-        [Required]
-        [Display(Name = "First Name")]
-        public string FirstName { get; set; }
-
-        [Display(Name = "Middle Name")]
-        public string MiddleName { get; set; }
-
-        [Required]
-        [Display(Name = "Last Name")]
-        public string LastName { get; set; }
-
         [Required]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
@@ -37,17 +22,11 @@ namespace Corbis.CMS.Web.Models
         public string ComfirmPassword { get; set; }
 
         [Required]
-        [DataType(DataType.EmailAddress)]
-        [Display(Name = "Email")]
-        public string Email { get; set; }
-
-        [Required]
         [Display(Name = "Is active")]
         public bool IsActive { get; set; }
 
         [Required]
         [Display(Name = "Role")]
         public AdminUserRoles Roles { get; set; }
-
     }
 }

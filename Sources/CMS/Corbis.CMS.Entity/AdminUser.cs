@@ -17,10 +17,12 @@ namespace Corbis.CMS.Entity
         /// <summary>
         /// Regular admin user role
         /// </summary>
+        [EnumMember]
         Admin = 1,
         /// <summary>
         /// Super admin role
         /// </summary>
+        [EnumMember]
         SuperAdmin = 3
     }
 

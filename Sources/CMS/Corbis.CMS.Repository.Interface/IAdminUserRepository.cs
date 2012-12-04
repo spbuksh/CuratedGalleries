@@ -11,13 +11,6 @@ namespace Corbis.CMS.Repository.Interface
 {
     public interface IAdminUserRepository 
     {
-        //TODO: These methods are obsolete!!! Refactor them and delete
-        void UpdateUser(int id, string login, bool isactive, string email, int roleId, string password);
-        void UpdateUser(int id, string login, bool isactive, string email, int roleId);
-
-
-        //*********************
-
         /// <summary>
         /// Creates admin user
         /// </summary>
@@ -51,7 +44,14 @@ namespace Corbis.CMS.Repository.Interface
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        OperationResult<OperationResults, AdminUserInfo> GetUserInfo(int id);
+        OperationResult<OperationResults, AdminUser> GetUser(int id);
+
+        /// <summary>
+        /// Gets admin user info by his memebership identifier
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        OperationResult<OperationResults, object> UpdateUser(AdminUser user);
 
         /// <summary>
         /// Authenticates admin user
@@ -72,6 +72,9 @@ namespace Corbis.CMS.Repository.Interface
         /// Changes user password
         /// </summary>
         OperationResult<OperationResults, object> ChangeUserPassword(int userID, string password);
+
+
+        OperationResult<OperationResults, object> ChangeUserRoles(int userID, AdminUserRoles roles);
 
     }
 }

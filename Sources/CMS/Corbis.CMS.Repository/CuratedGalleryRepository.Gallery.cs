@@ -160,10 +160,10 @@ namespace Corbis.CMS.Repository
                 rslt.Output.PublicationPeriod = period == null ? null : this.ObjectMapper.DoMapping<GalleryPublicationPeriod>(period);
 
                 if (record.Editor.HasValue)
-                    rslt.Output.Editor = this.UserRepository.GetUserInfo(record.Editor.Value).Output;
+                    rslt.Output.Editor = this.UserRepository.GetUser(record.Editor.Value).Output;
 
                 if (period != null && period.PublisherID.HasValue)
-                    rslt.Output.Publisher = this.UserRepository.GetUserInfo(period.PublisherID.Value).Output;
+                    rslt.Output.Publisher = this.UserRepository.GetUser(period.PublisherID.Value).Output;
 
                 if (includePackage)
                 {
@@ -230,8 +230,8 @@ namespace Corbis.CMS.Repository
                     var gallery = this.Convert(item.gallery);
                     gallery.PublicationPeriod = item.period == null ? null : this.ObjectMapper.DoMapping<GalleryPublicationPeriod>(item.period);
 
-                    gallery.Editor = item.editor == null ? null : this.UserRepository.GetUserInfo(item.editor.ID).Output;
-                    gallery.Publisher = item.publisher == null ? null : this.UserRepository.GetUserInfo(item.publisher.ID).Output;
+                    gallery.Editor = item.editor == null ? null : this.UserRepository.GetUser(item.editor.ID).Output;
+                    gallery.Publisher = item.publisher == null ? null : this.UserRepository.GetUser(item.publisher.ID).Output;
 
                     rslt.Output.Add(gallery);
                 }

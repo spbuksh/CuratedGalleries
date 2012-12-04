@@ -19,43 +19,6 @@ namespace Corbis.CMS.Repository
     [Serializable]
     public class AdminUserRepository : RepositoryBase, IAdminUserRepository
     {
-        #region Obsolete
-
-        public void UpdateUser(int id, string login, bool isactive, string email, int roleId, string password)
-        {
-            //using (var context = this.CreateMainContext())
-            //{
-            //    var user = context.AdminUserRecords.Single(u => u.UserId == id);
-            //    user.Login = login;
-            //    user.IsActive = isactive;
-            //    user.Password = EncryptPassword(password);
-            //    user.Email = email;
-            //    user.UserRoleId = roleId;
-
-            //    context.SubmitChanges();
-            //}
-
-            throw new NotImplementedException();
-        }
-
-        public void UpdateUser(int id, string login, bool isactive, string email, int roleId)
-        {
-            //using (var context = this.CreateMainContext())
-            //{
-            //    var user = context.AdminUserRecords.Single(u => u.UserId == id);
-            //    user.Login = login;
-            //    user.IsActive = isactive;
-            //    user.Email = email;
-            //    user.UserRoleId = roleId;
-
-            //    context.SubmitChanges();
-            //}
-
-            throw new NotImplementedException();
-        }
-
-        #endregion Obsolete
-
         public OperationResult<OperationResults, int?> CreateUser(int? creatorID, AdminUser user)
         {
             var output = new OperationResult<OperationResults, int?>() { Result = OperationResults.Success };
@@ -217,7 +180,7 @@ namespace Corbis.CMS.Repository
                     if (item.roles != null)
                     {
                         foreach (var irole in item.roles)
-                            user.Roles = user.Roles.HasValue ? (user.Roles.Value | this.GetRole(irole.RoleID)) : (AdminUserRoles)irole.RoleID;
+                            user.Roles = user.Roles.HasValue ? (user.Roles.Value | (AdminUserRoles)irole.RoleID) : (AdminUserRoles)irole.RoleID;
                     }
 
                     users.Add(user);
@@ -234,16 +197,17 @@ namespace Corbis.CMS.Repository
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public OperationResult<OperationResults, AdminUserInfo> GetUserInfo(int id)
+        public OperationResult<OperationResults, AdminUser> GetUser(int id)
         {
-            var result = new OperationResult<OperationResults, AdminUserInfo>() { Result = OperationResults.Success };
+            var result = new OperationResult<OperationResults, AdminUser>() { Result = OperationResults.Success };
 
             using (var context = this.CreateMainContext())
             {
                 var query = from m in context.AdminUserMembershipRecords
-                            join u in context.AdminUserProfileRecords on m.ProfileID equals u.ID
+                            join p in context.AdminUserProfileRecords on m.ProfileID equals p.ID
+                            join m2r in context.AdminUserToRoleRecords on m.ID equals m2r.MemberID into roles
                             where m.ID == id
-                            select new { ID = m.ID, FirstName = u.FirstName, MiddleName = u.MiddleName, LastName = u.LastName, IsActive = m.IsActive, Password = m.Password };
+                            select new { member = m, profile = p, roles = roles };
 
                 var record = query.SingleOrDefault();
 
@@ -253,10 +217,20 @@ namespace Corbis.CMS.Repository
                     return result;
                 }
 
-                var user = this.ObjectMapper.DoMapping<AdminUserInfo>(record);
+                var user = new AdminUser() 
+                {
+                    FirstName = record.profile.FirstName,
+                    Email = record.profile.Email,
+                    ID = id,
+                    IsActive = record.member.IsActive,
+                    LastName = record.profile.LastName,
+                    Login = record.member.Login,
+                    MiddleName = record.profile.MiddleName,
+                    Password = null
+                };
 
-                foreach (int item in context.AdminUserToRoleRecords.Where(x => x.MemberID == record.ID).Select(x => x.RoleID))
-                    user.Roles = user.Roles.HasValue ? (user.Roles.Value | this.GetRole(item)) : (AdminUserRoles)item;
+                foreach (var item in record.roles)
+                    user.Roles = user.Roles.HasValue ? (user.Roles.Value | (AdminUserRoles)item.RoleID) : (AdminUserRoles)item.RoleID;
 
                 result.Output = user;
             }
@@ -437,6 +411,97 @@ namespace Corbis.CMS.Repository
                 return new OperationResult<OperationResults, object>() { Result = OperationResults.Success };
             }
         }
+        public OperationResult<OperationResults, object> ChangeUserRoles(int userID, AdminUserRoles roles)
+        {
+            using (var context = this.CreateMainContext())
+            {
+                context.Connection.Open();
+                context.Transaction = context.Connection.BeginTransaction();
 
+                try
+                {
+                    var record = context.AdminUserMembershipRecords.Where(x => x.ID == userID).SingleOrDefault();
+
+                    if (record == null)
+                        return new OperationResult<OperationResults, object>() { Result = OperationResults.NotFound };
+
+                    foreach (var item in record.AdminUserToRoleRecords)
+                        context.AdminUserToRoleRecords.DeleteOnSubmit(item);
+
+                    context.SubmitChanges();
+
+                    //TODO: refactor, temporary we use 2 roles => for that reason I insert 1 item
+                    context.AdminUserToRoleRecords.InsertOnSubmit(new AdminUserToRoleRecord() { MemberID = userID, RoleID = (int)roles });
+                    context.SubmitChanges();
+
+                    context.Transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    if (context.Transaction != null)
+                        context.Transaction.Rollback();
+
+                    this.Logger.WriteError(ex);
+                    throw;
+                }
+
+                return new OperationResult<OperationResults, object>() { Result = OperationResults.Success };
+            }
+        }
+
+
+
+        public OperationResult<OperationResults, object> UpdateUser(AdminUser user)
+        {
+            var output = new OperationResult<OperationResults, object>() { Result = OperationResults.Success };
+
+            using (var context = this.CreateMainContext())
+            {
+                if (context.Connection.State != System.Data.ConnectionState.Open)
+                    context.Connection.Open();
+
+                try
+                {
+                    context.Transaction = context.Connection.BeginTransaction();
+
+                    var member = context.AdminUserMembershipRecords.Where(x => x.ID == user.ID.Value).SingleOrDefault();
+
+                    if (member == null)
+                        return new OperationResult<OperationResults, object>() { Result = OperationResults.NotFound };
+
+                    member.IsActive = user.IsActive;
+                    member.Login = user.Login;
+                    context.SubmitChanges();
+
+                    var profile = context.AdminUserProfileRecords.Where(x => x.ID == member.ProfileID).Single();
+                    profile.Email = user.Email;
+                    profile.FirstName = user.FirstName;
+                    profile.LastName = user.LastName;
+                    profile.MiddleName = user.MiddleName;
+                    context.SubmitChanges();
+
+                    foreach (var item in member.AdminUserToRoleRecords)
+                        context.AdminUserToRoleRecords.DeleteOnSubmit(item);
+
+                    context.SubmitChanges();
+
+                    context.AdminUserToRoleRecords.InsertOnSubmit(new AdminUserToRoleRecord() { MemberID = user.ID.Value, RoleID = (int)user.Roles });
+                    context.SubmitChanges();
+
+                    context.Transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    output.Result = OperationResults.Failure;
+
+                    this.Logger.WriteError(ex);
+
+                    if (context.Transaction != null)
+                        context.Transaction.Rollback();
+                }
+
+                return output;
+            }
+        }
     }
 }

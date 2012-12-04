@@ -1,10 +1,13 @@
 ﻿@using Corbis.CMS.Web.Code
 @using Corbis.CMS.Entity
 @model IEnumerable<AdminUser>
+
+@{
+    var eitems = Enum.GetValues(typeof(AdminUserRoles)).Cast<AdminUserRoles>().ToList();
+}
 <table class="corbis-users">
     <tr>
         <th>Name</th>
-        <th>Role</th>
         <th>Login</th>
         <th>Email</th>
         <th>Active</th>
@@ -16,30 +19,26 @@
     @foreach (var item in Model)
     {
         <tr corbis-item-id="@item.ID">
-            <td>
+            <td class="corbis-user-name">
                 @Html.Raw(item.GetFullName())
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Roles)
-            </td>
-
-            <td>
+            <td class="corbis-user-login">
                 @Html.DisplayFor(modelItem => item.Login)
             </td>
-             <td>
+             <td class="corbis-user-email">
                 @Html.DisplayFor(modelItem => item.Email)
             </td>
              <td>
                 @Html.CheckBox("IsActive", item.IsActive, new { @class = "check-box" })
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Roles)
+                @Html.DropDownList("roles", eitems.Select(x => new SelectListItem() { Text = x.GetText(), Value = x.ToString(), Selected = (x == item.Roles) }))
             </td>
             <td>
                 <a href="javascript:void(0)" onclick="showResetPasswordPopup('@item.ID.Value')">Change Password</a>
             </td>
             <td>
-                <a href="/User/Edit/@item.ID" title="Edit" >
+                <a href="javascript:void(0)" onclick="showEditUserDetailsPopup('@item.ID'); return false;" title="Edit User Details" >
                     <img src="/Images/edit.png" alt="edit" />
                 </a>
             </td>
@@ -52,51 +51,16 @@
     }
 </table>
 <script type="text/javascript">
-    $(function () {
-        $('table.corbis-users input[type=checkbox]').click(function () {
-            var jthis = $(this);
+    CorbisUserMngr.activationAction = '@Url.Action("ChangeUserActivation", "User")';
+    CorbisUserMngr.changePasswordAction = '@Url.Action("ChangePasswordPopup", "User")';
+    CorbisUserMngr.delAction = '@Url.Action("DeleteUser", "User")';
+    CorbisUserMngr.changeRoleAction = '@Url.Action("ChangeUserRoles", "User")';
 
-            var attribute = 'corbis-post-canceled';
-
-            if (jthis.attr(attribute) != undefined) {
-                jthis.removeAttr(attribute);
-                return;
-            }
-
-            var isActive = jthis.is(':checked');
-
-            var onSuccess = function (result) {
-                if (result.success == true) {
-                    //do nothing of show notification about success
-                }
-                else if (result.success == false) {
-                    alert(result.error);
-                    jthis.attr(attribute, '1');
-                    jthis.trigger('click');
-                }
-                else {
-                    throw 'Not implemented case';
-                }
-            };
-            var onError = function () {
-                jthis.attr(attribute, '1');
-                jthis.trigger('click');
-            }
-
-            $.ajax({
-                type: 'post',
-                url: '@Url.Action("ChangeUserActivation", "User")',
-                data: { id: jthis.closest('tr').attr('corbis-item-id'), isActive: isActive },
-                success: onSuccess,
-                error: onError
-            });
-        });
-    });
-    function showResetPasswordPopup(userID) {
+    function showEditUserDetailsPopup(userID) {
         showPopupWindow({
-            popupID: 'changePasswordPopup',
-            title: 'Change Password',
-            url: '@Url.Action("ChangePasswordPopup", "User")',
+            popupID: 'editUserDetailsPopup',
+            title: 'Edit User Details',
+            url: '@Url.Action("UserProfileDetailsPopup", "User")',
             params: { userID: userID }
         });
     }
