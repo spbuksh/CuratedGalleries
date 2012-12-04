@@ -42,9 +42,19 @@ namespace Corbis.CMS.Web.Code
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static string GetGalleryPath(int id)
+        public static string GetGalleryDevPath(int id)
         {
-            return Path.Combine(GalleryRuntime.GalleryDirectory, id.ToString());
+            return Path.Combine(GalleryRuntime.GalleryDevelopmentDirectory, id.ToString());
+        }
+
+        /// <summary>
+        /// Gets absolute folder path to the gallery based on its identifier
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public static string GetGalleryLivePath(int id)
+        {
+            return Path.Combine(GalleryRuntime.GalleryLiveDirectory, id.ToString());
         }
 
         /// <summary>
@@ -54,7 +64,16 @@ namespace Corbis.CMS.Web.Code
         /// <returns></returns>
         public static string GetGalleryOutputPath(int id)
         {
-            return Path.Combine(GetGalleryPath(id), GalleryOutputDirName);
+            return Path.Combine(GetGalleryDevPath(id), GalleryOutputDirName);
+        }
+        /// <summary>
+        /// This folder contains result gallery for preview. This folder has strict name.
+        /// </summary>
+        /// <param name="id">Gallery identifier</param>
+        /// <returns></returns>
+        public static string GetGalleryLiveOutputPath(int id)
+        {
+            return Path.Combine(GetGalleryLivePath(id), GalleryOutputDirName);
         }
 
         /// <summary>
@@ -64,7 +83,7 @@ namespace Corbis.CMS.Web.Code
         /// <returns></returns>
         public static string GetGalleryContentPath(int id)
         {
-            return Path.Combine(GetGalleryPath(id), GalleryContentDirName);
+            return Path.Combine(GetGalleryDevPath(id), GalleryContentDirName);
         }
 
         /// <summary>
@@ -239,7 +258,7 @@ namespace Corbis.CMS.Web.Code
 
             lock (gallery.GetSyncRoot())
             {
-                string galleryRoot = gallery.GetRootPath();
+                string galleryRoot = gallery.GetDevPath();
                 string galeryOutput = gallery.GetOutputPath();
 
                 Directory.CreateDirectory(galleryRoot);
@@ -300,7 +319,7 @@ namespace Corbis.CMS.Web.Code
                     case OperationResults.Success:
                     case OperationResults.NotFound:
                         {
-                            var dir = new DirectoryInfo(GetGalleryPath(id));
+                            var dir = new DirectoryInfo(GetGalleryDevPath(id));
 
                             if (dir.Exists)
                             {
@@ -509,5 +528,107 @@ namespace Corbis.CMS.Web.Code
                 SaveGalleryContent(galleryID, content, false);
             }
         }
+
+        public static OperationResults PublishGallery(int? userID, int id, DateTime fromUTC, DateTime? toUTC)
+        {
+            lock (GetGallerySyncRoot(id))
+            {
+                OperationResult<OperationResults, GalleryPublicationPeriod> ares = null;
+
+                try
+                {
+                    ares = GalleryRepository.Publish(userID, id, fromUTC, toUTC);
+                }
+                catch (Exception ex)
+                {
+                    Logger.WriteError(ex);
+                    throw ex;
+                }
+
+                if (ares.Result != OperationResults.Success)
+                    return ares.Result;
+
+                DateTime utcNow = DateTime.UtcNow;
+
+                if (fromUTC > utcNow || (toUTC.HasValue && toUTC.Value <= utcNow))
+                    return OperationResults.Success;
+
+                return GoGalleryLive(id);
+            }
+        }
+        public static OperationResults GoGalleryLive(int id)
+        {
+            lock (GetGallerySyncRoot(id))
+            {
+                string livepath = GetGalleryLivePath(id);
+
+                var dir = new DirectoryInfo(livepath);
+
+                if (dir.Exists)
+                {
+                    dir.Clear();
+                    dir.Refresh();
+                }
+
+                var gallery = BuildGalleryOutput(id);
+
+                DirectoryInfo src = new DirectoryInfo(gallery.GetDevPath());
+
+                var content = gallery.LoadContent(false);
+
+                ActionHandler<string, bool, bool> handler = content.SystemFilePathes == null || content.SystemFilePathes.Count == 0 ? (ActionHandler<string, bool, bool>)null :
+                    delegate(string path, bool isDir)
+                    {
+                        if (isDir) return true;
+                        return content.SystemFilePathes.FirstOrDefault(x => path.EndsWith(x)) == null;
+                    };
+
+                src.CopyTo(dir, handler);
+
+                return OperationResults.Success;
+            }
+        }
+
+        public static OperationResults UnPublishGallery(int id)
+        {
+            lock (GetGallerySyncRoot(id))
+            {
+                OperationResult<OperationResults, object> ares = null;
+
+                try
+                {
+                    ares = GalleryRepository.UnPublish(id);
+                }
+                catch (Exception ex)
+                {
+                    Logger.WriteError(ex);
+                    throw ex;
+                }
+
+                if (ares.Result != OperationResults.Success)
+                    return ares.Result;
+
+                string livepath = GetGalleryLivePath(id);
+
+                var dir = new DirectoryInfo(livepath);
+
+                if (dir.Exists)
+                {
+                    dir.Clear();
+                    dir.Refresh();
+
+                    try
+                    {
+                        dir.Delete(true);
+                    }
+                    catch (Exception)
+                    { }
+                }
+
+                return ares.Result;
+            }
+
+        }
+
     }
 }

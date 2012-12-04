@@ -1,0 +1,60 @@
+﻿@using Corbis.CMS.Web.Code
+@using Corbis.CMS.Web.Models
+@using Corbis.CMS.Entity
+@model GalleryInfoModel
+
+<div>
+    <table>
+        <tr>
+            <td>Gallery Name</td>
+            <td>@this.Model.Name</td>
+        </tr>
+        <tr>
+            <td>Created</td>
+            <td>@this.Model.CreationTime</td>
+        </tr>
+        <tr>
+            <td>Template</td>
+            <td>@this.Model.Template</td>
+        </tr>
+        <tr>
+            <td>Status</td>
+            <td>@this.Model.Status</td>
+        </tr>
+        @if (!string.IsNullOrEmpty(this.Model.PublishedBy)) {
+        <tr>
+            <td>Published By</td>
+            <td>@this.Model.PublishedBy</td>
+        </tr>                        
+        }
+        @if (!string.IsNullOrEmpty(this.Model.PublicationPeriod)) {
+        <tr>
+            <td>Live Period</td>
+            <td>@this.Model.PublicationPeriod</td>
+        </tr>            
+        }
+        @if (!string.IsNullOrEmpty(this.Model.LiveURL)) {
+        <tr>
+            <td>Live URL</td>
+            <td>
+                <a href="@this.Model.LiveURL" target="_blank">@this.Model.LiveURL</a>
+            </td>
+        </tr>            
+        }
+        @if (!string.IsNullOrEmpty(this.Model.LockedBy)) {
+        <tr>
+            <td>Mode</td>
+            <td>Editing</td>
+        </tr>                        
+        <tr>
+            <td>Locked by</td>
+            <td>@this.Model.LockedBy</td>
+        </tr>            
+        }
+        
+        <tr>
+            <td>Image Count</td>
+            <td>@this.Model.ImageCount.ToString()</td>
+        </tr>                    
+    </table>
+</div>

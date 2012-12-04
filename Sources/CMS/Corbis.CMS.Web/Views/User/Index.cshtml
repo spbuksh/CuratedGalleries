@@ -1,37 +1,32 @@
-﻿@model IEnumerable<Corbis.CMS.Entity.AdminUser>
-
+﻿@using Corbis.CMS.Entity
+@model IEnumerable<AdminUser>
 @{
     ViewBag.Title = "Index";
 }
 
 <h2>Index</h2>
-
 <p>
     @Html.ActionLink("Create New", "Create", null,
             new Dictionary<string, object> { { "class", "btn2 btn2-info" } })
 </p>
-
 <div id="content">
-@Html.Partial("Controls/Grid/_UserGrid",Model)
+    @Html.Partial("UserGridPartial",Model)
 </div>
-
 <script type="text/javascript">
-
-    function deleteUser(userId) {
-
+    function deleteUser(user, trigger) {
+        if (!confirm("Do you really want to delete '" + user.login + "'?")) return;
         $.ajax({
-            type: "POST",
-            url: "/User/DeleteUser",
-            data: $.toJSON({
-                "id": userId
-            }),
-            contentType: "application/json; charset=utf-8",
-            dataType: "html",
-            success: function (response) {
-
-                $('#content').html(response);
+            url: '@Url.Action("DeleteUser", "User")',
+            type: 'POST',
+            data: { id: user.id },
+            success: function (result) {
+                if (result.success) {
+                    $(trigger).closest('tr').remove();
+                }
+                else {
+                    alert('Error');
+                }
             }
         });
     }
-
 </script>

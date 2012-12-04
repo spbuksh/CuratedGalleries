@@ -1,17 +1,39 @@
-﻿@model Corbis.CMS.Web.Models.AdminUserModel
+﻿@using Corbis.CMS.Web.Models
+@model AdminUserMembershipModel
 @{
     ViewBag.Title = "Create";
     Response.CacheControl = "no-cache";
     Response.AddHeader("Pragma", "no-cache");
 }
-<h2>
-    Create</h2>
-@using (Html.BeginForm())
+<h2>Create</h2>
+@using (Html.BeginForm("Create", "User"))
 {
     @Html.ValidationSummary(true)
 
     <fieldset>
         <legend>User</legend>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.FirstName)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.FirstName)
+            @Html.ValidationMessageFor(model => model.FirstName)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.MiddleName)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.MiddleName)
+            @Html.ValidationMessageFor(model => model.MiddleName)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.LastName)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.LastName)
+            @Html.ValidationMessageFor(model => model.LastName)
+        </div>
         <div class="editor-label">
             @Html.LabelFor(model => model.Login)
         </div>
@@ -27,11 +49,11 @@
             @Html.ValidationMessageFor(model => model.Password)
         </div>
         <div class="editor-label">
-            @Html.LabelFor(model => model.PlainPassword)
+            @Html.LabelFor(model => model.ComfirmPassword)
         </div>
         <div class="editor-field">
-            @Html.EditorFor(model => model.PlainPassword)
-            @Html.ValidationMessageFor(model => model.PlainPassword)
+            @Html.EditorFor(model => model.ComfirmPassword)
+            @Html.ValidationMessageFor(model => model.ComfirmPassword)
         </div>
         <div class="editor-label">
             @Html.LabelFor(model => model.Email)
@@ -48,10 +70,10 @@
             @Html.ValidationMessageFor(model => model.IsActive)
         </div>
         <div class="editor-label">
-            @Html.LabelFor(model => model.Role)
+            @Html.LabelFor(model => model.Roles)
         </div>
         <div class="editor-field">
-            @Html.EnumDropDownListFor(model => model.Role)
+            @Html.EnumDropDownListFor(model => model.Roles)
         </div>
         <p>
             <input type="submit" value="Create" />

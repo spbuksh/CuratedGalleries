@@ -58,6 +58,7 @@
     <Compile Include="ErrorControllerBase.cs" />
     <Compile Include="ErrorDetailsModel.cs" />
     <Compile Include="IoCControllerFactory.cs" />
+    <Compile Include="jQueryDateTimePicker.cs" />
     <Compile Include="Models\ClientErrorModel.cs" />
     <Compile Include="Models\CorbisImageGalleryModel.cs" />
     <Compile Include="Models\CorbisImageModel.cs" />

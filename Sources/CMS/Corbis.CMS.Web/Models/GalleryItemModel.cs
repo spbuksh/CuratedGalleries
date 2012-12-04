@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Corbis.CMS.Entity;
+using Corbis.Public.Entity;
 
 namespace Corbis.CMS.Web.Models
 {
@@ -31,18 +33,39 @@ namespace Corbis.CMS.Web.Models
         public bool Enabled { get; set; }
 
         /// <summary>
-        /// Gallery created date
+        /// Formatted gallery created date
         /// </summary>
-        public DateTime DateCreated { get; set; }
+        public string DateCreated { get; set; }
 
         /// <summary>
         /// Gallery created date
         /// </summary>
-        public DateTime DateModified { get; set; }
+        public string DateModified { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public Nullable<int> Editor { get; set; }
+        public AdminUserInfo Editor { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public AdminUserInfo Publisher { get; set; }
+
+        /// <summary>
+        /// Gallery status
+        /// </summary>
+        public CuratedGalleryStatuses Status { get; set; }
+
+        /// <summary>
+        /// Publication period 
+        /// </summary>
+        public Range<string> PublicationPeriod { get; set; }
+
+        /// <summary>
+        /// Publication url 
+        /// </summary>
+        public string PublicationUrl { get; set; }
+
     }
 }

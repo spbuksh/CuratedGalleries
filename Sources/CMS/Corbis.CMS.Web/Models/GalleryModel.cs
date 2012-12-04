@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
+using Corbis.CMS.Entity;
 
 namespace Corbis.CMS.Web.Models
 {
@@ -20,6 +21,16 @@ namespace Corbis.CMS.Web.Models
         [Display(Name = "Gallery Name")]
         [Required(ErrorMessage = "Gallery name can not be empty")]
         public string Name { get; set; }
+
+        /// <summary>
+        /// Current gallery status
+        /// </summary>
+        public CuratedGalleryStatuses Status { get; set; }
+
+        /// <summary>
+        /// Gallery publication period
+        /// </summary>
+        public GalleryPublicationPeriod PublicationPeriod { get; set; }
 
         /// <summary>
         /// 

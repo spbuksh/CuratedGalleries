@@ -45,8 +45,10 @@
     <Compile Include="AdminRegistrationForm.cs" />
     <Compile Include="ArchivePackage.cs" />
     <Compile Include="CuratedGallery.cs" />
+    <Compile Include="CuratedGalleryStatus.cs" />
     <Compile Include="GalleryIcon.cs" />
     <Compile Include="GalleryIconType.cs" />
+    <Compile Include="GalleryPublicationPeriod.cs" />
     <Compile Include="GalleryTemplate.cs" />
     <Compile Include="GalleryTemplateInfo.cs" />
     <Compile Include="ImageUrlSet.cs" />

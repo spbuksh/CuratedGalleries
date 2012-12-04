@@ -60,7 +60,7 @@ namespace Corbis.CMS.Web.GarbageCollector
         {
             try
             {
-                var root = new DirectoryInfo(GalleryRuntime.GalleryDirectory);
+                var root = new DirectoryInfo(GalleryRuntime.GalleryDevelopmentDirectory);
                 var actualGalleries = GalleryRuntime.GetGalleries().Select(_ => _.ID.ToString()).ToList();
                 var dirictories = root.GetDirectories().Select(_ => _.Name).ToList();
                 var dirictoriesToRemove = dirictories.Except(actualGalleries).ToList();

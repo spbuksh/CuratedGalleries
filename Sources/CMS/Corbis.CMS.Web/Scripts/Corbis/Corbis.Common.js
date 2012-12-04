@@ -51,15 +51,29 @@ function endWaitCursor(jload) {
 var validationSummaryHelper = function (selector) {
     this._selector = selector;
 }
-validationSummaryHelper.prototype.reset = function reset() { 
-    var jelem = $(this._selector);
+validationSummaryHelper.prototype.reset = function (inputSelector) {
+    var jform = $(this._selector).closest('form');
 
-    var jul = jelem.children('ul').html('');
-    $(jul).append('<li style="display:none"></li>');
-
-    jelem.removeClass('validation-summary-errors');
-    jelem.addClass('validation-summary-valid');
+    jform.data("validator").resetForm();
+    jform.find(".validation-summary-errors")
+            .addClass("validation-summary-valid")
+            .removeClass("validation-summary-errors");
+    jform.find(".field-validation-error")
+            .addClass("field-validation-valid")
+            .removeClass("field-validation-error")
+            .removeData("unobtrusiveContainer")
+            .find(">*")
+            .removeData("unobtrusiveContainer");
 }
+validationSummaryHelper.prototype.showErrors = function (errors, inputSelector) {
+    var jform = $(this._selector).closest('form');
+    var container = jform.find("[data-valmsg-summary=true]"), list = container.find("ul");
+    list.empty();
+    container.addClass("validation-summary-errors").removeClass("validation-summary-valid");
+    Array.forEach(errors, function (item, index, array) {
+        $("<li />").html(item).appendTo(list);
+    });
+};
 
 
 function onBeginMsAjaxRequest() {
@@ -82,7 +96,7 @@ function clientLogger(options) {
         this._options.showErrorAlerts = false;
 
     window.onerror = function (msg, url, line) {
-        this._error(msg, url, line);
+        this.error(msg, url, line);
     };
 };
 clientLogger.prototype._log = function (logEntry) {
@@ -220,7 +234,7 @@ function showPopupWindow(options) {
                     create: options.onCreated,
                     open: options.onOpened
                 });
-                jdiv.parent().draggable({ handle: "#draggable" });
+                jdiv.parent().draggable({ handle: "div.ui-dialog-titlebar" });
 
                 $(function () {
                     $.validator.unobtrusive.parse(jdiv);

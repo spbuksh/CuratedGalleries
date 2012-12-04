@@ -77,6 +77,38 @@
             </authorization>
         </system.web>
     </location>
+
+    <!-- ******** GalleryRuntime file system access *************** -->
+    <location path="CuratedGalleries/Temp" allowOverride="true">
+        <system.web>
+            <authorization>
+                <deny users="?" />
+            </authorization>
+        </system.web>
+    </location>
+    <location path="CuratedGalleries/Templates" allowOverride="true">
+        <system.web>
+            <authorization>
+                <deny users="?" />
+            </authorization>
+        </system.web>
+    </location>
+    <location path="CuratedGalleries/Galleries" allowOverride="true">
+        <system.web>
+            <authorization>
+                <deny users="?" />
+            </authorization>
+        </system.web>
+    </location>
+    <location path="CuratedGalleries/Live" allowOverride="true">
+        <system.web>
+            <authorization>
+                <allow users="*" />
+            </authorization>
+        </system.web>
+    </location>
+    <!-- ********************************************************** -->
+
     <system.web>
         <!-- We upload images. So we must increase request size-->
         <httpRuntime maxRequestLength="524288000" />

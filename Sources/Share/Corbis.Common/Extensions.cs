@@ -98,12 +98,30 @@ namespace Corbis.Common
         }
 
 
-
-        public static DirectoryInfo CopyTo(this DirectoryInfo from, string to)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <param name="filter">This logic filters files and folders. string input parameter is fullpath, second boolean parameter indicates if it folder or file(true if folder).</param>
+        /// <returns></returns>
+        public static DirectoryInfo CopyTo(this DirectoryInfo from, string to, ActionHandler<string, bool, bool> filter = null)
         {
             var dir = new DirectoryInfo(to);
-            Utils.DirectoryCopy(from, dir);
-            return dir;
+            return from.CopyTo(dir, filter);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <param name="filter">This logic filters files and folders. string input parameter is fullpath, second boolean parameter indicates if it folder or file(true if folder).</param>
+        /// <returns></returns>
+        public static DirectoryInfo CopyTo(this DirectoryInfo from, DirectoryInfo to, ActionHandler<string, bool, bool> filter = null)
+        {
+            Utils.DirectoryCopy(from, to, filter);
+            to.Refresh();
+            return to;
         }
 
         public static void Clear(this DirectoryInfo dir)
@@ -121,6 +139,46 @@ namespace Corbis.Common
                 Directory.Delete(dir.FullName, true);
         }
 
+        public static T ToEnum<T>(this byte item)
+        {
+            return ((object)item).ToEnum<T>();
+        }
+        public static T ToEnum<T>(this short item)
+        {
+            return ((object)item).ToEnum<T>();
+        }
+        public static T ToEnum<T>(this ushort item)
+        {
+            return ((object)item).ToEnum<T>();
+        }
+        public static T ToEnum<T>(this int item)
+        {
+            return ((object)item).ToEnum<T>();
+        }
+        public static T ToEnum<T>(this uint item)
+        {
+            return ((object)item).ToEnum<T>();
+        }
+        public static T ToEnum<T>(this long item)
+        {
+            return ((object)item).ToEnum<T>();
+        }
+        public static T ToEnum<T>(this ulong item)
+        {
+            return ((object)item).ToEnum<T>();
+        }
+
+        public static T ToEnum<T>(this object item)
+        {
+            var type = typeof(T);
+
+            if (!type.IsEnum)
+                throw new ArgumentException(string.Format("Type '{0}' is not enum", type.AssemblyQualifiedName));
+
+            var itype = Enum.GetUnderlyingType(type);
+
+            return (T)Enum.ToObject(type, (item.GetType() == itype ? item : Convert.ChangeType(item, itype)));
+        }
 
     }
 }

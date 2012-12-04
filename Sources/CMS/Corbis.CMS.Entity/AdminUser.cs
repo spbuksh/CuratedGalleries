@@ -31,7 +31,7 @@ namespace Corbis.CMS.Entity
         /// <summary>
         /// User unique identifier
         /// </summary>
-        public virtual int ID { get; set; }
+        public virtual Nullable<int> ID { get; set; }
 
         /// <summary>
         /// User first name

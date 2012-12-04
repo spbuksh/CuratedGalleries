@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
+using Corbis.CMS.Entity;
 
 namespace Corbis.CMS.Repository.Interface.Communication
 {
@@ -30,5 +31,11 @@ namespace Corbis.CMS.Repository.Interface.Communication
         /// Defines portion of retrived data. If it if null then rest data (from startIndex) will be returned or all entities
         /// </summary>
         public Nullable<int> Count { get; set; }
+
+        public Nullable<CuratedGalleryStatuses> Status { get; set; }
+
+        public Nullable<DateTime> PublicationPeriodFrom { get; set; }
+
+        public Nullable<int> PublisherID { get; set; }
     }
 }

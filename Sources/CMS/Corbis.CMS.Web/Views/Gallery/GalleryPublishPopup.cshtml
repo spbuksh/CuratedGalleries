@@ -1,0 +1,40 @@
+﻿@using Corbis.CMS.Entity
+@using Corbis.CMS.Web.Models
+@using Corbis.Presentation.Common
+@model GalleryPublicationPeriodModel
+@{
+    var ajaxOptions = new AjaxOptions()
+    {
+        HttpMethod = "POST",
+        OnBegin = "onBeginMsAjaxRequest",
+        OnComplete = "onCompleteMsAjaxRequest",
+        OnSuccess = "onGalleryPublishSuccess"
+    };
+}
+@Styles.Render("~/Content/site.css")
+
+<div class="publishPeriodContent">
+@using (Ajax.BeginForm("PublishPopup_POST", "Gallery", ajaxOptions))
+{
+    @Html.ValidationSummary();
+    <div>                                   
+        <label>Start Date:</label>@Html.TextBoxFor(x => x.From)
+        <label>End Date:</label>@Html.TextBoxFor(x => x.To)
+    </div>
+    <div>
+        <input type="button" class="publish" value="Publish" onclick="onPublishSubmit(this); return false;" />
+        <input type="button" class="cancel" value="Cancel" onclick="onPublishCancel(this, '@this.ViewBag.PopupID'); return false;" />
+    </div>
+}
+<script type="text/javascript">
+    var GalleryPublicationPopup = { };
+    GalleryPublicationPopup.popupID = '@this.ViewBag.PopupID';
+    GalleryPublicationPopup.calendarIconUrl = '@Url.Action("calendar.png", "Images")';
+    GalleryPublicationPopup.action = '@Url.Action("PublishPopup_POST", "Gallery")';
+    GalleryPublicationPopup.params = { galleryID: '@this.Model.GalleryID', popupID: '@this.ViewBag.PopupID.ToString()', DateTimeFormat: '@this.Model.DateTimeFormat' };
+    GalleryPublicationPopup.home = '@Url.Action("Index", "Gallery")';
+</script>
+@Scripts.Render("~/Scripts/jquery-ui-timepicker-addon.js")
+@Scripts.Render("~/Scripts/Corbis/Corbis.GalleryPublicationPopup.js")
+</div>
+

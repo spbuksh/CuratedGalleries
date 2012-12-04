@@ -1,11 +1,10 @@
 ﻿@using Corbis.CMS.Web.Code
 @using Corbis.CMS.Web.Models
+@using Corbis.CMS.Entity
 @model GalleryItemModel
 
 @{
     var user = this.GetCurrentUser();
-
-    bool isLocked = this.Model.Editor.HasValue;
 }
 <div class="action_button">
 @*    <div class="button_list">
@@ -24,37 +23,60 @@
             <div class="galleryTitle">
                 <a href="@Url.Action("BuildGallery", "Gallery", new { id = this.Model.ID })" target="_blank">@Html.Raw(this.Model.Name)</a>
             <div>
-            @if (this.Model.Editor.HasValue) {
-                if (this.Model.Editor.Value == user.ID) {
+            @if (this.Model.Editor != null) {
+                if (this.Model.Editor.ID == user.ID) {
                     @Html.ActionLink("Edit", "EditGallery", "Gallery", new { id = this.Model.ID }, null)
-                    <a href="javascript:void(0)">Unlock</a>
-                    <a href="javascript:void(0)" onclick="DeleteGallery(@this.Model.ID,'@(Url.Action("DeleteGallery", "Gallery"))'); return false;" >Delete</a>                
+                    <a href="javascript:void(0)" onclick="onUnLockGalleryClick(@this.Model.ID, this); return false;">Unlock</a>
+                    <a href="javascript:void(0)" onclick="DeleteGallery(@this.Model.ID,'@(Url.Action("DeleteGallery", "Gallery"))'); return false;" >Delete</a>        
+                    <a href="javascript:void(0)" onclick="publishGallery(@this.Model.ID); return false;" >Publish</a>
+                }
+                else if (user.Roles.HasValue && (user.Roles.Value & AdminUserRoles.SuperAdmin) == AdminUserRoles.SuperAdmin) { 
+                    <a href="javascript:void(0)" onclick="onUnLockGalleryClick(@this.Model.ID, this); return false;">Unlock</a>
                 }
             }
-            else {
-                @Html.ActionLink("Lock and Edit", "EditGallery", "Gallery", new { id = this.Model.ID }, new { onclick = string.Format("return onLockGalleryClick('{0}',{1}, this);", this.Url.Action("LockGallery", "Gallery"), this.Model.ID) })
-                <a href="javascript:void(0)" onclick="DeleteGallery(@this.Model.ID,'@(Url.Action("DeleteGallery", "Gallery"))'); return false;" >Delete</a>
+            else
+            {                
+                if (this.Model.Status == CuratedGalleryStatuses.UnPublished)
+                {
+                    @Html.ActionLink("Lock and Edit", "EditGallery", "Gallery", new { id = this.Model.ID }, new { onclick = string.Format("return onLockGalleryClick('{0}',{1}, this);", this.Url.Action("LockGallery", "Gallery"), this.Model.ID) })
+                    <a href="javascript:void(0)" onclick="publishGallery(@this.Model.ID); return false;" >Publish</a>
+                    <a href="javascript:void(0)" onclick="DeleteGallery(@this.Model.ID,'@(Url.Action("DeleteGallery", "Gallery"))'); return false;" >Delete</a>
+                }
+                else
+                {
+                    <a href="javascript:void(0)" onclick="unPublishGallery(@this.Model.ID); return false;" >Un-Publish</a>
+                }
             }
+                    <a href="javascript:void(0)" onclick="showGalleryInfoPopup(@this.Model.ID); return false;" >Details</a>
                 </div>
             </div>
             <div class="createDate">
             <table>
                 <tr>
-                    <td>Date created</td>
-                    <td>@this.Model.DateCreated.ToString()</td>
+                    <td>Status</td>
+                    <td>@this.Model.Status.GetText()</td>
                 </tr>
+                @if (this.Model.Editor != null) {
+                <tr>
+                    <td>Locked By</td>
+                    <td>@this.Model.Editor.GetFullName()</td>
+                </tr>
+                }
+                else if (this.Model.Publisher != null) { 
+                <tr>
+                    <td>Published By</td>
+                    <td>@this.Model.Publisher.GetFullName()</td>
+                </tr>                    
+                }
                 <tr>
                     <td>Template</td>
                     <td>@this.Model.TemplateName</td>
                 </tr>
-                <tr>
-                    <td>Status</td>
-                    <td>Un-Published</td>
-                </tr>
             </table>
-            </div>
-           
+            </div>           
         </div>
     </div> 
     <div class="clear-fix"></div> 
 </div>
+
+

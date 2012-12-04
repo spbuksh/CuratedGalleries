@@ -66,9 +66,14 @@ namespace Corbis.CMS.Web.Code
         public static string TemporaryDirectory { get; private set; }
 
         /// <summary>
+        /// Absolute directory path to folder with curated galleries in development
+        /// </summary>
+        public static string GalleryDevelopmentDirectory { get; private set; }
+
+        /// <summary>
         /// Absolute directory path to folder with (released) curated galleries
         /// </summary>
-        public static string GalleryDirectory { get; private set; }
+        public static string GalleryLiveDirectory { get; private set; }
 
         /// <summary>
         /// Absolute directory path to folder with shared images
@@ -128,10 +133,16 @@ namespace Corbis.CMS.Web.Code
             var section = CuratedGalleryEnvironmentSection.GetSection(configSection);
 
             //
-            GalleryDirectory = GetAbsolutePath(section.Settings.GalleryDirectory);
+            GalleryDevelopmentDirectory = GetAbsolutePath(section.Settings.GalleryDevelopmentDirectory);
 
-            if (!Directory.Exists(GalleryDirectory))
-                Directory.CreateDirectory(GalleryDirectory);
+            if (!Directory.Exists(GalleryDevelopmentDirectory))
+                Directory.CreateDirectory(GalleryDevelopmentDirectory);
+
+            //
+            GalleryLiveDirectory = GetAbsolutePath(section.Settings.GalleryLiveDirectory);
+
+            if (!Directory.Exists(GalleryLiveDirectory))
+                Directory.CreateDirectory(GalleryLiveDirectory);
 
             //
             MaxImageSize = section.Settings.MaxImageSize;

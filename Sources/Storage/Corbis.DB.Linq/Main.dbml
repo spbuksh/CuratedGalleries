@@ -1,33 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><Database Name="Corbis.Main" Class="MainDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
   <Connection Mode="AppSettings" ConnectionString="Data Source=PAVELSM\MSSQL2008;Initial Catalog=Corbis.Main;Integrated Security=True" SettingsObjectName="Corbis.DB.Linq.Properties.Settings" SettingsPropertyName="Corbis_MainConnectionString" Provider="System.Data.SqlClient" />
-  <Table Name="dbo.AdminUserMembership" Member="AdminUserMembershipRecords">
-    <Type Name="AdminUserMembershipRecord">
-      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="ProfileID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="Login" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
-      <Column Name="Password" Type="System.String" DbType="NVarChar(150) NOT NULL" CanBeNull="false" />
-      <Column Name="PasswordExpirationDate" Type="System.DateTime" DbType="DateTime2" CanBeNull="true" />
-      <Column Name="IsActive" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
-      <Column Name="DateCreated" Type="System.DateTime" DbType="DateTime2 NOT NULL" CanBeNull="false" />
-      <Association Name="AdminUserMembershipRecord_AdminUserToRoleRecord" Member="AdminUserToRoleRecords" ThisKey="ID" OtherKey="MemberID" Type="AdminUserToRoleRecord" />
-      <Association Name="AdminUserMembershipRecord_CuratedGallery" Member="CuratedGalleryRecords" ThisKey="ID" OtherKey="Editor" Type="CuratedGalleryRecord" />
-      <Association Name="AdminUserProfileRecord_AdminUserMembershipRecord" Member="AdminUserProfileRecord" ThisKey="ProfileID" OtherKey="ID" Type="AdminUserProfileRecord" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
-    </Type>
-  </Table>
   <Table Name="dbo.AdminUserRole" Member="AdminUserRoleRecords">
     <Type Name="AdminUserRoleRecord">
       <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="Name" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
       <Column Name="Description" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
-      <Association Name="AdminUserRoleRecord_AdminUserToRoleRecord" Member="AdminUserToRoleRecords" ThisKey="ID" OtherKey="RoleID" Type="AdminUserToRoleRecord" />
-    </Type>
-  </Table>
-  <Table Name="dbo.AdminUserToRole" Member="AdminUserToRoleRecords">
-    <Type Name="AdminUserToRoleRecord">
-      <Column Name="MemberID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="RoleID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Association Name="AdminUserMembershipRecord_AdminUserToRoleRecord" Member="AdminUserMembershipRecord" ThisKey="MemberID" OtherKey="ID" Type="AdminUserMembershipRecord" IsForeignKey="true" />
-      <Association Name="AdminUserRoleRecord_AdminUserToRoleRecord" Member="AdminUserRoleRecord" ThisKey="RoleID" OtherKey="ID" Type="AdminUserRoleRecord" IsForeignKey="true" />
+      <Association Name="AdminUserRoleRecord_AdminUserToRole" Member="AdminUserToRoleRecords" ThisKey="ID" OtherKey="RoleID" Type="AdminUserToRoleRecord" />
     </Type>
   </Table>
   <Table Name="dbo.[File]" Member="FileRecords">
@@ -36,7 +14,7 @@
       <Column Name="Name" Type="System.String" DbType="NChar(50)" CanBeNull="true" />
       <Column Name="Content" Type="System.Data.Linq.Binary" DbType="VarBinary(MAX) NOT NULL" CanBeNull="false" UpdateCheck="Never" />
       <Association Name="FileRecord_GalleryTemplateRecord" Member="GalleryTemplateRecords" ThisKey="ID" OtherKey="PackageID" Type="GalleryTemplateRecord" />
-      <Association Name="FileRecord_CuratedGallery" Member="CuratedGalleryRecords" ThisKey="ID" OtherKey="Archive" Type="CuratedGalleryRecord" />
+      <Association Name="FileRecord_CuratedGalleryRecord" Member="CuratedGalleryRecords" ThisKey="ID" OtherKey="Archive" Type="CuratedGalleryRecord" />
     </Type>
   </Table>
   <Table Name="dbo.AdminUserProfile" Member="AdminUserProfileRecords">
@@ -56,8 +34,30 @@
       <Column Name="PackageID" Type="System.Int64" DbType="BigInt NOT NULL" CanBeNull="false" />
       <Column Name="IsDefault" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Column Name="DateCreated" Type="System.DateTime" DbType="DateTime2 NOT NULL" CanBeNull="false" />
-      <Association Name="GalleryTemplateRecord_CuratedGallery" Member="CuratedGalleryRecords" ThisKey="ID" OtherKey="TemplateID" Type="CuratedGalleryRecord" />
+      <Association Name="GalleryTemplateRecord_CuratedGalleryRecord" Member="CuratedGalleryRecords" ThisKey="ID" OtherKey="TemplateID" Type="CuratedGalleryRecord" />
       <Association Name="FileRecord_GalleryTemplateRecord" Member="FileRecord" ThisKey="PackageID" OtherKey="ID" Type="FileRecord" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CuratedGalleryStatus" Member="CuratedGalleryStatusRecords">
+    <Type Name="CuratedGalleryStatusRecord">
+      <Column Name="ID" Type="System.Int16" DbType="SmallInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="CuratedGalleryStatusRecord_CuratedGalleryRecord" Member="CuratedGalleryRecords" ThisKey="ID" OtherKey="StatusID" Type="CuratedGalleryRecord" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AdminUserMembership" Member="AdminUserMembershipRecords">
+    <Type Name="AdminUserMembershipRecord">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="ProfileID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Login" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Password" Type="System.String" DbType="NVarChar(150) NOT NULL" CanBeNull="false" />
+      <Column Name="PasswordExpirationDate" Type="System.DateTime" DbType="DateTime2" CanBeNull="true" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="DateCreated" Type="System.DateTime" DbType="DateTime2 NOT NULL" CanBeNull="false" />
+      <Association Name="AdminUserMembershipRecord_CuratedGalleryRecord" Member="CuratedGalleryRecords" ThisKey="ID" OtherKey="Editor" Type="CuratedGalleryRecord" />
+      <Association Name="AdminUserMembershipRecord_GalleryPublicationPeriodRecord" Member="GalleryPublicationPeriodRecords" ThisKey="ID" OtherKey="PublisherID" Type="GalleryPublicationPeriodRecord" />
+      <Association Name="AdminUserMembershipRecord_AdminUserToRole" Member="AdminUserToRoleRecords" ThisKey="ID" OtherKey="MemberID" Type="AdminUserToRoleRecord" />
+      <Association Name="AdminUserProfileRecord_AdminUserMembershipRecord" Member="AdminUserProfileRecord" ThisKey="ProfileID" OtherKey="ID" Type="AdminUserProfileRecord" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
     </Type>
   </Table>
   <Table Name="dbo.CuratedGallery" Member="CuratedGalleryRecords">
@@ -70,9 +70,32 @@
       <Column Name="DateModified" Type="System.DateTime" DbType="DateTime2" CanBeNull="true" />
       <Column Name="Archive" Type="System.Int64" DbType="BigInt" CanBeNull="true" />
       <Column Name="Editor" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Association Name="AdminUserMembershipRecord_CuratedGallery" Member="AdminUserMembershipRecord" ThisKey="Editor" OtherKey="ID" Type="AdminUserMembershipRecord" IsForeignKey="true" />
-      <Association Name="FileRecord_CuratedGallery" Member="FileRecord" ThisKey="Archive" OtherKey="ID" Type="FileRecord" IsForeignKey="true" />
-      <Association Name="GalleryTemplateRecord_CuratedGallery" Member="GalleryTemplateRecord" ThisKey="TemplateID" OtherKey="ID" Type="GalleryTemplateRecord" IsForeignKey="true" />
+      <Column Name="StatusID" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Association Name="CuratedGalleryRecord_GalleryPublicationPeriodRecord" Member="GalleryPublicationPeriodRecords" ThisKey="ID" OtherKey="GalleryID" Type="GalleryPublicationPeriodRecord" />
+      <Association Name="AdminUserMembershipRecord_CuratedGalleryRecord" Member="AdminUserMembershipRecord" ThisKey="Editor" OtherKey="ID" Type="AdminUserMembershipRecord" IsForeignKey="true" />
+      <Association Name="CuratedGalleryStatusRecord_CuratedGalleryRecord" Member="CuratedGalleryStatusRecord" ThisKey="StatusID" OtherKey="ID" Type="CuratedGalleryStatusRecord" IsForeignKey="true" />
+      <Association Name="FileRecord_CuratedGalleryRecord" Member="FileRecord" ThisKey="Archive" OtherKey="ID" Type="FileRecord" IsForeignKey="true" />
+      <Association Name="GalleryTemplateRecord_CuratedGalleryRecord" Member="GalleryTemplateRecord" ThisKey="TemplateID" OtherKey="ID" Type="GalleryTemplateRecord" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.GalleryPublicationPeriod" Member="GalleryPublicationPeriodRecords">
+    <Type Name="GalleryPublicationPeriodRecord">
+      <Column Name="ID" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="GalleryID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Start" Type="System.DateTime" DbType="DateTime2 NOT NULL" CanBeNull="false" />
+      <Column Name="[End]" Member="End" Type="System.DateTime" DbType="DateTime2" CanBeNull="true" />
+      <Column Name="Publisher" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="PublisherID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="AdminUserMembershipRecord_GalleryPublicationPeriodRecord" Member="AdminUserMembershipRecord" ThisKey="PublisherID" OtherKey="ID" Type="AdminUserMembershipRecord" IsForeignKey="true" />
+      <Association Name="CuratedGalleryRecord_GalleryPublicationPeriodRecord" Member="CuratedGalleryRecord" ThisKey="GalleryID" OtherKey="ID" Type="CuratedGalleryRecord" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AdminUserToRole" Member="AdminUserToRoleRecords">
+    <Type Name="AdminUserToRoleRecord">
+      <Column Name="MemberID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="RoleID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="AdminUserMembershipRecord_AdminUserToRole" Member="AdminUserMembershipRecord" ThisKey="MemberID" OtherKey="ID" Type="AdminUserMembershipRecord" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="AdminUserRoleRecord_AdminUserToRole" Member="AdminUserRoleRecord" ThisKey="RoleID" OtherKey="ID" Type="AdminUserRoleRecord" IsForeignKey="true" />
     </Type>
   </Table>
 </Database>

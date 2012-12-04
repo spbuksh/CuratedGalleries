@@ -18,6 +18,8 @@ using Corbis.CMS.Repository.Interface.Communication;
 using System.Drawing;
 using System.Threading;
 using System.Drawing.Imaging;
+using Corbis.Common.ObjectMapping.Interface;
+using Corbis.Public.Entity;
 
 namespace Corbis.CMS.Web.Controllers
 {
@@ -25,6 +27,9 @@ namespace Corbis.CMS.Web.Controllers
     {
         [Dependency]
         public ICuratedGalleryRepository GalleryRepository { get; set; }
+
+        [Dependency]
+        public IAdminUserRepository UserRepository { get; set; }
 
         /// <summary>
         /// Gallety index page
@@ -45,7 +50,7 @@ namespace Corbis.CMS.Web.Controllers
                 throw;
             }
 
-            switch (rslt.Result)
+            switch(rslt.Result)
             {
                 case OperationResults.Success:
                 case OperationResults.NotFound:
@@ -60,12 +65,27 @@ namespace Corbis.CMS.Web.Controllers
 
             foreach (var item in rslt.Output)
             {
-                var model = this.ObjectMapper.DoMapping<GalleryItemModel>(item);
+                var model = this.Convert(item);
                 model.TemplateName = GalleryRuntime.GetTemplate(item.TemplateID).Name;
                 galleries.Add(model);
             }
 
             return View("Index", galleries);
+        }
+
+        protected GalleryItemModel Convert(CuratedGallery item)
+        {
+            MappingData md = new MappingData(new string[] 
+                { 
+                    Utils.GetPropertyName<CuratedGallery, GalleryPublicationPeriod>(x => x.PublicationPeriod),
+                    Utils.GetPropertyName<CuratedGallery, DateTime>(x => x.DateCreated),
+                    Utils.GetPropertyName<CuratedGallery, DateTime?>(x => x.DateModified)
+                });
+            var output = this.ObjectMapper.DoMapping<GalleryItemModel>(item, md);
+            output.DateCreated = item.DateCreated.ToString(DateTimeFormat);
+            output.DateModified = item.DateModified.HasValue ? item.DateModified.Value.ToString(DateTimeFormat) : null;
+            output.PublicationPeriod = item.PublicationPeriod == null ? null : new Range<string>() { From = item.PublicationPeriod.Start.ToString(), To = item.PublicationPeriod.End.HasValue ? item.PublicationPeriod.End.Value.ToString() : null };
+            return output;
         }
 
         /// <summary>
@@ -172,7 +192,7 @@ namespace Corbis.CMS.Web.Controllers
 
         protected GalleryContentImageModel Convert(GalleryContentImage item, int galleryID)
         {
-            var model = new GalleryContentImageModel() { GalleryID = galleryID, ID = item.ID, Urls = item.EditUrls, Text = item.Name, Order = item.Order,};
+            var model = new GalleryContentImageModel() { GalleryID = galleryID, ID = item.ID, Urls = item.EditUrls, Text = item.Name, Order = item.Order };
 
             if (item.ContentImage.TextContent != null)
             {
@@ -239,7 +259,7 @@ namespace Corbis.CMS.Web.Controllers
         [HttpPost]
         public ActionResult LockGallery(int id)
         {
-            var rslt = this.GalleryRepository.LockGallery(id, this.CurrentUser.ID);
+            var rslt = this.GalleryRepository.LockGallery(id, this.CurrentUser.ID.Value);
 
             switch (rslt.Result)
             {
@@ -261,6 +281,17 @@ namespace Corbis.CMS.Web.Controllers
             this.GalleryRepository.UnLockGallery(id);
             return this.RedirectToAction("Index", "Gallery");
         }
+        /// <summary>
+        /// Create/Edit gallery
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult UnLockGallery_AJAX(int id)
+        {
+            var rslt = this.GalleryRepository.UnLockGallery(id);
+            return this.Json(new { success = rslt.Result == OperationResults.Success });
+        }
+
         /// <summary>
         /// Create/Edit gallery
         /// </summary>
@@ -369,7 +400,7 @@ namespace Corbis.CMS.Web.Controllers
         [HttpGet]
         public ActionResult GetFontFamilies()
         {
-            int lcid = Thread.CurrentThread.CurrentCulture.LCID;
+            int lcid = this.UserCulture.LCID;
             return this.Json(FontFamily.Families.Select(x => new { text = x.GetName(lcid), value = x.Name }).ToArray(), JsonRequestBehavior.AllowGet);
         }
 
@@ -576,7 +607,7 @@ namespace Corbis.CMS.Web.Controllers
 
             using (var package = new ZipFile())
             {
-                var root = GalleryRuntime.GetGalleryPath(id);
+                var root = GalleryRuntime.GetGalleryDevPath(id);
 
                 package.AddFiles(Directory.GetFiles(root));
 
@@ -668,5 +699,131 @@ namespace Corbis.CMS.Web.Controllers
             this.ViewBag.SwfElementID = swfElementID;
             return this.PartialView("UploadMultipleImagesPopup");
         }
+
+
+        protected const string DateTimeFormat = "dd-MMM-yyyy HH:mm";
+
+        [HttpGet]
+        public ActionResult PublishPopup_GET(string popupID, int galleryID)
+        {
+            if (this.CurrentUser == null)
+                this.RedirectToLoginPage();
+
+            var model = new GalleryPublicationPeriodModel() { GalleryID = galleryID, From = DateTime.Now.ToString(DateTimeFormat, this.UserCulture) };
+            this.ViewBag.PopupID = popupID;
+
+            return this.PartialView("GalleryPublishPopup", model);
+        }
+        [HttpPost]
+        public ActionResult PublishPopup_POST(string popupID, GalleryPublicationPeriodModel model)
+        {
+            if (this.CurrentUser == null)
+                this.RedirectToLoginPage();
+
+            if (!this.ModelState.IsValid)
+            {
+                this.ViewBag.PopupID = popupID;
+                return this.PartialView("GalleryPublishPopup", model);
+            }
+
+            var result = GalleryRuntime.PublishGallery(this.CurrentUser.ID, model.GalleryID,
+                DateTime.ParseExact(model.From, DateTimeFormat, this.UserCulture).ToUniversalTime(),
+                string.IsNullOrEmpty(model.To) ? (DateTime?)null : DateTime.ParseExact(model.To, DateTimeFormat, this.UserCulture).ToUniversalTime());
+
+            switch(result)
+            {
+                case OperationResults.Success:
+                    return this.Json(new { success = true });
+                case OperationResults.NotFound:
+                    return this.Json(new { success = false, error = "Gallery was not found" });
+                case OperationResults.Failure:
+                    return this.Json(new { success = false, error = "Server error" });
+            }
+
+            throw new NotImplementedException();
+        }
+
+        [HttpPost]
+        public ActionResult GetGalleryListItem(int id)
+        {
+            OperationResult<OperationResults, CuratedGallery> rslt = null;
+
+            try
+            {
+                rslt = this.GalleryRepository.GetGallery(id);
+            }
+            catch (Exception ex)
+            {
+                this.Logger.WriteError(ex);
+                throw;
+            }
+
+            switch (rslt.Result)
+            {
+                case OperationResults.Success:
+                    break;
+                case OperationResults.NotFound:
+                    return this.Json(new { success = false, error = "Gallery was not found" });
+                case OperationResults.Failure:
+                    return this.Json(new { success = false, error = "Server Error" });
+                default:
+                    throw new NotImplementedException();
+            }
+
+            GalleryItemModel galleryModel = this.Convert(rslt.Output);
+            galleryModel.TemplateName = GalleryRuntime.GetTemplate(rslt.Output.TemplateID).Name;
+
+            return this.PartialView("GalleryListItemPartial", galleryModel);
+        }
+
+        public ActionResult UnPublish(int id)
+        {
+            var result = GalleryRuntime.UnPublishGallery(id);
+
+            switch (result)
+            {
+                case OperationResults.Success:
+                    return this.Json(new { success = true });
+                case OperationResults.NotFound:
+                    return this.Json(new { success = false, error = "Gallery was not found" });
+                case OperationResults.Failure:
+                    return this.Json(new { success = false, error = "Server error" });
+            }
+
+            return this.Json(new { success = true }, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult GetGalleryInfoPopup(int id)
+        {
+            var model = new GalleryInfoModel();
+
+            lock (GalleryRuntime.GetGallerySyncRoot(id))
+            {
+                var gallery = GalleryRuntime.GetGallery(id);
+
+                model.Name = gallery.Name;
+                model.CreationTime = gallery.DateCreated.ToString(DateTimeFormat);
+                model.Template = GalleryRuntime.GetTemplate(gallery.TemplateID).Name;
+                model.Status = gallery.Status.GetText();
+
+                if (gallery.Status == CuratedGalleryStatuses.Published)
+                {
+                    model.PublicationPeriod = string.Format("{0} - {1}", gallery.PublicationPeriod.Start.ToString(DateTimeFormat), gallery.PublicationPeriod.End.HasValue ? gallery.PublicationPeriod.End.Value.ToString(DateTimeFormat) : "Undefined");
+                    model.LiveURL = string.Format("http://{0}/{1}", this.Request.Url.Authority, gallery.GetLiveUrl(this.HttpContext).TrimStart('/'));
+                }
+
+                if (gallery.IsInEditMode)
+                    model.LockedBy = gallery.Editor == null ? "unknown" : gallery.Editor.GetFullName();
+
+                if (gallery.Publisher != null)
+                    model.PublishedBy = gallery.Publisher.GetFullName();
+
+                var content = gallery.LoadContent(false);
+                model.ImageCount = content.Images.Count;
+            }
+
+            return this.PartialView("GalleryInfoPopup", model);
+        }
+
     }
 }

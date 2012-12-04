@@ -3,14 +3,17 @@
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="~/Scripts/Corbis/Corbis.Common.js" />
 /// ***********************************************************************
-
+var GalleryIndexPage = {
+    publishUrl: null,
+    unLockUrl: null
+};
 function DeleteGallery(id, url) {
     if (!confirm("Do you really want to detele gallery?"))
         return false;
 
     var onsuccess = function (result) {
         if (result.success)
-            $('div.galleryItem[corbis-item-id="' + id + '"]').remove();
+            $('div.galleryItem[corbis-item-id="' + id + '"]').parent().remove();
     };
     $.ajax({
         url: url,
@@ -50,3 +53,107 @@ function onLockGalleryClick(lockUrl, galleryID, link) {
 
     return false;
 }
+function onUnLockGalleryClick(galleryID, trigger) {
+    var jelem = $(trigger);
+
+    var onUnLockSuccess = function (result) {
+        if (result.success == true) {
+            var onSuccess = function (data) {
+                $('div.galleryItem[corbis-item-id="' + galleryID + '"]').parent().replaceWith(data);
+            };
+
+            $.ajax({
+                url: GalleryIndexPage.getGalleryItemUrl,
+                type: "POST",
+                data: { id: galleryID },
+                success: onSuccess
+            });
+        }
+        else {
+            alert('Error');
+        }
+    };
+    $.ajax({
+        url: GalleryIndexPage.unLockUrl,
+        type: 'POST',
+        data: { id: galleryID },
+        success: onUnLockSuccess
+    });
+
+    return false;
+}
+
+
+function publishGallery(id) {
+    showPopupWindow({
+        popupID: 'publishGalleryPopup',
+        title: 'Publish Period',
+        url: GalleryIndexPage.publishUrl,
+        params: { galleryID: id },
+        onLoaded: function () {
+            GalleryPublicationPopup.onPublishSucceeded = function (result) {
+                if (result.success == true) {
+                    var onSuccess = function (data) {
+                        $('div.galleryItem[corbis-item-id="' + id + '"]').parent().replaceWith(data);
+                    };
+                    $.ajax({
+                        url: GalleryIndexPage.getGalleryItemUrl,
+                        type: "POST",
+                        data: { id: id },
+                        success: onSuccess
+                    });
+                }
+                else if (result.success == false) {
+                    alert(result.error);
+                }
+                else {
+                    throw 'Unexpected ajax action result';
+                }
+            };
+        }
+    });
+}
+function unPublishGallery(id) {
+    if (!confirm('Do you really want to un-publish the gallery?'))
+        return;
+
+    var onUnpublishSuccess = function (result) {
+        if (result.success == true) {
+            var onSuccess = function (data) {
+                $('div.galleryItem[corbis-item-id="' + id + '"]').parent().replaceWith(data);
+            };
+
+            $.ajax({
+                url: GalleryIndexPage.getGalleryItemUrl,
+                type: "POST",
+                data: { id: id },
+                success: onSuccess
+            });
+        }
+        else {
+            alert('Error');
+        }
+    }
+
+    $.ajax({
+        url: GalleryIndexPage.unpublishUrl,
+        type: "POST",
+        data: { id: id },
+        success: onUnpublishSuccess
+    });
+}
+
+function showGalleryInfoPopup(id) {
+    showPopupWindow({
+        popupID: 'galleryInfoPopup',
+        title: 'Gallery Info',
+        url: GalleryIndexPage.galleryInfoUrl,
+        params: { id: id },
+        jdialogOptions: {
+            resizable: true
+        }
+    });
+}
+
+
+
