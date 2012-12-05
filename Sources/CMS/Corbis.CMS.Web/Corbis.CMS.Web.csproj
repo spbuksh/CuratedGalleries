@@ -241,6 +241,7 @@
     <Compile Include="Models\AdminUserMembershipModel.cs" />
     <Compile Include="Models\ResetPasswordModel.cs" />
     <Compile Include="Models\UserProfileDetailsModel.cs" />
+    <Compile Include="Models\UserProfileModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -551,6 +552,7 @@
     <Content Include="Views\Gallery\GalleryInfoPopup.cshtml" />
     <Content Include="Views\User\ChangePasswordPopup.cshtml" />
     <Content Include="Views\User\UserProfileDetailsPopup.cshtml" />
+    <Content Include="Views\User\UserProfile.cshtml" />
     <None Include="Web.config.local">
       <SubType>Designer</SubType>
     </None>

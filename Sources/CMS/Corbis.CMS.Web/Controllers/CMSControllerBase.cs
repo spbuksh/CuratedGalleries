@@ -25,6 +25,9 @@ namespace Corbis.CMS.Web.Controllers
     /// </summary>
     public class CMSControllerBase : BaseController
     {
+        [Dependency]
+        public IAdminUserRepository UserRepository { get; set; }
+
         /// <summary>
         /// Current logged on admin user
         /// </summary>
@@ -88,6 +91,11 @@ namespace Corbis.CMS.Web.Controllers
         }
         private CultureInfo m_Culture = null;
 
+        protected string UserLastUpdateTimeSessionKey
+        {
+            get { return "UserLastUpdateTime_{8C8E9913-2B96-4B79-AA89-4B194763E5AA}"; }
+        }
+
         protected override IAsyncResult BeginExecuteCore(AsyncCallback callback, object state)
         {
             Thread.CurrentThread.CurrentCulture = this.UserCulture;
@@ -138,11 +146,19 @@ namespace Corbis.CMS.Web.Controllers
                     }
 
                     //User data was restored successfully. We must get actual data and compare with restored
-                    //TODO: send request to get actual user info. Currently i quess that actual is equal to restored
-                    AdminUserInfo actual = restored; 
-                    
+                    var rslt = this.UserRepository.GetUser(restored.ID.Value);
+
+                    if (rslt.Result != OperationResults.Success)
+                    {
+                        FormsAuthentication.SignOut();
+                        context.Result = this.RedirectToLoginPage();
+                        return;
+                    }
+
+                    AdminUserInfo actual = rslt.Output;
+
                     //if user will be deleted/deactivated or has updated roles then exec login action
-                    if (actual == null || actual.Roles != restored.Roles)
+                    if (actual == null)
                     {
                         FormsAuthentication.SignOut();
                         context.Result = this.RedirectToLoginPage();
@@ -150,12 +166,37 @@ namespace Corbis.CMS.Web.Controllers
                     }
 
                     //update auth info in cookies
-                    this.CurrentUser = restored;
-                    this.SetAuthData(restored);                    
+                    this.Session[this.UserLastUpdateTimeSessionKey] = DateTime.UtcNow;
+                    this.CurrentUser = actual;
+                    this.SetAuthData(this.CurrentUser);
                 }
                 else
                 {
-                    //TODO: update user info by schedule (for example every 5 minutes)
+                    //update user info
+                    DateTime? dt = (DateTime?)this.Session[this.UserLastUpdateTimeSessionKey];
+
+                    if (!dt.HasValue)
+                    {
+                        dt = DateTime.UtcNow;
+                        this.Session[this.UserLastUpdateTimeSessionKey] = dt;
+                    }
+
+                    if (dt.Value.AddMinutes(1) < DateTime.UtcNow)
+                    {
+                        var rslt = this.UserRepository.GetUser(this.CurrentUser.ID.Value);
+
+                        if (rslt.Result != OperationResults.Success || this.CurrentUser.Roles != rslt.Output.Roles)
+                        {
+                            FormsAuthentication.SignOut();
+                            context.Result = this.RedirectToLoginPage();
+                            this.CurrentUser = null;
+                            return; 
+                        }
+
+                        this.CurrentUser = rslt.Output;
+                        this.Session[this.UserLastUpdateTimeSessionKey] = DateTime.UtcNow;
+                        this.SetAuthData(this.CurrentUser);
+                    }
                 }
             }
             else

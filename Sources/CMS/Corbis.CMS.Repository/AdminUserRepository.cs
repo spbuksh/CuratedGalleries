@@ -30,6 +30,9 @@ namespace Corbis.CMS.Repository
 
                 try
                 {
+                    if (!this.CheckLogin(context, user.Login))
+                        return new OperationResult<OperationResults, int?>() { Result = OperationResults.Failure };
+
                     context.Transaction = context.Connection.BeginTransaction();
 
                     var profile = new AdminUserProfileRecord()
@@ -53,9 +56,7 @@ namespace Corbis.CMS.Repository
                     context.AdminUserMembershipRecords.InsertOnSubmit(member);
                     context.SubmitChanges();
 
-                    foreach (AdminUserRoles item in user.Roles.GetItems())
-                        context.AdminUserToRoleRecords.InsertOnSubmit(new AdminUserToRoleRecord() { RoleID = (int)item, MemberID = member.ID });
-
+                    context.AdminUserToRoleRecords.InsertOnSubmit(new AdminUserToRoleRecord() { RoleID = (int)user.Roles.Value, MemberID = member.ID });
                     context.SubmitChanges();
 
                     context.Transaction.Commit();
@@ -301,7 +302,7 @@ namespace Corbis.CMS.Repository
 
                 foreach (int item in context.AdminUserToRoleRecords.Where(x => x.MemberID == record.ID).Select(x => x.RoleID))
                 {
-                    user.Roles = user.Roles.HasValue ? (user.Roles.Value | this.GetRole(item)) : (AdminUserRoles)item;
+                    user.Roles = user.Roles.HasValue ? (user.Roles.Value | (AdminUserRoles)item) : (AdminUserRoles)item;
                 }
 
                 result.Output = user;
@@ -320,7 +321,7 @@ namespace Corbis.CMS.Repository
                     context.Connection.Open();
                     context.Transaction = context.Connection.BeginTransaction();
 
-                    if (!this.Check(context, form.Login))
+                    if (!this.CheckLogin(context, form.Login))
                         throw new NotImplementedException();
 
                     var profile = this.ObjectMapper.DoMapping<AdminUserProfileRecord>(form);
@@ -368,33 +369,23 @@ namespace Corbis.CMS.Repository
         /// </summary>
         /// <param name="login"></param>
         /// <returns>Boolean value. If it is true then login name can be used, otherwise this login is exists in the system</returns>
-        public OperationResult<OperationResults, Nullable<bool>> Check(string login)
+        public OperationResult<OperationResults, bool?> CheckLogin(string login)
         {
             using (var context = this.CreateMainContext())
             {
                 return new OperationResult<OperationResults, bool?>()
                 {
                     Result = OperationResults.Success,
-                    Output = this.Check(context, login)
+                    Output = this.CheckLogin(context, login)
                 };
             }
         }
 
-        protected bool Check(MainDataContext context, string login)
+        protected bool CheckLogin(MainDataContext context, string login)
         {
-            return context.AdminUserMembershipRecords.Where(x => string.Equals(x.Login, login)).Count() == 0;
+            return context.AdminUserMembershipRecords.Where(x => string.Equals(x.Login, login)).FirstOrDefault() == null;
         }
 
-
-        private AdminUserRoles GetRole(int roleID)
-        {
-            switch(roleID)
-            {
-                case 1: return AdminUserRoles.Admin;
-                case 2: return AdminUserRoles.SuperAdmin;
-                default: throw new NotImplementedException();
-            }            
-        }
 
         public OperationResult<OperationResults, object> ChangeUserPassword(int userID, string password) 
         {

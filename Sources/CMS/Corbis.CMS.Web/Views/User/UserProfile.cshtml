@@ -1,0 +1,80 @@
+﻿@using Corbis.CMS.Web.Code
+@using Corbis.CMS.Web.Models
+@model UserProfileModel
+@{
+    ViewBag.Title = "Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var ajaxOptions = new AjaxOptions()
+    {
+        HttpMethod = "POST",
+        OnBegin = "onBeginMsAjaxRequest",
+        OnComplete = "onCompleteMsAjaxRequest",
+        OnSuccess = "onSaveSuccess"
+    };
+
+    var user = this.GetCurrentUser();
+}
+
+<h2>Profile</h2>
+
+@using (Ajax.BeginForm("UserProfile", "User", ajaxOptions))
+{
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <legend>Profile</legend>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.FirstName)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.FirstName)
+            @Html.ValidationMessageFor(model => model.FirstName)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.MiddleName)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.MiddleName)
+            @Html.ValidationMessageFor(model => model.MiddleName)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.LastName)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.LastName)
+            @Html.ValidationMessageFor(model => model.LastName)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Email)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Email)
+            @Html.ValidationMessageFor(model => model.Email)
+        </div>
+        <p>
+            <input type="submit" value="Save" />
+        </p>
+        <p>
+            <a href="javascript:void(0)" onclick="showResetPasswordPopup(); return false;">Reset Password</a>
+        </p>
+
+    </fieldset>
+    
+}
+
+<script type="text/javascript">
+    function onSaveSuccess(result) { 
+        //todo
+    }
+    function showResetPasswordPopup() {
+        showPopupWindow({
+            popupID: 'changePasswordPopup',
+            title: 'Change Password',
+            url: '@Url.Action("ChangePasswordPopup", "User")',
+            params: { userID: @user.ID }
+        });
+    }
+
+</script>

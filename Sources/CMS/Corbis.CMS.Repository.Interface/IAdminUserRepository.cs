@@ -62,7 +62,8 @@ namespace Corbis.CMS.Repository.Interface
         OperationResult<UserAuthResults, AdminUserInfo> Authenticate(string login, string password);
 
         /// <summary>
-        /// Registers user as admin member
+        /// Registers user as admin member.
+        /// Obsolete. Use Create User
         /// </summary>
         /// <param name="form">Admin user registration data</param>
         /// <returns>Admin user member identifier</returns>
@@ -75,6 +76,13 @@ namespace Corbis.CMS.Repository.Interface
 
 
         OperationResult<OperationResults, object> ChangeUserRoles(int userID, AdminUserRoles roles);
+
+        /// <summary>
+        /// Checks user login for existance
+        /// </summary>
+        /// <param name="login"></param>
+        /// <returns>Result is success if this login does not exist in the storage. Otherwise result is failure</returns>
+        OperationResult<OperationResults, bool?> CheckLogin(string login);
 
     }
 }

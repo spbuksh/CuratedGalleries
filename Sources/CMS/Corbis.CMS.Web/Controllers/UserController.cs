@@ -20,9 +20,6 @@ namespace Corbis.CMS.Web.Controllers
 {
     public class UserController : CMSControllerBase
     {
-        [Dependency]
-        public IAdminUserRepository UserRepository { get; set; }
-
         public ActionResult Index()
         {
             var users = this.UserRepository.GetUsers().Output;
@@ -211,6 +208,37 @@ namespace Corbis.CMS.Web.Controllers
             this.UserRepository.UpdateUser(user);
 
             return this.Json(new { success = true, userID = model.UserID, name = user.GetFullName(), login = model.Login, email = user.Email });
+        }
+
+        [HttpGet]
+        public ActionResult UserProfile()
+        {
+            var model = new UserProfileModel();
+            model.FirstName = this.CurrentUser.FirstName;
+            model.MiddleName = this.CurrentUser.MiddleName;
+            model.LastName = this.CurrentUser.LastName;
+            model.Email = this.CurrentUser.Email;
+
+            return this.View("UserProfile", model);
+        }
+        [HttpPost]
+        public ActionResult UserProfile(UserProfileModel model)
+        {
+            var rslt = this.UserRepository.GetUser(this.CurrentUser.ID.Value);
+
+            rslt.Output.FirstName = model.FirstName;
+            rslt.Output.MiddleName = model.MiddleName;
+            rslt.Output.LastName = model.LastName;
+            rslt.Output.Email = model.Email;
+
+            this.UserRepository.UpdateUser(rslt.Output);
+
+            this.CurrentUser.Email = rslt.Output.Email;
+            this.CurrentUser.FirstName = rslt.Output.FirstName;
+            this.CurrentUser.MiddleName = rslt.Output.MiddleName;
+            this.CurrentUser.LastName = rslt.Output.LastName;
+
+            return this.Json(new { success = true });
         }
 
     }

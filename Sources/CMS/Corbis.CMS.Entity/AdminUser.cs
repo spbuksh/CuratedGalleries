@@ -56,6 +56,11 @@ namespace Corbis.CMS.Entity
         public virtual bool IsActive { get; set; }
 
         /// <summary>
+        /// User email
+        /// </summary>
+        public string Email { get; set; }
+
+        /// <summary>
         /// Admin user roles
         /// </summary>
         public virtual Nullable<AdminUserRoles> Roles { get; set; }
@@ -74,9 +79,5 @@ namespace Corbis.CMS.Entity
         /// </summary>
         public string Password { get; set; }
 
-        /// <summary>
-        /// User email
-        /// </summary>
-        public string Email { get; set; }
     }
 }

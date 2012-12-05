@@ -28,9 +28,6 @@ namespace Corbis.CMS.Web.Controllers
         [Dependency]
         public ICuratedGalleryRepository GalleryRepository { get; set; }
 
-        [Dependency]
-        public IAdminUserRepository UserRepository { get; set; }
-
         /// <summary>
         /// Gallety index page
         /// </summary>

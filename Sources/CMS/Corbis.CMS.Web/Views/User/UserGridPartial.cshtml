@@ -10,9 +10,9 @@
         <th>Name</th>
         <th>Login</th>
         <th>Email</th>
+        <th></th>
         <th>Active</th>
         <th>Role</th>
-        <th></th>
         <th></th>
         <th></th>
     </tr>
@@ -28,6 +28,11 @@
              <td class="corbis-user-email">
                 @Html.DisplayFor(modelItem => item.Email)
             </td>
+            <td>
+                <a href="javascript:void(0)" onclick="showEditUserDetailsPopup('@item.ID'); return false;" title="Edit User Details" >
+                    <img src="/Images/edit.png" alt="edit" />
+                </a>
+            </td>
              <td>
                 @Html.CheckBox("IsActive", item.IsActive, new { @class = "check-box" })
             </td>
@@ -36,11 +41,6 @@
             </td>
             <td>
                 <a href="javascript:void(0)" onclick="showResetPasswordPopup('@item.ID.Value')">Change Password</a>
-            </td>
-            <td>
-                <a href="javascript:void(0)" onclick="showEditUserDetailsPopup('@item.ID'); return false;" title="Edit User Details" >
-                    <img src="/Images/edit.png" alt="edit" />
-                </a>
             </td>
             <td>              
                 <a href="javascript:void(0)" onclick="deleteUser({ id: @item.ID.Value, login: '@item.Login' }, this); return false;" title="Delete">
