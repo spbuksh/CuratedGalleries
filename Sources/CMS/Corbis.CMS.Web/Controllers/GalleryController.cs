@@ -28,9 +28,6 @@ namespace Corbis.CMS.Web.Controllers
         [Dependency]
         public ICuratedGalleryRepository GalleryRepository { get; set; }
 
-        [Dependency]
-        public IAdminUserRepository UserRepository { get; set; }
-
         /// <summary>
         /// Gallety index page
         /// </summary>
@@ -130,9 +127,14 @@ namespace Corbis.CMS.Web.Controllers
         [ActionName("CreateGallery")]
         public ActionResult CreateGallery_GET()
         {
+            var templates = GalleryRuntime.GetTemplates();
+
+            if (templates == null || templates.Length == 0)
+                return this.RedirectToAction("Index", "Gallery");
+
             var model = new CreateGalleryModel() { Name = null };
 
-            foreach (var template in GalleryRuntime.GetTemplates())
+            foreach (var template in templates)
             {
                 var item = this.Convert(template);
 

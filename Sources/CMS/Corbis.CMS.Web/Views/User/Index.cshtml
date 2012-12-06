@@ -4,6 +4,8 @@
     ViewBag.Title = "Index";
 }
 
+@Scripts.Render("~/Scripts/Corbis/Corbis.User.Index.js")
+
 <h2>Index</h2>
 <p>
     @Html.ActionLink("Create New", "Create", null,
@@ -12,21 +14,3 @@
 <div id="content">
     @Html.Partial("UserGridPartial",Model)
 </div>
-<script type="text/javascript">
-    function deleteUser(user, trigger) {
-        if (!confirm("Do you really want to delete '" + user.login + "'?")) return;
-        $.ajax({
-            url: '@Url.Action("DeleteUser", "User")',
-            type: 'POST',
-            data: { id: user.id },
-            success: function (result) {
-                if (result.success) {
-                    $(trigger).closest('tr').remove();
-                }
-                else {
-                    alert('Error');
-                }
-            }
-        });
-    }
-</script>

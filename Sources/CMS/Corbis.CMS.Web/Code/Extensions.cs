@@ -52,5 +52,18 @@ namespace Corbis.CMS.Web.Code
                     throw new NotImplementedException();
             }            
         }
+
+        public static string GetText(this AdminUserRoles item)
+        {
+            switch(item)
+            {
+                case AdminUserRoles.Admin:
+                    return "Admin";
+                case AdminUserRoles.SuperAdmin:
+                    return "Super Admin";
+                default:
+                    throw new NotImplementedException();
+            }
+        }
     }
 }

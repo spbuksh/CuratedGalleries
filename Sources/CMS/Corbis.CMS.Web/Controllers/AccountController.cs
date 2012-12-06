@@ -24,9 +24,6 @@ namespace Corbis.CMS.Web.Controllers
 {
     public class AccountController : CMSControllerBase
     {
-        [Dependency]
-        public IAdminUserRepository UserRepository { get; set; }
-
         /// <summary>
         /// Password utilities
         /// </summary>

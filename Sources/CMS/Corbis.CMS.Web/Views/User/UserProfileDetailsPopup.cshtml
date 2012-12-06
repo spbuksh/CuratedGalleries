@@ -1,0 +1,86 @@
+﻿@using Corbis.CMS.Web.Models
+@model UserProfileDetailsModel
+
+@{
+    var options = new AjaxOptions()
+    {
+        HttpMethod = "POST",
+        OnBegin = "onBeginMsAjaxRequest",
+        OnComplete = "onCompleteMsAjaxRequest",
+        OnSuccess = "onUpdateUserSuccess"
+    };
+
+    string popupID = this.ViewBag.PopupID.ToString();        
+}
+@using (Ajax.BeginForm("UserProfileDetailsPopup", "User", options))
+{
+    @Html.ValidationSummary()
+    @Html.HiddenFor(x => x.UserID)
+    @Html.Hidden("popupID", popupID)
+    <fieldset>
+        <legend>User</legend>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.FirstName)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.FirstName)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.MiddleName)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.MiddleName)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.LastName)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.LastName)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Login)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Login)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Email)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Email)
+        </div>
+        <p>
+            <input type="submit" value="OK" />
+            <input type="button" class="corbis-button-cancel" value="Cancel" />
+        </p>
+    </fieldset>
+}
+<script type="text/javascript">
+    $(function () {
+        var jpopup = $('div[corbis-popup-id="' + '@popupID' + '"]');
+
+        jpopup.find('input.corbis-button-cancel').click(function () {
+            closePopupWindow('@popupID');
+        });
+
+        if ('@this.IsPost.ToString().ToLower()' == 'true') {
+            $.validator.unobtrusive.parse(jpopup.find('form'));
+        }
+    });
+    function onUpdateUserSuccess(result) {
+        if (result.success != undefined) {
+            if (result.success == true) {
+                var tr = $('table.corbis-users tr[corbis-item-id="' + result.userID + '"]');
+                tr.find('td.corbis-user-name').html(result.name);
+                tr.find('td.corbis-user-login').html(result.login);
+                tr.find('td.corbis-user-email').html(result.email);
+                closePopupWindow('@popupID');
+            }
+        }
+        else {
+            $('div[corbis-popup-id="' + '@popupID' + '"]').html(result);
+        }
+    }
+</script>
+

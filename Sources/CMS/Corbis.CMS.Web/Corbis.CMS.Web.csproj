@@ -244,6 +244,8 @@
     <Compile Include="Models\ImageTextContentModel.cs" />
     <Compile Include="Models\AdminUserMembershipModel.cs" />
     <Compile Include="Models\ResetPasswordModel.cs" />
+    <Compile Include="Models\UserProfileDetailsModel.cs" />
+    <Compile Include="Models\UserProfileModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -336,6 +338,7 @@
     <Content Include="Scripts\Corbis\Corbis.GalleryIndex.js" />
     <Content Include="Scripts\Corbis\Corbis.Template.js" />
     <Content Include="Scripts\Corbis\Corbis.GalleryPublicationPopup.js" />
+    <Content Include="Scripts\Corbis\Corbis.User.Index.js" />
     <Content Include="Scripts\Corbis\jquery.textaligment.js" />
     <Content Include="Scripts\Corbis\Uploader.js" />
     <Content Include="Scripts\jquery-1.7.1-vsdoc.js" />
@@ -553,6 +556,8 @@
     <Content Include="Views\Gallery\GalleryPublishPopup.cshtml" />
     <Content Include="Views\Gallery\GalleryInfoPopup.cshtml" />
     <Content Include="Views\User\ChangePasswordPopup.cshtml" />
+    <Content Include="Views\User\UserProfileDetailsPopup.cshtml" />
+    <Content Include="Views\User\UserProfile.cshtml" />
     <None Include="Web.config.local">
       <SubType>Designer</SubType>
     </None>

@@ -11,13 +11,6 @@ namespace Corbis.CMS.Repository.Interface
 {
     public interface IAdminUserRepository 
     {
-        //TODO: These methods are obsolete!!! Refactor them and delete
-        void UpdateUser(int id, string login, bool isactive, string email, int roleId, string password);
-        void UpdateUser(int id, string login, bool isactive, string email, int roleId);
-
-
-        //*********************
-
         /// <summary>
         /// Creates admin user
         /// </summary>
@@ -51,7 +44,14 @@ namespace Corbis.CMS.Repository.Interface
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        OperationResult<OperationResults, AdminUserInfo> GetUserInfo(int id);
+        OperationResult<OperationResults, AdminUser> GetUser(int id);
+
+        /// <summary>
+        /// Gets admin user info by his memebership identifier
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        OperationResult<OperationResults, object> UpdateUser(AdminUser user);
 
         /// <summary>
         /// Authenticates admin user
@@ -62,7 +62,8 @@ namespace Corbis.CMS.Repository.Interface
         OperationResult<UserAuthResults, AdminUserInfo> Authenticate(string login, string password);
 
         /// <summary>
-        /// Registers user as admin member
+        /// Registers user as admin member.
+        /// Obsolete. Use Create User
         /// </summary>
         /// <param name="form">Admin user registration data</param>
         /// <returns>Admin user member identifier</returns>
@@ -72,6 +73,16 @@ namespace Corbis.CMS.Repository.Interface
         /// Changes user password
         /// </summary>
         OperationResult<OperationResults, object> ChangeUserPassword(int userID, string password);
+
+
+        OperationResult<OperationResults, object> ChangeUserRoles(int userID, AdminUserRoles roles);
+
+        /// <summary>
+        /// Checks user login for existance
+        /// </summary>
+        /// <param name="login"></param>
+        /// <returns>Result is success if this login does not exist in the storage. Otherwise result is failure</returns>
+        OperationResult<OperationResults, bool?> CheckLogin(string login);
 
     }
 }

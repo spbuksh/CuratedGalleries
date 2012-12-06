@@ -17,10 +17,12 @@ namespace Corbis.CMS.Entity
         /// <summary>
         /// Regular admin user role
         /// </summary>
+        [EnumMember]
         Admin = 1,
         /// <summary>
         /// Super admin role
         /// </summary>
+        [EnumMember]
         SuperAdmin = 3
     }
 
@@ -54,6 +56,11 @@ namespace Corbis.CMS.Entity
         public virtual bool IsActive { get; set; }
 
         /// <summary>
+        /// User email
+        /// </summary>
+        public string Email { get; set; }
+
+        /// <summary>
         /// Admin user roles
         /// </summary>
         public virtual Nullable<AdminUserRoles> Roles { get; set; }
@@ -72,9 +79,5 @@ namespace Corbis.CMS.Entity
         /// </summary>
         public string Password { get; set; }
 
-        /// <summary>
-        /// User email
-        /// </summary>
-        public string Email { get; set; }
     }
 }
