@@ -11,7 +11,7 @@
         createImageUploader({ url: '@(Url.HttpRouteUrl("DefaultApi", new { controller = "Upload", action = "UploadGalleryContentImage", id = this.Model.GalleryID, imageID = this.Model.ImageID }))',
             id: 'singleImageUploader',
             contentDivID: 'singleImageUploader',
-            filter: '*.jpg;*.jpeg',
+            filter: '*.jpg;*.jpeg;*.png',
             uploadCallBack: 'reUploadGalleryImageCallback',
             errorCallBack: 'uploadImageErrorCallback',
             viewMode: 'single',
