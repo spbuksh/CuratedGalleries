@@ -1,11 +1,19 @@
 ﻿@using Corbis.CMS.Web.Models
+@using Corbis.CMS.Web.Code
 @model List<GalleryItemModel>
 @{
     ViewBag.Title = "Curated Galleries";
+    
+    var templates = GalleryRuntime.GetTemplates();
 }
 <h2>Curated Galleries</h2>
 <p>
-    @Html.ActionLink("Create New Gallery", "CreateGallery", "Gallery")
+    @if (templates == null || templates.Length == 0) {
+        <text>System does not have registered gallery templates. In order to create a gallery you must @Html.ActionLink("register", "Index", "Template") templates first.</text>
+    }
+    else { 
+        @Html.ActionLink("Create New Gallery", "CreateGallery", "Gallery")
+    }
 </p>
 <div>
 @foreach (var item in this.Model) {

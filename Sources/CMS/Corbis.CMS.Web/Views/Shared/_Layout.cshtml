@@ -22,11 +22,10 @@
         @Scripts.Render("~/Scripts/swfobject.js")
         @Scripts.Render("~/Scripts/Corbis/Corbis.Common.js")
         
-       <script type="text/javascript">
-            //client error logger. It is singleton
-            var ClientLogger = new clientLogger({ url: '@Url.Action("LogClientEntry", "Error")', showErrorAlerts: true });
+        <script type="text/javascript">
+           //client error logger. It is singleton defined in Corbis.Common.js
+           clientLogger.initialize({ url: '@Url.Action("LogClientEntry", "Error")', showErrorAlerts: true });
         </script>
-
     </head>
     <body>
         <div class="wrapper">

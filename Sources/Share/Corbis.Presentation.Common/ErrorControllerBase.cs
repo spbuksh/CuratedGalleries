@@ -73,10 +73,13 @@ namespace Corbis.Presentation.Common
                 case "warning":
                     this.Logger.WriteWarning(message);
                     break;
+                case "info":
+                    this.Logger.WriteInfo(message);
+                    break;
                 default: throw new NotImplementedException();
             }
 
-            return this.Json("OK");
+            return this.Json(new { success = true });
         }
 
 
