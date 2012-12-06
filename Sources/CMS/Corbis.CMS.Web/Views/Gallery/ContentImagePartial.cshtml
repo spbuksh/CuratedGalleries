@@ -121,7 +121,7 @@
                         <div id="@bcContentID">
                             @Html.Partial("BodyCopyTextContentPartial", bc ?? new BodyCopyTextContentModel() { BodyCopy = string.Empty, DropCap = string.Empty })
                         </div>
-                        <input value="Apply" type="submit" />
+                        <input value="Apply" type="submit"  />
                     }
                 </div>
                 
@@ -133,7 +133,7 @@
                         <div id="@ciContentID">
                             @Html.Partial("CustomImageTextContentPartial", ci ?? new CustomImageContentModel(){ImageID = this.Model.ID , GalleryID = this.Model.GalleryID, ContentImageUrl = this.Model.ContentImage.EditUrls ?? new ImageUrlSet()})
                         </div>
-                        <input value="Apply" type="submit" />
+                        <input value="Apply" type="submit"  onclick="return onApplySubmit(this);" />
                     }
                 </div>
             </div>
@@ -142,6 +142,28 @@
     <div class="clear-fix">
     </div>
     <script type="text/javascript">
+        
+        function onApplySubmit(trigger) {
+        var jform = $(trigger).closest('form');
+            
+        var jimg = jform.find('div.imgPresenter img');
+        var validator = jform.validate();
+            
+        if (!jform.valid()) {
+            return false;
+        }
+
+        var helper = new validationSummaryHelper(jform.find('div.validation-summary-valid,div.validation-summary-errors'));
+        helper.reset();
+
+        if (jimg.attr('src') == null) {
+            helper.showErrors(["Please upload content Image"]);
+            return false;
+        }
+            return true;
+           
+    }
+
         function onQnASuccess@(imageUIID)(data) {
             _onTextContentSaveSuccess(data, '#@qaContentID');
         }
@@ -154,7 +176,7 @@
         function onEmptySuccess@(imageUIID)(data) {
             _onTextContentSaveSuccess(data, '#@emContentID');
         }
-          function onCustomImageSuccess@(imageUIID)(data) {
+        function onCustomImageSuccess@(imageUIID)(data) {
             _onTextContentSaveSuccess(data, '#@ciContentID');
         }
         $(function () {

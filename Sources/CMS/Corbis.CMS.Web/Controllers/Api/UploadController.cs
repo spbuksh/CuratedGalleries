@@ -83,7 +83,7 @@ namespace Corbis.CMS.Web.Controllers.Api
             var template = GalleryRuntime.GetTemplate(gallery.TemplateID);
 
             string contentpath = gallery.GetContentPath();
-            string rootpath = gallery.GetRootPath();
+            string rootpath = gallery.GetDevPath();
 
             if (!Directory.Exists(contentpath))
                 Directory.CreateDirectory(contentpath);

@@ -13,14 +13,13 @@
 @Html.TextBoxFor(x => x.Height)
     </div>
     <div class="right_side">
-<label>Width</label>
-@Html.TextBoxFor(x => x.Width)
+        <label>Width</label>
+        @Html.TextBoxFor(x => x.Width)
     </div>
 </div>
 <script type="text/javascript">
 
     function reUploadGalleryImageCallback(result) {
-        debugger;
         var data = jQuery.parseJSON(result);
         var jimg = $('div[corbis-content-id="' + data.ImageID + '"] div.imgPresenter img');
         jimg.attr('src', data.ContentUrl);
@@ -38,6 +37,6 @@
             });
         }
 
-    
-        
+
+
 </script>
