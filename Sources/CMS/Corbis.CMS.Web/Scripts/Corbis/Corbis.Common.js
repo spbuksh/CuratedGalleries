@@ -52,8 +52,10 @@ var validationSummaryHelper = function (selector) {
     this._selector = selector;
 }
 validationSummaryHelper.prototype.reset = function (inputSelector) {
-    var jform = $(this._selector).closest('form');
-
+    var jelem = $(this._selector);
+    if (jelem.length == 0) return;
+    var jform = jelem.closest('form');
+    if (jform.length == 0) return;
     jform.data("validator").resetForm();
     jform.find(".validation-summary-errors")
             .addClass("validation-summary-valid")

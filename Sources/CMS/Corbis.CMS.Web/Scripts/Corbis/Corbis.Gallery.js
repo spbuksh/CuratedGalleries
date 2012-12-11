@@ -112,7 +112,7 @@ $(function () {
         });
     };
 
-    CollapseImagesAll();
+    //CollapseImagesAll();
 });
 
 function initGalleryImageDragDrop(id) {

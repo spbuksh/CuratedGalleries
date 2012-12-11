@@ -145,7 +145,7 @@
             title: 'Upload Images',
             url: '@Url.Action("UploadMultipleImages", "Gallery")',
             params: { galleryID: '@this.Model.ID', swfElementID: swfElementID },
-            onClosed: function () { swfobject.removeSWF(swfElementID); } //TODO: it is hack. In the future it must be deleted and refactored
+            onClosed: function () { swfobject.removeSWF(swfElementID); window.location = window.location; } //TODO: it is hack. In the future it must be deleted and refactored
         });
     }
     function publishGallery() {

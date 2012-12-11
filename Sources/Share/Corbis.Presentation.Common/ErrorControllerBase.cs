@@ -47,6 +47,10 @@ namespace Corbis.Presentation.Common
                     this.Logger.WriteError(model.Exception, model.Message, false, model.UserID);
                     model.IsLogged = true;
                 }
+
+                //this exception occured when
+                if (model.Exception != null && model.Exception is System.Web.Mvc.HttpAntiForgeryException)
+                    return this.RedirectToHomePage();
             }
 
             return this.View("ErrorDetails", model);
@@ -98,7 +102,7 @@ namespace Corbis.Presentation.Common
                 if (string.IsNullOrEmpty(this.DefaultErrorPageUrl))
                     throw;
 
-                this.Redirect(this.DefaultErrorPageUrl);
+                context.Result = this.Redirect(this.DefaultErrorPageUrl);
             }
 
             base.OnException(context);

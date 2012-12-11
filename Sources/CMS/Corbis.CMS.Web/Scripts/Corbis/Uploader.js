@@ -27,6 +27,7 @@ function createImageUploader(options) {
     flashvars.greetingText = options.greetingText;
     flashvars.uploadCallBack = options.uploadCallBack;
     flashvars.errorCallBack = options.errorCallBack;
+    flashvars.callBackJobStatus = options.callBackJobStatus;
     flashvars.uploadAttemps = options.uploadAttemps;
     flashvars.viewMode = options.viewMode;
 

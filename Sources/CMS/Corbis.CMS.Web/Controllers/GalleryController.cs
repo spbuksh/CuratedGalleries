@@ -598,6 +598,7 @@ namespace Corbis.CMS.Web.Controllers
         /// </summary>
         /// <param name="id">Gallery identifier</param>
         /// <returns></returns>
+        [HandleError(ExceptionType = typeof(HttpAntiForgeryException), View = "AntiForgeryHandling")]
         public ActionResult Download(int id)
         {
             //TODO: File/folder filter for package has not been implemented. For example we do not need xml gallery state file.
@@ -638,6 +639,10 @@ namespace Corbis.CMS.Web.Controllers
             }
 
             return this.File(output, "application/zip");
+        }
+        public ActionResult AntiForgeryHandling(Nullable<int> id)
+        {
+            return this.RedirectToLoginPage();
         }
 
         /// <summary>
