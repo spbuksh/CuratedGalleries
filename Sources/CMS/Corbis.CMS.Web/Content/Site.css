@@ -1060,7 +1060,7 @@ padding: 0 1.5%;
 .action_button .button_list ul a.unlock:hover{background-position: -25px -75px}
 .action_button .button_list ul a.preview:hover{ background-position: -25px -100px;}
 
-
+span.required-field { color: Red }
 /*
 .templPreview{overflow: hidden;zoom:1;}
 .templPreview ul{list-style: none;}

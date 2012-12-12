@@ -29,7 +29,7 @@
             @Html.LabelFor(model => model.FirstName)
         </div>
         <div class="editor-field">
-            @Html.EditorFor(model => model.FirstName)
+            @Html.EditorFor(model => model.FirstName)<span class="required-field">*</span>
             @Html.ValidationMessageFor(model => model.FirstName)
         </div>
         <div class="editor-label">
@@ -37,20 +37,19 @@
         </div>
         <div class="editor-field">
             @Html.EditorFor(model => model.MiddleName)
-            @Html.ValidationMessageFor(model => model.MiddleName)
         </div>
         <div class="editor-label">
             @Html.LabelFor(model => model.LastName)
         </div>
         <div class="editor-field">
-            @Html.EditorFor(model => model.LastName)
+            @Html.EditorFor(model => model.LastName)<span class="required-field">*</span>
             @Html.ValidationMessageFor(model => model.LastName)
         </div>
         <div class="editor-label">
             @Html.LabelFor(model => model.Email)
         </div>
         <div class="editor-field">
-            @Html.EditorFor(model => model.Email)
+            @Html.EditorFor(model => model.Email)<span class="required-field">*</span>
             @Html.ValidationMessageFor(model => model.Email)
         </div>
         <p>

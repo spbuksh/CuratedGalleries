@@ -18,7 +18,7 @@
 {
     @Html.ValidationSummary();
     <div>                                   
-        <label>Start Date:</label>@Html.TextBoxFor(x => x.From)
+        <label>Start Date:</label>@Html.TextBoxFor(x => x.From)<span class="required-field">*</span>
         <label>End Date:</label>@Html.TextBoxFor(x => x.To)
     </div>
     <div>
