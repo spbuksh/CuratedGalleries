@@ -44,7 +44,7 @@
             @Html.ActionLink("Download Gallery", "Download", "Gallery", new { id = this.Model.ID }, null)
         </li>
         <li>
-            <a href="javascript:void(0)" onclick="ClearGalleryContent(@this.Model.ID, '@Url.Action("ClearGalleryContent", "Gallery")'); return false;">Clear content</a>
+            <a class="clear-content-trigger" href="javascript:void(0)" onclick="ClearGalleryContent(@this.Model.ID, '@Url.Action("ClearGalleryContent", "Gallery")'); return false;">Clear content</a>
         </li>
         <li>
             <a href="javascript:void(0)" onclick="ExpandImagesAll(); return false;">Expand all</a>
@@ -97,7 +97,9 @@
 <div class="galleryContent">
     @if (this.Model.CoverImage != null)
     { 
-        @Html.Partial("CoverImagePartial", this.Model.CoverImage)
+        var dict = new ViewDataDictionary(this.Model.CoverImage);
+        dict["canDelete"] = this.Model.ContentImages == null || this.Model.ContentImages.Count == 0;
+        @Html.Partial("CoverImagePartial", dict)
     }
     @if (this.Model.ContentImages != null)
     {

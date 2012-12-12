@@ -9,14 +9,14 @@
     var position = this.Model.TextPosition;
     
     var txtMode = string.IsNullOrWhiteSpace(this.Model.Biography) ? emptyClass : textClass;
+    
+    var bCanDelete = this.ViewData.ContainsKey("canDelete") && (bool)this.ViewData["canDelete"];
  }
-<div class="contentImage" corbis-item-id="@this.Model.ID">
-    @*<span class="dragndrop"></span>*@ <span class="toolbar"><a href="javascript:void(0)"
-        class="minimal"></a>@*<a href="javascript:void(0)" class="close"></a>*@ </span>
-    @*    <span class="up_down">
-        <a class="up" href="javascript:void(0)"></a>
-        <a class="down" href="javascript:void(0)"></a>
-    </span>*@
+<div class="contentImage" corbis-item-id="@this.Model.ID" corbis-cover-image="true" >
+    <span class="toolbar">
+        <a href="javascript:void(0)" class="minimal"></a>
+        <a href="javascript:void(0)" class="close"></a>
+    </span>
     <div class="collapsed" style="display: none;">
         <img src="@this.Model.Urls.Small" alt="" />
     </div>
@@ -105,6 +105,11 @@
             if ('@(this.IsPost.ToString().ToLower())' == 'true') {
                 $.validator.unobtrusive.parse('div.coverImage');
             }
+
+            var jclose = $('div[corbis-cover-image] span.toolbar>a.close');
+
+            if('@(bCanDelete.ToString().ToLower())' == 'false') 
+                jclose.hide();                
         });
     </script>
 </div>

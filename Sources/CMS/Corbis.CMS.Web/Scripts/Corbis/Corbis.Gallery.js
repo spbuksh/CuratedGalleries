@@ -41,8 +41,13 @@ $(function () {
 
     //******* image toolbar handling
     //delete image
-    $('div.contentImage span.toolbar a.close').live('click', function () {
+    $('div[corbis-content-image] span.toolbar a.close').live('click', function () {
         DeleteGalleryContentImage($(this).closest('div.contentImage'));
+    });
+
+    //delete image
+    $('div[corbis-cover-image] span.toolbar a.close').live('click', function () {
+        $('a.clear-content-trigger').trigger('click');
     });
 
     var _expandCollapseHandler = function (parent) {
@@ -267,7 +272,7 @@ function InitContentImage(options) {
 
 
 function ClearGalleryContent(id, url) {
-    if (!confirm("Do you really want to detele all gallery images?"))
+    if (!confirm("Do you really want to detele gallery image(s)?"))
         return;
 
     var onsuccess = function (result) {
@@ -289,8 +294,14 @@ function DeleteGalleryContentImage(data) {
         return;
 
     var onsuccess = function (result) {
-        if (result.success)
+        if (result.success) {
             jimage.remove();
+
+            var jclose = $('div[corbis-cover-image] span.toolbar>a.close');
+
+            if ($('div[corbis-content-image]').length == 0)
+                jclose.show();                
+        }
     };
     $.ajax({
         url: GalleryPageMngr.deleteContentImageURL,
