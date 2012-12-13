@@ -27,6 +27,7 @@
                             (pq != null ? pullquoteClass :
                             (ci != null ? customImageClass :
                                 (bc != null ? bodycopyClass : null))));
+    var contentImageUrl = this.Model.ContentImage.EditUrls == null ? string.Empty : this.Model.ContentImage.EditUrls.Large;
 }
 <div class="contentImage" corbis-item-id="@this.Model.ID" corbis-content-image="true">
     <span class="dragndrop"></span><span class="toolbar"><a href="javascript:void(0)"
@@ -44,7 +45,9 @@
             </div>
             <div class="imgPresenter">
                 <img class="imgPresenterTemplate" src="@this.Model.Urls.Large" alt="@this.Model.Text" />
-                <div class="livePreview"></div>
+                <div class="livePreview">
+                    <img class="imgLivePriview" src="@contentImageUrl" />
+                </div>
             </div>
             <div class="txtAlign">
                 <ul>
