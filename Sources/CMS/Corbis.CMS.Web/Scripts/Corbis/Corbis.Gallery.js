@@ -117,8 +117,121 @@ $(function () {
         });
     };
 
-    //CollapseImagesAll();
+    //****** adding live preview 	
+    check();
+
+    $('.minimal').live('click', function () {
+        check();
+    });
+    $('.contentImage .txtAlign li').bind('click', function () {
+        refreshLivePreview($(this).parent().parent().parent().find('.imgPresenter .livePreview'), $(this).attr('corbis-data-position'));
+    });
 });
+
+function check() {
+    var content_image_position, active_content_wizard, counter, preview_width, preview_height, preview_image;
+
+    $('.contentImage').each(function () {
+        content_image_position = $(this).find('.imgArea .txtAlign li.active').attr('corbis-data-position');
+
+        $(this).find('.txtArea .radioGroup input[type="radio"]').each(function () {
+            if ($(this)[0].checked == true) {
+                active_content_wizard = $(this).attr('corbis-txt-type')
+            }
+        });
+
+        switch (active_content_wizard) {
+            case 'empty':
+            case 'text':
+                preview_width = 0;
+                preview_height = 0;
+                break;
+            default:
+                preview_width = $(this).find('.txtInputs .' + active_content_wizard + ' #Width').val();
+                preview_height = $(this).find('.txtInputs .' + active_content_wizard + ' #Height').val();
+
+        }
+        console.log(preview_height);
+        preview_width = 100 * parseInt(preview_width) / 1024;
+        preview_height = 100 * parseInt(preview_height) / 662;
+
+        preview_image = $(this).find('.imgArea .imgPresenter .livePreview');
+        console.log(preview_height);
+        refreshLivePreview(preview_image, content_image_position, preview_width, preview_height);
+
+    });
+}
+function refreshLivePreview(obj, pos, width, height) {
+
+    var image = obj.parent().find('.imgPresenterTemplate');
+
+    console.log(obj.height());
+
+    if ((width == 'undefined') || (width == null)) {
+        width = 100 * parseInt(obj.width()) / 298;
+    }
+    if ((height == 'undefined') || (height == null)) {
+        height = 100 * parseInt(obj.height()) / 191;
+    }
+
+    obj.removeAttr('style');
+    image.removeAttr('style');
+
+    obj.css('width', width + '%');
+    obj.css('height', height + '%');
+
+    console.log(obj.height());
+
+    switch (pos) {
+        case 'left':
+        case 'topleft':
+        case 'bottomleft':
+            obj.css('left', '0px');
+            obj.css('top', '50%');
+            obj.css('margin-top', '-' + parseInt(obj.height() / 2) + 'px');
+            image.css('right', '0px');
+            break;
+        case 'right':
+        case 'topright':
+        case 'bottomright':
+            obj.css('right', '0px');
+            obj.css('top', '50%');
+            obj.css('margin-top', '-' + parseInt(obj.height() / 2) + 'px');
+            image.css('left', '0px');
+            break;
+        case 'top':
+            obj.css('top', '0px');
+            obj.css('left', '50%');
+            obj.css('margin-left', '-' + parseInt(obj.width() / 2) + 'px');
+            image.css('bottom', '0px');
+            break;
+        case 'bottom':
+            obj.css('bottom', '0px');
+            obj.css('left', '50%');
+            obj.css('margin-left', '-' + parseInt(obj.width() / 2) + 'px');
+            image.css('top', '0px');
+            break;
+        case 'center':
+            obj.css('left', '50%');
+            obj.css('margin-left', '-' + parseInt(obj.width() / 2) + 'px');
+            obj.css('top', '50%');
+            obj.css('margin-top', '-' + parseInt(obj.height() / 2) + 'px');
+            image.css('top', '0px');
+            break;
+    }
+}
+
+function checkContentDimension(selector) {
+    var width = $(selector).find('.#Width').val();
+    var height = $(selector).find('.#Height').val();
+    var pos = $(selector).parents('.expanded').find('.txtAlign li.active').attr('corbis-data-position');
+    var obj = $(selector).parents('.expanded').find('.livePreview');
+
+    width = 100 * parseInt(width) / 1024;
+    height = 100 * parseInt(height) / 662;
+
+    refreshLivePreview(obj, pos, width, height);
+}
 
 function initGalleryImageDragDrop(id) {
     //!!! See http://threedubmedia.com/code/event/drag !!!
@@ -243,6 +356,8 @@ function _onTextContentSaveSuccess(data, selector) {
     if (data.success) {
         alert('Image updated successfully');
 
+	checkContentDimension(selector);
+		
         var jvs = $(selector).closest('form').find('div.validation-summary-errors');
 
         if (jvs.length != 0) {

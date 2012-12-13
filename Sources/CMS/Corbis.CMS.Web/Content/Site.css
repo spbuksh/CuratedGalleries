@@ -973,6 +973,13 @@ padding: 0 1.5%;
     -webkit-box-shadow: 0 0 10px rgba(0,0,0,0.5); /* Для Safari и Chrome */
     box-shadow: 0 0 10px rgba(0,0,0,0.5); /* Параметры тени */
 }
+/*--- live preview ---*/
+.imgArea .imgPresenter { border: 1px solid black; width: 298px; height: 191px; overflow: hidden; }
+.imgArea .imgPresenter img.imgPresenterTemplate {position: absolute;top:0px;left:0px;}
+.imgArea .imgPresenter .livePreview img{ width:100%; height:100%; }
+.imgArea .txtAlign ul li { margin-right: 6px!important;}
+.imgArea .livePreview { position: absolute; background: white;}
+/*-- /live preview ---*/
 .imgArea{float: left;}
 .imgPresenter{ position: relative;margin-bottom: 10px;}
 .imgArea .imgToolbar{margin-bottom: 10px}
