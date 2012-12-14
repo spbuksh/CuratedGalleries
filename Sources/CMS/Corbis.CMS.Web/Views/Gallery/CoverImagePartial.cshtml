@@ -1,14 +1,30 @@
-﻿@using Corbis.CMS.Web.Models
+﻿@using Corbis.CMS.Entity
+@using Corbis.CMS.Web.Models
 @model GalleryCoverImageModel
 @{
     var imageUIID = Guid.NewGuid().ToString("N");
     
     var emptyClass = "empty";
     var textClass = "text";
-
+    var customImageClass = "customImage";
+    var ci = this.Model.ContentImage.TextContent as CustomImageContentModel;
+    if (ci != null)
+    {
+        ci.ImageID = Model.ID;
+        ci.GalleryID = Model.GalleryID;
+        ci.ContentImageUrl = this.Model.ContentImage.EditUrls;
+    }
     var position = this.Model.TextPosition;
-    
-    var txtMode = string.IsNullOrWhiteSpace(this.Model.Biography) ? emptyClass : textClass;
+    var txtMode = emptyClass;
+    if(!string.IsNullOrWhiteSpace(this.Model.Biography))
+    {
+        txtMode = textClass;
+    }
+    if(ci.ContentImageUrl!=null)
+    {
+        txtMode = customImageClass;
+    }
+    //var txtMode = string.IsNullOrWhiteSpace(this.Model.Biography) ? emptyClass : textClass;
     
     var bCanDelete = this.ViewData.ContainsKey("canDelete") && (bool)this.ViewData["canDelete"];
  }
@@ -49,8 +65,15 @@
             <div class="radioGroup">
                  <label for="empty_@this.Model.ID">None</label><input name="radioGroup_@this.Model.ID" id="empty_@this.Model.ID" corbis-txt-type="@emptyClass" checked="checked" type="radio" />       
                 <label for="text_@this.Model.ID">Text</label><input name="radioGroup_@this.Model.ID" id="text_@this.Model.ID" corbis-txt-type="@textClass" type="radio" />
+                <label for="ci_@this.Model.ID">
+                    Custom Image</label><input name="radioGroup_@this.Model.ID" id="ci_@this.Model.ID" corbis-txt-type="@customImageClass" type="radio" />
             </div>
             <div class="txtInputs">
+                                @{ 
+                    var ciContentID = "ciContent_" + this.Model.ID;
+
+                    var routeValues = new { galleryID = this.Model.GalleryID, imageID = this.Model.ID };
+                }
                 <div style="display: none;" class="@textClass">
                     @using (Ajax.BeginForm("SetCoverContent", "Gallery",
                                            new { id = this.Model.GalleryID },
@@ -89,17 +112,32 @@
                         <input value="Apply" type="submit" />
                     }
                 </div>
+                <div style="display: none;" class="@customImageClass">
+                    @using (Ajax.BeginForm("SetCoverCustomImageContent", "Gallery", routeValues, new AjaxOptions() { HttpMethod = "POST", OnBegin = "onBeginMsAjaxRequest", OnComplete = "onCompleteMsAjaxRequest", OnSuccess = "onCustomImageCoverSuccess" + imageUIID }))
+                    {
+                        @Html.ValidationSummary()
+                        @Html.Hidden("position")
+                        <div id="@ciContentID">
+                            @Html.Partial("CustomImageTextContentPartial", ci ?? new CustomImageContentModel(){ImageID = this.Model.ID , GalleryID = this.Model.GalleryID, ContentImageUrl = this.Model.ContentImage.EditUrls ?? new ImageUrlSet()})
+                        </div>
+                        <input value="Apply" type="submit"  onclick="return onApplySubmit(this);" />
+                    }
+                </div>
             </div>
         </div>
     </div>
     <div class="clear-fix">
     </div>
     <script type="text/javascript">
+         function onCustomImageCoverSuccess@(imageUIID)(data) {
+            _onTextContentSaveSuccess(data, '#@ciContentID');
+        }
         $(function () {
             _setCoverTextPosition('@(this.Model.TextPosition.ToString().ToLower())');
-
-             InitContentImage({ imageID: '@this.Model.ID',
-                 position: ('@(this.Model.TextPosition.ToString().ToLower())'),
+            
+            
+            InitContentImage({ imageID: '@this.Model.ID',
+                position: ('@(this.Model.TextPosition.ToString().ToLower())'),
                 txtMode: '@txtMode'
             });
             //add client validation supporting

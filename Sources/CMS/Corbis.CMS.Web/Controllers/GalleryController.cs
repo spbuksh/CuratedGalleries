@@ -242,8 +242,12 @@ namespace Corbis.CMS.Web.Controllers
                 Text = item.Name,
                 Order = item.Order,
                 Biography = item.Biography,
-                TextPosition = item.TextPosition
+                TextPosition = item.TextPosition,
             };
+            model.ContentImage = this.ObjectMapper.DoMapping<GalleryImageContentModel>(item.ContentImage);
+            model.ContentImage.TextContent = this.ObjectMapper.DoMapping<CustomImageContentModel>(item.ContentImage.TextContent);
+            model.ContentImage.TextContent.Height = item.ContentImage.TextContent.Size.HasValue ? item.ContentImage.TextContent.Size.Value.Height : (int?)null;
+            model.ContentImage.TextContent.Width = item.ContentImage.TextContent.Size.HasValue ? item.ContentImage.TextContent.Size.Value.Width : (int?)null;
 
             model.HeadlineCopyText = item.Headline.Text;
             model.HeadlineCopyFontSize = item.Headline.FontSize;
@@ -476,6 +480,23 @@ namespace Corbis.CMS.Web.Controllers
         }
 
         [HttpPost]
+        public ActionResult SetCoverCustomImageContent(int galleryID, string imageID, CustomImageContentModel model)
+        {
+            if (!this.ModelState.IsValid)
+                this.PartialView("CustomImageTextContentPartial", model);
+
+            Action<GalleryImageBase> handler = delegate(GalleryImageBase item)
+            {
+                (item as GalleryCoverImage).ContentImage.TextContent = this.ObjectMapper.DoMapping<CustomImageTextContent>(model);
+                (item as GalleryCoverImage).ContentImage.TextContent.Size = new Size(model.Width.Value, model.Height.Value);
+            };
+            GalleryRuntime.UpdateGalleryContentImage(galleryID, imageID, handler);
+
+            return this.Json(new { success = true });
+        }
+
+
+        [HttpPost]
         public ActionResult SetCustomImageContent(int galleryID, string imageID, CustomImageContentModel model)
         {
             if (!this.ModelState.IsValid)
@@ -524,6 +545,8 @@ namespace Corbis.CMS.Web.Controllers
             content.CoverImage.Standfirst.Text = model.StandfirstText;
             content.CoverImage.Standfirst.FontSize = model.StandfirstFontSize;
             content.CoverImage.TextPosition = model.TextPosition;
+            content.CoverImage.ContentImage.EditUrls = null;
+            content.CoverImage.ContentImage.TextContent = new CustomImageTextContent();
             GalleryRuntime.SaveGalleryContent(id, content);
 
             return this.Json(new { success = true });
@@ -542,6 +565,8 @@ namespace Corbis.CMS.Web.Controllers
             content.CoverImage.Standfirst.Text = string.Empty;
             content.CoverImage.Standfirst.FontSize = 0;
             content.CoverImage.TextPosition = CoverTextContentPositions.TopLeft;
+            content.CoverImage.ContentImage.EditUrls = null;
+            content.CoverImage.ContentImage.TextContent = new CustomImageTextContent();
             GalleryRuntime.SaveGalleryContent(id, content);
 
             return this.Json(new { success = true });

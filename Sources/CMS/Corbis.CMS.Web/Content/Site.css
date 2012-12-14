@@ -93,6 +93,8 @@ h5, h6 {
     }
 
 
+
+
 /* main layout
 ----------------------------------------------------------*/
 .content-wrapper {
@@ -974,7 +976,7 @@ padding: 0 1.5%;
     box-shadow: 0 0 10px rgba(0,0,0,0.5); /* Параметры тени */
 }
 /*--- live preview ---*/
-.imgArea .imgPresenter { border: 1px solid black; width: 298px; height: 191px; overflow: hidden; }
+.imgArea .imgPresenter { border: 1px solid black; width: 300px; height: 193px; overflow: hidden; }
 .imgArea .imgPresenter img.imgPresenterTemplate {position: absolute;top:0px;left:0px;}
 .imgArea .imgPresenter .livePreview img{ width:100%; height:100%; }
 .imgArea .txtAlign ul li { margin-right: 6px!important;}

@@ -370,7 +370,8 @@ namespace Corbis.CMS.Web.Controllers.Api
                             //TODO: we can get default values from gallery template
                             cimg.Headline = new CoverTextItem() { FontSize = 40 };
                             cimg.Standfirst = new CoverTextItem() { FontSize = 12 };
-
+                            cimg.ContentImage = new GalleryImageContent();
+                            cimg.ContentImage.TextContent = new CustomImageTextContent();
                             content.Images.Add(cimg);
                             img = cimg;
                         }

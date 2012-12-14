@@ -52,6 +52,16 @@ namespace Corbis.CMS.Web.Models
     /// </summary>
     public class GalleryCoverImageModel : GalleryImageModelBase
     {
+        public GalleryCoverImageModel()
+        {
+            if(ContentImage == null)
+            {
+                ContentImage = new GalleryImageContentModel();
+            }
+        }
+
+        public GalleryImageContentModel ContentImage { get; set; }
+
         public CoverTextContentPositions TextPosition { get; set; }
 
         [Required(ErrorMessage = "Headline copy must not be empty")]

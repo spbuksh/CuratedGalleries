@@ -119,10 +119,6 @@ $(function () {
 
     //****** adding live preview 	
     check();
-
-    $('.minimal').live('click', function () {
-        check();
-    });
     $('.contentImage .txtAlign li').bind('click', function () {
         refreshLivePreview($(this).parent().parent().parent().find('.imgPresenter .livePreview'), $(this).attr('corbis-data-position'));
     });
@@ -161,17 +157,17 @@ function check() {
 
     });
 }
+
+
 function refreshLivePreview(obj, pos, width, height) {
 
     var image = obj.parent().find('.imgPresenterTemplate');
 
-    console.log(obj.height());
-
     if ((width == 'undefined') || (width == null)) {
-        width = 100 * parseInt(obj.width()) / 298;
+        width = 100 * parseInt(obj.width()) / 300;
     }
     if ((height == 'undefined') || (height == null)) {
-        height = 100 * parseInt(obj.height()) / 191;
+        height = 100 * parseInt(obj.height()) / 193;
     }
 
     obj.removeAttr('style');
@@ -179,8 +175,6 @@ function refreshLivePreview(obj, pos, width, height) {
 
     obj.css('width', width + '%');
     obj.css('height', height + '%');
-
-    console.log(obj.height());
 
     switch (pos) {
         case 'left':
@@ -190,6 +184,7 @@ function refreshLivePreview(obj, pos, width, height) {
             obj.css('top', '50%');
             obj.css('margin-top', '-' + parseInt(obj.height() / 2) + 'px');
             image.css('right', '0px');
+            image.css('left', 'auto');
             break;
         case 'right':
         case 'topright':
@@ -198,18 +193,21 @@ function refreshLivePreview(obj, pos, width, height) {
             obj.css('top', '50%');
             obj.css('margin-top', '-' + parseInt(obj.height() / 2) + 'px');
             image.css('left', '0px');
+            image.css('right', 'auto');
             break;
         case 'top':
             obj.css('top', '0px');
             obj.css('left', '50%');
             obj.css('margin-left', '-' + parseInt(obj.width() / 2) + 'px');
             image.css('bottom', '0px');
+            image.css('top', 'auto');
             break;
         case 'bottom':
             obj.css('bottom', '0px');
             obj.css('left', '50%');
             obj.css('margin-left', '-' + parseInt(obj.width() / 2) + 'px');
             image.css('top', '0px');
+            image.css('bottom', 'auto');
             break;
         case 'center':
             obj.css('left', '50%');
@@ -244,7 +242,7 @@ function initGalleryImageDragDrop(id) {
             out.attr('corbis-item-id', jelem.attr('corbis-item-id'));
             return out;
         },
-        opacity: 0.8,
+        opacity: 0.8, 
         start: function (event, ui) {
             $('div.contentImage[corbis-item-id="' + ui.helper.attr('corbis-item-id') + '"]').addClass('corbis-drop-ignore');
         },
@@ -380,6 +378,9 @@ function InitContentImage(options) {
 
     if (options.txtMode) {
         $(jroot).find('div.radioGroup input[corbis-txt-type="' + options.txtMode + '"]').trigger('click');
+        $(jroot).find('div.radioGroup input[type="radio"]').removeAttr('checked');
+        $(jroot).find('div.radioGroup input[corbis-txt-type="' + options.txtMode + '"]').attr('checked', 'checked');
+        check();
     }
 
     initGalleryImageDragDrop(options.imageID);

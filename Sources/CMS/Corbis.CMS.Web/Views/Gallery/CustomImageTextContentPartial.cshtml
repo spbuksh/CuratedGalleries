@@ -1,10 +1,13 @@
 ﻿@model Corbis.CMS.Web.Models.CustomImageContentModel
+@{
+    var contentImageUrl = Model.ContentImageUrl == null ? string.Empty : Model.ContentImageUrl.Large;
+}
 <div>
     <a href="javascript:void(0)" onclick="editContentImage('@this.Model.ImageID','@this.Model.GalleryID'); return false;">Upload Content Image</a>
 </div>
 <div corbis-content-id="@this.Model.ImageID">
     <div class="imgPresenter">
-        <img src="@this.Model.ContentImageUrl.Large"  />
+        <img src="@contentImageUrl"  />
     </div>
 </div>
 <div class="blockWP">
@@ -28,6 +31,7 @@
     }
 
     function editContentImage(imageID, galleryID) {
+        debugger;
             showPopupWindow({
                 popupID: 'editGalleryImage',
                 title: 'Edit Image',
